@@ -18,7 +18,7 @@ locals {
   resource_prefix       = "cognitech-${local.name_abr}"
   config_state = {
     common_key          = "terraform/${local.name_abr}-${local.environment}-deploy-common/terraform.tfstate"
-    lock_tablet_name    = "Terraform"
+    lock_table_name     = "Terraform"
     key_shared_services = "terraform/${local.name_abr}-${local.environment}-shared-services/terraform.tfstate"
     key_tenant          = "terraform/${local.name_abr}-${local.environment}-tenant/terraform.tfstate"
 

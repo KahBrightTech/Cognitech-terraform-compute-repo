@@ -71,7 +71,7 @@ remote_state {
   config = {
     bucket               = local.state_bucket
     bucket_sse_algorithm = "AES256"
-    dynamodb_table       = local.state_lock_table
+    dynamodb_table       = include.env.locals.config_state.lock_table_name
     encrypt              = true
     key                  = "${local.deployment_name}/terraform.tfstate"
     region               = local.region
