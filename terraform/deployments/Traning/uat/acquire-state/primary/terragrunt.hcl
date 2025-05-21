@@ -61,13 +61,12 @@ remote_state {
     if_exists = "overwrite"
   }
   config = {
-    bucket                   = local.state_bucket
-    bucket_sse_algorithm     = "AES256"
-    dynamodb_table           = include.env.locals.remote_state_bucket.remote_dynamodb_table
-    encrypt                  = true
-    key                      = "${local.deployment_name}/terraform.tfstate"
-    region                   = local.region
-    skip_bucket_enforced_tls = true
+    bucket               = local.state_bucket
+    bucket_sse_algorithm = "AES256"
+    dynamodb_table       = include.env.locals.remote_state_bucket.remote_dynamodb_table
+    encrypt              = true
+    key                  = "${local.deployment_name}/terraform.tfstate"
+    region               = local.region
   }
 }
 
