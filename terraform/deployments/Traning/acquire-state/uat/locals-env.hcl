@@ -15,7 +15,7 @@ locals {
     secondary = "terragruntusw2"
   }
   remote_dynamodb_table = "Terraform"
-  resource_prefix - "cognitech-${local.name_abr}"
+  resource_prefix       = "cognitech-${local.name_abr}"
   config_state = {
     common_key          = "terraform/${local.name_abr}-${local.environment}-deploy-common/terraform.tfstate"
     lock_tablet_name    = "Terraform"
