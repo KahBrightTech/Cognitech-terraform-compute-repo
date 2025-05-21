@@ -11,7 +11,7 @@ locals {
   owner       = "kbrigthain@gmail.com"
 
   remote_state_bucket = {
-    primary               = "terragruntuse1-compute-state"
+    primary               = "terragruntuse-compute-state"
     secondary             = "terragruntusw2-compute-state"
     remote_dynamodb_table = "Terraform"
   }
