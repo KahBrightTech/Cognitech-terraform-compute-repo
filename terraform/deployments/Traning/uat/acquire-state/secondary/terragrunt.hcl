@@ -17,7 +17,7 @@ include "env" {
 locals {
 
   deployment      = "${include.env.locals.name_abr}-acquire-tfstate"
-  region_context  = "primary"
+  region_context  = "secondary"
   region          = local.region_context == "primary" ? include.cloud.locals.regions.use1.name : include.cloud.locals.regions.usw2.name
   deployment_name = "terraform/${include.env.locals.name_abr}-${local.vpc_name}-${local.deployment}"
   state_bucket    = local.region_context == "primary" ? include.env.locals.remote_state_bucket.primary : include.env.locals.remote_state_bucket.secondary
@@ -32,6 +32,14 @@ locals {
     }
   )
 }
+
+#-------------------------------------------------------
+# Source  
+#-------------------------------------------------------
+terraform {
+  source = "../../../../..//formations/Training"
+}
+
 
 #-------------------------------------------------------
 # Inputs 
@@ -52,7 +60,6 @@ inputs = {
     }
   ]
 }
-
 #-------------------------------------------------------
 # State Configuration
 #-------------------------------------------------------
@@ -65,7 +72,7 @@ remote_state {
   config = {
     bucket               = local.state_bucket
     bucket_sse_algorithm = "AES256"
-    dynamodb_table       = include.env.locals.config_state.lock_table_name
+    dynamodb_table       = local.state_lock_table
     encrypt              = true
     key                  = "${local.deployment_name}/terraform.tfstate"
     region               = local.region

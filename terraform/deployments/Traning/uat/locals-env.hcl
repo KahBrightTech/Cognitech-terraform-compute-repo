@@ -11,8 +11,8 @@ locals {
   owner       = "kbrigthain@gmail.com"
 
   remote_state_bucket = {
-    primary   = "terragruntuse1"
-    secondary = "terragruntusw2"
+    primary   = "terragruntuse1-compute-state"
+    secondary = "terragruntusw2-compute-state"
   }
   remote_dynamodb_table = "Terraform"
   resource_prefix       = "cognitech-${local.name_abr}"
@@ -21,6 +21,9 @@ locals {
     lock_table_name     = "Terraform"
     key_shared_services = "terraform/${local.name_abr}-${local.environment}-shared-services/terraform.tfstate"
     key_tenant          = "terraform/${local.name_abr}-${local.environment}-tenant/terraform.tfstate"
+    network_config_state = {
+      key_account =
+    }
 
   }
 
