@@ -36,7 +36,7 @@ locals {
 # Inputs 
 #-------------------------------------------------------
 inputs = {
-  tf_remote_state = [
+  tf_remote_states = [
     {
       name            = "Shared"
       bucket_name     = "include.env.locals.network_config_state.bucket_name[local.region_context]"
