@@ -69,7 +69,6 @@ remote_state {
     region               = local.region
   }
 }
-
 #-------------------------------------------------------
 # Providers 
 #-------------------------------------------------------
@@ -83,3 +82,6 @@ generate "aws-providers" {
   EOF
 }
 
+terraform {
+  source = "git::https://github.com/njibrigthain100/Cognitech-terraform-iac-modules.git//terraform/modules/acquire-state?ref=v1.1.9"
+}
