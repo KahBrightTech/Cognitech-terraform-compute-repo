@@ -41,13 +41,13 @@ inputs = {
     {
       name            = "Shared"
       bucket_name     = "include.env.locals.network_config_state.bucket_name[local.region_context]"
-      bucket_key      = "${include.env.locals.name_abr}-${include.env.locals.network_config_state.shared_services_vpc_name}-${local.region_context}"
+      bucket_key      = "${include.env.locals.name_abr}-${include.env.locals.network_config_state.shared_services_vpc_name}-${local.region_context}/terraform.tfstate"
       lock_table_name = include.env.locals.network_config_state.remote_dynamodb_table
     },
     {
       name            = "Tenant"
       bucket_name     = "include.env.locals.network_config_state.bucket_name[local.region_context]"
-      bucket_key      = "${include.env.locals.name_abr}-${local.vpc_name}-${local.region_context}"
+      bucket_key      = "${include.env.locals.name_abr}-${local.vpc_name}-${local.region_context}/terraform.tfstate"
       lock_table_name = include.env.locals.network_config_state.remote_dynamodb_table
     }
   ]
@@ -65,7 +65,7 @@ remote_state {
   config = {
     bucket               = local.state_bucket
     bucket_sse_algorithm = "AES256"
-    dynamodb_table       = include.env.locals.config_state.lock_table_name
+    dynamodb_table       = include.env.locals.remote_state_bucket.remote_dynamodb_table
     encrypt              = true
     key                  = "${local.deployment_name}/terraform.tfstate"
     region               = local.region
