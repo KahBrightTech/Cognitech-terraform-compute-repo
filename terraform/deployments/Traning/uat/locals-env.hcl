@@ -11,20 +11,19 @@ locals {
   owner       = "kbrigthain@gmail.com"
 
   remote_state_bucket = {
-    primary   = "terragruntuse1-compute-state"
-    secondary = "terragruntusw2-compute-state"
+    primary               = "terragruntuse1-compute-state"
+    secondary             = "terragruntusw2-compute-state"
+    remote_dynamodb_table = "Terraform"
   }
-  remote_dynamodb_table = "Terraform"
-  resource_prefix       = "cognitech-${local.name_abr}"
-  config_state = {
-    common_key          = "terraform/${local.name_abr}-${local.environment}-deploy-common/terraform.tfstate"
-    lock_table_name     = "Terraform"
-    key_shared_services = "terraform/${local.name_abr}-${local.environment}-shared-services/terraform.tfstate"
-    key_tenant          = "terraform/${local.name_abr}-${local.environment}-tenant/terraform.tfstate"
-    network_config_state = {
-      key_account =
+  resource_prefix = "cognitech-${local.name_abr}"
+  network_config_state = {
+    bucket_name = {
+      primary   = "terragruntuse1"
+      secondary = "terragruntusw2"
     }
-
+    key_shared_services      = "${local.name_abr}-shared-services"
+    remote_dynamodb_table    = "Terraform"
+    shared_services_vpc_name = "shared-services"
   }
 
   tags = {
