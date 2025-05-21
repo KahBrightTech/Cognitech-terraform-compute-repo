@@ -1,4 +1,4 @@
-name: Deploy-primary-trn-acquire-state
+name: Deploy-primary-trn-acquire-state-uat
 
 on:
   push:
@@ -6,8 +6,8 @@ on:
       - main # Run on push to the main branch
       - "*" # Run on push to any feature branch
     paths:
-      - "terraform/deployments/Traning/acquire-state/uat/primary/**/*"
-      - ".github/workflows/deploy-primary-trn-acquire-state.yaml"
+      - "terraform/deployments/Traning/uat/acquire-state/primary/**/*"
+      - ".github/workflows/deploy-primary-trn-acquire-state-uat.yaml"
   workflow_dispatch:
     inputs:
       terragrunt_action:
@@ -26,7 +26,7 @@ on:
 env:
   IAM_ROLE: arn:aws:iam::485147667400:role/prod-OIDCGitHubRole-role
   REGION: us-east-1
-  DEPLOYMENT_PATH: terraform/deployments/Traning/acquire-state/uat/primary
+  DEPLOYMENT_PATH: terraform/deployments/Traning/uat/acquire-state/primary
 
 permissions:
   packages: write
