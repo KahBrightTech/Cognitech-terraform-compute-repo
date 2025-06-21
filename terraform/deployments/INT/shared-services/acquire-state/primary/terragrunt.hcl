@@ -50,7 +50,7 @@ inputs = {
   tf_remote_states = [
     {
       name            = "Shared"
-      bucket_name     = "include.env.locals.network_config_state.bucket_name[local.region_context]"
+      bucket_name     = include.env.locals.network_config_state.bucket_name[local.region_context]
       bucket_key      = "terraform/${include.env.locals.name_abr}-${local.vpc_name}-${local.region_context}/terraform.tfstate"
       lock_table_name = include.env.locals.network_config_state.remote_dynamodb_table
     }
