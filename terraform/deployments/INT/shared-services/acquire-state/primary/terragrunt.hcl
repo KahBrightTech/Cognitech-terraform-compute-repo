@@ -21,8 +21,10 @@ locals {
   region          = local.region_context == "primary" ? include.cloud.locals.regions.use1.name : include.cloud.locals.regions.usw2.name
   region_prefix   = local.region_context == "primary" ? include.cloud.locals.region_prefix.primary : include.cloud.locals.region_prefix.secondary
   region_blk      = local.region_context == "primary" ? include.cloud.locals.regions.use1 : include.cloud.locals.regions.usw2
+  account_details = include.cloud.locals.account_info[include.env.locals.name_abr]
+  account_name    = local.account_details.name
   deployment_name = "terraform/${include.env.locals.name_abr}-${local.vpc_name}-${local.deployment}"
-  state_bucket    = local.region_context == "primary" ? "${include.cloud.locals.account_info[include.env.locals.name_abr].name}-${local.region_prefix.primary}-${local.vpc_name}-config-bucket" : "${include.cloud.locals.account_info[include.env.locals.name_abr].name}-${local.region_prefix.secondary}-${local.vpc_name}-config-bucket"
+  state_bucket    = local.region_context == "primary" ? "${local.account_name}-${local.region_prefix.primary}-${local.vpc_name}-config-bucket" : "${locals.account_name}-${local.region_prefix.secondary}-${local.vpc_name}-config-bucket"
   vpc_name        = "shared-services"
 
   # Composite variables 
@@ -79,4 +81,6 @@ generate "aws-providers" {
   }
   EOF
 }
+
+
 

@@ -19,8 +19,12 @@ locals {
   deployment      = "acquire-tfstate"
   region_context  = "primary"
   region          = local.region_context == "primary" ? include.cloud.locals.regions.use1.name : include.cloud.locals.regions.usw2.name
+  region_prefix   = local.region_context == "primary" ? include.cloud.locals.region_prefix.primary : include.cloud.locals.region_prefix.secondary
+  region_blk      = local.region_context == "primary" ? include.cloud.locals.regions.use1 : include.cloud.locals.regions.usw2
+  account_details = include.cloud.locals.account_info[include.env.locals.name_abr]
+  account_name    = local.account_details.name
   deployment_name = "terraform/${include.env.locals.name_abr}-${local.vpc_name}-${local.deployment}"
-  state_bucket    = local.region_context == "primary" ? include.env.locals.remote_state_bucket.primary : include.env.locals.remote_state_bucket.secondary
+  state_bucket    = local.region_context == "primary" ? "${local.account_name}-${local.region_prefix.primary}-${local.vpc_name}-config-bucket" : "${locals.account_name}-${local.region_prefix.secondary}-${local.vpc_name}-config-bucket"
   vpc_name        = "dev"
 
   # Composite variables 
@@ -32,7 +36,6 @@ locals {
     }
   )
 }
-
 #-------------------------------------------------------
 # Inputs 
 #-------------------------------------------------------
@@ -41,13 +44,7 @@ inputs = {
     {
       name            = "Shared"
       bucket_name     = "include.env.locals.network_config_state.bucket_name[local.region_context]"
-      bucket_key      = "${include.env.locals.name_abr}-${include.env.locals.network_config_state.shared_services_vpc_name}-${local.region_context}/terraform.tfstate"
-      lock_table_name = include.env.locals.network_config_state.remote_dynamodb_table
-    },
-    {
-      name            = "Tenant"
-      bucket_name     = "include.env.locals.network_config_state.bucket_name[local.region_context]"
-      bucket_key      = "${include.env.locals.name_abr}-${local.vpc_name}-${local.region_context}/terraform.tfstate"
+      bucket_key      = "terraform/${include.env.locals.name_abr}-${loca.vpc_name}-${local.region_context}/terraform.tfstate"
       lock_table_name = include.env.locals.network_config_state.remote_dynamodb_table
     }
   ]
@@ -84,4 +81,6 @@ generate "aws-providers" {
   }
   EOF
 }
+
+
 
