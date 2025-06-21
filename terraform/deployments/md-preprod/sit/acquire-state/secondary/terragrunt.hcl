@@ -36,6 +36,14 @@ locals {
     }
   )
 }
+
+#-------------------------------------------------------
+# Source  
+#-------------------------------------------------------
+terraform {
+  source = "git::https://github.com/njibrigthain100/Cognitech-terraform-iac-modules.git//terraform/modules/acquire-state?ref=v1.1.55"
+}
+
 #-------------------------------------------------------
 # Inputs 
 #-------------------------------------------------------
@@ -44,7 +52,7 @@ inputs = {
     {
       name            = "Shared"
       bucket_name     = "include.env.locals.network_config_state.bucket_name[local.region_context]"
-      bucket_key      = "terraform/${include.env.locals.name_abr}-${loca.vpc_name}-${local.region_context}/terraform.tfstate"
+      bucket_key      = "terraform/${include.env.locals.name_abr}-${local.vpc_name}-${local.region_context}/terraform.tfstate"
       lock_table_name = include.env.locals.network_config_state.remote_dynamodb_table
     }
   ]

@@ -36,11 +36,19 @@ locals {
     }
   )
 }
+
+#-------------------------------------------------------
+# Source  
+#-------------------------------------------------------
+terraform {
+  source = "git::https://github.com/njibrigthain100/Cognitech-terraform-iac-modules.git//terraform/modules/acquire-state?ref=v1.1.55"
+}
+
 #-------------------------------------------------------
 # Inputs 
 #-------------------------------------------------------
 inputs = {
-  tf_remote_state = [
+  tf_remote_states = [
     {
       name            = "Shared"
       bucket_name     = "include.env.locals.network_config_state.bucket_name[local.region_context]"
