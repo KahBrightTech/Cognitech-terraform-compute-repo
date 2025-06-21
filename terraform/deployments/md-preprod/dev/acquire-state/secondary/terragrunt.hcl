@@ -24,7 +24,7 @@ locals {
   account_details = include.cloud.locals.account_info[include.env.locals.name_abr]
   account_name    = local.account_details.name
   deployment_name = "terraform/${include.env.locals.name_abr}-${local.vpc_name}-${local.deployment}"
-  state_bucket    = local.region_context == "primary" ? "${local.account_name}-${local.region_prefix.primary}-${local.vpc_name}-config-bucket" : "${locals.account_name}-${local.region_prefix.secondary}-${local.vpc_name}-config-bucket"
+  state_bucket    = local.region_context == "primary" ? "${local.account_name}-${include.cloud.locals.region_prefix.primary}-${local.vpc_name}-config-bucket" : "${local.account_name}-${include.cloud.locals.region_prefix.secondary}-${local.vpc_name}-config-bucket"
   vpc_name        = "dev"
 
   # Composite variables 
