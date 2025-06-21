@@ -2,30 +2,35 @@
 # Cloud variables 
 #-------------------------------------------------------
 locals {
-  account_name = {
-    MD = {
-      Preprod = {
-        name   = "mdpreproduction"
-        number = "485147667400"
-      }
-      Prod = {
-        name   = "mdproduction"
-        number = "730335294148"
-      }
-      name   = "MDPreproduction"
+
+  account_info = {
+    mdpp = {
+      name   = "mdpreproduction"
       number = "485147667400"
     }
-    TRN = {
-      Preprod = {
-        name   = "trn-preproduction"
-        number = "485147667400"
-      }
-      Prod = {
-        name   = "trn-production"
-        number = "730335294148"
-      }
+    mdp = {
+      name   = "mdproduction"
+      number = "730335294148"
+    }
+    tpp = {
+      name   = "trn-preproduction"
+      number = "485147667400"
+    }
+
+    tp = {
+      name   = "trn-production"
+      number = "730335294148"
+    }
+    intpp = {
+      name   = "int-preproduction"
+      number = "730335294148"
+    }
+    intp = {
+      name   = "int-production"
+      number = "388927731914"
     }
   }
+
   billing_code_number = {
     kah = "90471"
     int = "TBD"
