@@ -43,7 +43,6 @@ locals {
 terraform {
   source = "git::https://github.com/njibrigthain100/Cognitech-terraform-iac-modules.git//terraform/modules/acquire-state?ref=v1.1.55"
 }
-
 #-------------------------------------------------------
 # Inputs 
 #-------------------------------------------------------
