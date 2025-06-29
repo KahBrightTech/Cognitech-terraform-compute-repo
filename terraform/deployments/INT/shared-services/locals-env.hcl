@@ -24,6 +24,12 @@ locals {
     remote_dynamodb_table    = "Terragrunt"
     shared_services_vpc_name = "shared-services"
   }
+  subnet_prefix = {
+    primary    = "sbnt1"
+    secondary  = "sbnt2"
+    tertiary   = "sbnt3"
+    quaternary = "sbnt4"
+  }
 
   tags = {
     Environment  = local.environment
