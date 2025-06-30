@@ -90,7 +90,7 @@ inputs = {
         delete_on_termination = true
         encrypted             = false
       }
-      subnet_id     = dependency.shared_services.outputs.remote_tfstates.Shared.public_subnet[local.env.locals.subnet_prefix.primary].primary_subnet_id
+      subnet_id     = dependency.shared_services.outputs.remote_tfstates.Shared.public_subnet[include.env.locals.subnet_prefix.primary].primary_subnet_id
       Schedule_name = "ansible-server-schedule"
       security_group_ids = [
         dependency.shared_services.outputs.remote_tfstates.Shared.security_group.app.id
