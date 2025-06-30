@@ -37,7 +37,7 @@ module "hosted_zones" {
     name    = each.value.name
     zone_id = each.value.zone_id
     type    = each.value.type
-    records = module.ec2[each.key].public_ip
+    records = module.ec2[each.key].private_ip
   }
 }
 

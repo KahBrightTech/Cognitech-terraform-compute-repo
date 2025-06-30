@@ -25,6 +25,7 @@ locals {
   deployment_name = "terraform/${include.env.locals.name_abr}-${local.vpc_name}-${local.deployment}"
   state_bucket    = local.region_context == "primary" ? "${local.account_name}-${include.cloud.locals.region_prefix.primary}-${local.vpc_name}-config-bucket" : "${local.account_name}-${include.cloud.locals.region_prefix.secondary}-${local.vpc_name}-config-bucket"
   vpc_name        = "shared-services"
+  vpc_name_abr    = "shr"
 
   # Composite variables 
   tags = merge(
@@ -40,7 +41,7 @@ locals {
 # Dependencies 
 #-------------------------------------------------------
 dependency "shared_services" {
-  config_path = "../../../acquire-state/${local.region_context}"
+  config_path = "../../acquire-state/${local.region_context}"
 }
 #-------------------------------------------------------
 # Source
@@ -93,6 +94,10 @@ inputs = {
       security_group_ids = [
         dependency.shared_services.remote_tfstates.Shared.security_group.app.id
       ]
+      hosted_zones = {
+        name    = dependency.shared_services.remote_tfstates.Shared.zones[local.vpc_name_abr].zone_name
+        zone_id = dependency.shared_services.remote_tfstates.Shared.zones[local.vpc_name_abr].zone_id
+      }
     }
   ]
 }
