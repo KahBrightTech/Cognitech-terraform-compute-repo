@@ -19,7 +19,7 @@ data "aws_iam_roles" "network_role" {
 # EC2 - Creates ec2 instances
 #--------------------------------------------------------------------
 module "ec2" {
-  source   = "git::https://github.com/njibrigthain100/Cognitech-terraform-iac-modules.git//terraform/modules/EC2-instance?ref=v1.1.78"
+  source   = "git::https://github.com/njibrigthain100/Cognitech-terraform-iac-modules.git//terraform/modules/EC2-instance?ref=v1.1.79"
   for_each = (var.ec2s != null) ? { for item in var.ec2s : item.index => item } : {}
   common   = var.common
   ec2      = each.value
