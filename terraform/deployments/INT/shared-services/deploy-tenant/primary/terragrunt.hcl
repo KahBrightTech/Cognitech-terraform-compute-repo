@@ -17,6 +17,7 @@ include "env" {
 locals {
   deployment      = "tenants-resources"
   region_context  = "primary"
+  deploy_globally = "true"
   region          = local.region_context == "primary" ? include.cloud.locals.regions.use1.name : include.cloud.locals.regions.usw2.name
   region_prefix   = local.region_context == "primary" ? include.cloud.locals.region_prefix.primary : include.cloud.locals.region_prefix.secondary
   region_blk      = local.region_context == "primary" ? include.cloud.locals.regions.use1 : include.cloud.locals.regions.usw2
@@ -71,11 +72,11 @@ inputs = {
       }
       associate_public_ip_address = true
       instance_type               = "t3.medium"
-      iam_instance_profile        = dependency.shared_services.remote_tfstates.Shared.ec2_profiles[local.vpc_name].iam_profiles.name
+      iam_instance_profile        = dependency.shared_services.outputs.remote_tfstates.Shared.ec2_profiles[local.vpc_name].iam_profiles.name
       os_release_date             = "RHEL9"
       associate_public_ip_address = true
       instance_type               = "t3.medium"
-      key_name                    = dependency.shared_services.remote_tfstates.Shared.ec2_key_pairs["${local.vpc_name}-key-pair"].name
+      key_name                    = dependency.shared_services.outputs.remote_tfstates.Shared.ec2_key_pairs["${local.vpc_name}-key-pair"].name
       custom_tags = {
         "Name"       = "INTPP-SHR-L-ANSIBLE-01"
         "DNS_Suffix" = "shr.cognitech.com"
@@ -89,14 +90,14 @@ inputs = {
         delete_on_termination = true
         encrypted             = false
       }
-      subnet_id     = dependency.shared_services.remote_tfstates.Shared.public_subnet[local.env.locals.subnet_prefix.primary].primary_subnet_id
+      subnet_id     = dependency.shared_services.outputs.remote_tfstates.Shared.public_subnet[local.env.locals.subnet_prefix.primary].primary_subnet_id
       Schedule_name = "ansible-server-schedule"
       security_group_ids = [
-        dependency.shared_services.remote_tfstates.Shared.security_group.app.id
+        dependency.shared_services.outputs.remote_tfstates.Shared.security_group.app.id
       ]
       hosted_zones = {
-        name    = "ans01.${dependency.shared_services.remote_tfstates.Shared.zones[local.vpc_name_abr].zone_name}"
-        zone_id = dependency.shared_services.remote_tfstates.Shared.zones[local.vpc_name_abr].zone_id
+        name    = "ans01.${dependency.shared_services.outputs.remote_tfstates.Shared.zones[local.vpc_name_abr].zone_name}"
+        zone_id = dependency.shared_services.outputs.remote_tfstates.Shared.zones[local.vpc_name_abr].zone_id
       }
     }
   ]
