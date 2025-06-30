@@ -50,7 +50,7 @@ variable "ec2s" {
     hosted_zones = optional(object({
       name           = string
       zone_id        = string
-      type           = "A"
+      type           = string
       ttl            = optional(number, 60)
       records        = optional(list(string))
       set_identifier = optional(string)
