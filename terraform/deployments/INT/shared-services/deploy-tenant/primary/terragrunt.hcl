@@ -95,7 +95,7 @@ inputs = {
         dependency.shared_services.remote_tfstates.Shared.security_group.app.id
       ]
       hosted_zones = {
-        name    = dependency.shared_services.remote_tfstates.Shared.zones[local.vpc_name_abr].zone_name
+        name    = "ans01.${dependency.shared_services.remote_tfstates.Shared.zones[local.vpc_name_abr].zone_name}"
         zone_id = dependency.shared_services.remote_tfstates.Shared.zones[local.vpc_name_abr].zone_id
       }
     }
