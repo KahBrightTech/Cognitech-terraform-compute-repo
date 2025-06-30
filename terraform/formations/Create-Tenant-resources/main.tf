@@ -30,17 +30,17 @@ module "ec2" {
 # Route 53 - Creates  DNS records 
 #--------------------------------------------------------------------
 module "hosted_zones" {
-  source = "git::https://github.com/njibrigthain100/Cognitech-terraform-iac-modules.git//terraform/modules/Route-53-records?ref=v1.1.59"
-  # for_each = (var.ec2s.hosted_zones != null) ? { for item in var.ec2s.hosted_zones : item.name => item } : {}
-  common = var.common
+  source   = "git::https://github.com/njibrigthain100/Cognitech-terraform-iac-modules.git//terraform/modules/Route-53-records?ref=v1.1.59"
+  for_each = (var.ec2s != null) ? { for item in var.ec2s : item.index => item if item.hosted_zones != null } : {}
+  common   = var.common
   dns_record = {
-    name           = var.ec2s.hosted_zones.zone_id
-    zone_id        = var.ec2s.hosted_zones.zone_id
-    type           = var.ec2s.hosted_zones.type
-    records        = module.ec2[each.key].private_ip
-    ttl            = var.ec2s.hosted_zones.ttl
-    set_identifier = var.ec2s.hosted_zones.set_identifier
-    weight         = var.ec2s.hosted_zones.weight
+    name           = each.value.hosted_zones.name
+    zone_id        = each.value.hosted_zones.zone_id
+    type           = each.value.hosted_zones.type
+    records        = [module.ec2[each.key].private_ip]
+    ttl            = each.value.hosted_zones.ttl
+    set_identifier = each.value.hosted_zones.set_identifier
+    weight         = each.value.hosted_zones.weight
   }
 }
 

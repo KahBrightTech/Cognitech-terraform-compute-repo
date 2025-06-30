@@ -14,6 +14,7 @@ variable "ec2s" {
   description = "EC2 Instance configuration"
   type = list(object({
     type = object({
+      index         = optional(string)
       name          = string
       name_override = optional(string)
       custom_ami    = optional(string)
