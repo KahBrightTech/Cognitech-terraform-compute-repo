@@ -47,7 +47,7 @@ variable "ec2s" {
       backup_plan_name   = optional(string)
       security_group_ids = list(string)
     })
-    hosted_zones = optionalobject({
+    hosted_zones = optional(object({
       name           = string
       zone_id        = string
       type           = "A"
@@ -55,7 +55,7 @@ variable "ec2s" {
       records        = optional(list(string))
       set_identifier = optional(string)
       weight         = optional(number)
-    })
+    }))
   }))
   default = null
 }
