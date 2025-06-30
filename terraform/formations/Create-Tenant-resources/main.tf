@@ -19,7 +19,7 @@ data "aws_iam_roles" "network_role" {
 # EC2 - Creates ec2 instances
 #--------------------------------------------------------------------
 module "ec2" {
-  source   = "git::https://github.com/njibrigthain100/Cognitech-terraform-iac-modules.git//terraform/modules/EC2-instance?ref=v1.1.79"
+  source   = "git::https://github.com/njibrigthain100/Cognitech-terraform-iac-modules.git//terraform/modules/EC2-instance?ref=v1.1.81"
   for_each = (var.ec2s != null) ? { for item in var.ec2s : item.index => item } : {}
   common   = var.common
   ec2      = each.value
@@ -30,7 +30,7 @@ module "ec2" {
 # Route 53 - Creates  DNS records 
 #--------------------------------------------------------------------
 module "hosted_zones" {
-  source   = "git::https://github.com/njibrigthain100/Cognitech-terraform-iac-modules.git//terraform/modules/Route-53-records?ref=v1.1.80"
+  source   = "git::https://github.com/njibrigthain100/Cognitech-terraform-iac-modules.git//terraform/modules/Route-53-records?ref=v1.1.81"
   for_each = (var.ec2s != null) ? { for item in var.ec2s : item.index => item if item.hosted_zones != null } : {}
   common   = var.common
   dns_record = merge(
