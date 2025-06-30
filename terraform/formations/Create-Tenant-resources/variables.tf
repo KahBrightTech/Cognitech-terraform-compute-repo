@@ -13,7 +13,6 @@ variable "common" {
 variable "ec2s" {
   description = "EC2 Instance configuration"
   type = list(object({
-    description = "EC2 Instance configuration"
     type = object({
       name          = string
       name_override = optional(string)
