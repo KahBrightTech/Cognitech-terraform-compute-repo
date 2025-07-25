@@ -63,7 +63,7 @@ inputs = {
     tags          = local.tags
     region        = local.region
   }
-  ec2s = [
+  ec2_instances = [
     {
       index         = "ans"
       name          = "ansible-server"
