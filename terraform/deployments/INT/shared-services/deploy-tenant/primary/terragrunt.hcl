@@ -59,11 +59,12 @@ terraform {
 #-------------------------------------------------------
 inputs = {
   common = {
-    global        = local.deploy_globally
-    account_name  = include.cloud.locals.account_info[include.env.locals.name_abr].name
-    region_prefix = local.region_prefix
-    tags          = local.tags
-    region        = local.region
+    global           = local.deploy_globally
+    account_name     = include.cloud.locals.account_info[include.env.locals.name_abr].name
+    region_prefix    = local.region_prefix
+    tags             = local.tags
+    region           = local.region
+    account_name_abr = include.env.locals.name_abr
   }
   ec2_instances = [
     {
