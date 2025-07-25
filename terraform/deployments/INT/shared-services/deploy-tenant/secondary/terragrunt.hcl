@@ -40,7 +40,7 @@ locals {
 # Dependencies 
 #-------------------------------------------------------
 dependency "shared_services" {
-  config_path = "../../../acquire-state/${local.region_context}"
+  config_path = "../../acquire-state/${local.region_context}"
 }
 #-------------------------------------------------------
 # Source
@@ -64,17 +64,18 @@ inputs = {
     {
       index         = "ans"
       name          = "ansible-server"
+      attach_tg     = ["acct_tg"]
       name_override = "INTPP-SHR-L-ANSIBLE-01"
       ami_config = {
         os_release_date = "AL2023"
       }
       associate_public_ip_address = true
       instance_type               = "t3.medium"
-      iam_instance_profile        = dependency.shared_services.remote_tfstates.Shared.ec2_profiles[local.vpc_name].iam_profiles.name
+      iam_instance_profile        = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_profiles[local.vpc_name].iam_profiles.name
       os_release_date             = "RHEL9"
       associate_public_ip_address = true
       instance_type               = "t3.medium"
-      key_name                    = dependency.shared_services.remote_tfstates.Shared.ec2_key_pairs["${local.vpc_name}-key-pair"].name
+      key_name                    = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name}-key-pair"].name
       custom_tags = {
         "Name"       = "INTPP-SHR-L-ANSIBLE-01"
         "DNS_Suffix" = "shr.cognitech.com"
@@ -88,11 +89,59 @@ inputs = {
         delete_on_termination = true
         encrypted             = false
       }
-      subnet_id     = dependency.shared_services.remote_tfstates.Shared.public_subnet[local.env.locals.subnet_prefix.primary].primary_subnet_id
+      subnet_id     = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].public_subnet[include.env.locals.subnet_prefix.primary].primary_subnet_id
       Schedule_name = "ansible-server-schedule"
       security_group_ids = [
-        dependency.shared_services.remote_tfstates.Shared.security_group.app.id
+        dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].security_group.app.id
       ]
+      hosted_zones = {
+        name    = "ans01.${dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].zones[local.vpc_name_abr].zone_name}"
+        zone_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].zones[local.vpc_name_abr].zone_id
+        type    = "A"
+      }
+    }
+  ]
+  alb_listeners = []
+  alb_listener_rules = [
+    {
+      index_key    = "acct"
+      listener_arn = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.load_balancers["acct"].default_listener.arn
+      rules = [
+        {
+          key      = "acct"
+          priority = 10
+          type     = "forward"
+          target_groups = [
+            {
+              tg_name = "acct_tg"
+              weight  = 99
+            }
+          ]
+          conditions = [
+            {
+              host_headers = [
+                "acct.${local.public_hosted_zone}",
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+  nlb_listeners = []
+  target_groups = [
+    {
+      key      = "acct_tg"
+      name     = "acct_tg"
+      protocol = "HTTPS"
+      port     = 443
+      health_check = {
+        protocol = "HTTPS"
+        port     = "443"
+        path     = "/"
+      }
+      vpc_name     = local.vpc_name
+      vpc_name_abr = "${local.vpc_name_abr}"
     }
   ]
 }

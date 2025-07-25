@@ -22,7 +22,15 @@ module "ec2_instance" {
   source   = "git::https://github.com/njibrigthain100/Cognitech-terraform-iac-modules.git//terraform/modules/EC2-instance?ref=v1.1.81"
   for_each = (var.ec2_instances != null) ? { for item in var.ec2_instances : item.index => item } : {}
   common   = var.common
-  ec2      = each.value
+  ec2 = merge(
+    each.value,
+    {
+      target_group_arns = (each.value.attach_tg != null) ? [
+        for item in each.value.attach_tg :
+        module.target_groups[item].target_group_arn
+      ] : null
+    }
+  )
 }
 
 

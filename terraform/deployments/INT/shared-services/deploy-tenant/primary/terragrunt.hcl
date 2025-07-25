@@ -15,18 +15,19 @@ include "env" {
 # Locals 
 #-------------------------------------------------------
 locals {
-  deployment      = "tenants-resources"
-  region_context  = "primary"
-  deploy_globally = "true"
-  region          = local.region_context == "primary" ? include.cloud.locals.regions.use1.name : include.cloud.locals.regions.usw2.name
-  region_prefix   = local.region_context == "primary" ? include.cloud.locals.region_prefix.primary : include.cloud.locals.region_prefix.secondary
-  region_blk      = local.region_context == "primary" ? include.cloud.locals.regions.use1 : include.cloud.locals.regions.usw2
-  account_details = include.cloud.locals.account_info[include.env.locals.name_abr]
-  account_name    = local.account_details.name
-  deployment_name = "terraform/${include.env.locals.name_abr}-${local.vpc_name}-${local.deployment}"
-  state_bucket    = local.region_context == "primary" ? "${local.account_name}-${include.cloud.locals.region_prefix.primary}-${local.vpc_name}-config-bucket" : "${local.account_name}-${include.cloud.locals.region_prefix.secondary}-${local.vpc_name}-config-bucket"
-  vpc_name        = "shared-services"
-  vpc_name_abr    = "shr"
+  deployment         = "tenants-resources"
+  region_context     = "primary"
+  deploy_globally    = "true"
+  region             = local.region_context == "primary" ? include.cloud.locals.regions.use1.name : include.cloud.locals.regions.usw2.name
+  region_prefix      = local.region_context == "primary" ? include.cloud.locals.region_prefix.primary : include.cloud.locals.region_prefix.secondary
+  region_blk         = local.region_context == "primary" ? include.cloud.locals.regions.use1 : include.cloud.locals.regions.usw2
+  account_details    = include.cloud.locals.account_info[include.env.locals.name_abr]
+  account_name       = local.account_details.name
+  deployment_name    = "terraform/${include.env.locals.name_abr}-${local.vpc_name}-${local.deployment}"
+  state_bucket       = local.region_context == "primary" ? "${local.account_name}-${include.cloud.locals.region_prefix.primary}-${local.vpc_name}-config-bucket" : "${local.account_name}-${include.cloud.locals.region_prefix.secondary}-${local.vpc_name}-config-bucket"
+  vpc_name           = "shared-services"
+  vpc_name_abr       = "shared"
+  public_hosted_zone = "${local.vpc_name_abr}.${include.env.locals.public_domain}"
 
   # Composite variables 
   tags = merge(
@@ -66,6 +67,7 @@ inputs = {
     {
       index         = "ans"
       name          = "ansible-server"
+      attach_tg     = ["acct_tg"]
       name_override = "INTPP-SHR-L-ANSIBLE-01"
       ami_config = {
         os_release_date = "AL2023"
@@ -100,6 +102,49 @@ inputs = {
         zone_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].zones[local.vpc_name_abr].zone_id
         type    = "A"
       }
+    }
+  ]
+  alb_listeners = []
+  alb_listener_rules = [
+    {
+      index_key    = "acct"
+      listener_arn = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.load_balancers["acct"].default_listener.arn
+      rules = [
+        {
+          key      = "acct"
+          priority = 10
+          type     = "forward"
+          target_groups = [
+            {
+              tg_name = "acct_tg"
+              weight  = 99
+            }
+          ]
+          conditions = [
+            {
+              host_headers = [
+                "acct.${local.public_hosted_zone}",
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+  nlb_listeners = []
+  target_groups = [
+    {
+      key      = "acct_tg"
+      name     = "acct_tg"
+      protocol = "HTTPS"
+      port     = 443
+      health_check = {
+        protocol = "HTTPS"
+        port     = "443"
+        path     = "/"
+      }
+      vpc_name     = local.vpc_name
+      vpc_name_abr = "${local.vpc_name_abr}"
     }
   ]
 }

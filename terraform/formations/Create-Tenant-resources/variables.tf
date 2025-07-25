@@ -13,10 +13,12 @@ variable "common" {
 variable "ec2_instances" {
   description = "EC2 Instance configuration"
   type = list(object({
-    index         = optional(string)
-    name          = string
-    name_override = optional(string)
-    custom_ami    = optional(string)
+    index             = optional(string)
+    name              = string
+    name_override     = optional(string)
+    custom_ami        = optional(string)
+    attach_tg         = optional(list(string))
+    target_group_arns = optional(list(string))
     ami_config = object({
       os_release_date  = optional(string)
       os_base_packages = optional(string)

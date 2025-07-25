@@ -14,7 +14,7 @@ locals {
     remote_dynamodb_table = "Terragrunt"
   }
   resource_prefix = "cognitech-${local.name_abr}"
-
+  public_domain   = "cognitechllc.org"
   network_config_state = {
     bucket_name = {
       primary   = "terragruntint"
