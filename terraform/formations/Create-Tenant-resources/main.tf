@@ -18,9 +18,9 @@ data "aws_iam_roles" "network_role" {
 #--------------------------------------------------------------------
 # EC2 - Creates ec2 instances
 #--------------------------------------------------------------------
-module "ec2" {
+module "ec2_instance" {
   source   = "git::https://github.com/njibrigthain100/Cognitech-terraform-iac-modules.git//terraform/modules/EC2-instance?ref=v1.1.81"
-  for_each = (var.ec2s != null) ? { for item in var.ec2s : item.index => item } : {}
+  for_each = (var.ec2_instances != null) ? { for item in var.ec2_instances : item.index => item } : {}
   common   = var.common
   ec2      = each.value
 }
@@ -31,14 +31,55 @@ module "ec2" {
 #--------------------------------------------------------------------
 module "hosted_zones" {
   source   = "git::https://github.com/njibrigthain100/Cognitech-terraform-iac-modules.git//terraform/modules/Route-53-records?ref=v1.1.81"
-  for_each = (var.ec2s != null) ? { for item in var.ec2s : item.index => item if item.hosted_zones != null } : {}
+  for_each = (var.ec2_instances != null) ? { for item in var.ec2_instances : item.index => item if item.hosted_zones != null } : {}
   common   = var.common
   dns_record = merge(
     each.value.hosted_zones,
     {
-      records = [module.ec2[each.key].private_ip]
+      records = [module.ec2_instance[each.key].private_ip]
     }
   )
+}
+
+#--------------------------------------------------------------------
+# Target groups
+#--------------------------------------------------------------------
+module "target_groups" {
+  source       = "git::https://github.com/njibrigthain100/Cognitech-terraform-iac-modules.git//terraform/modules/Target-groups?ref=v1.2.90"
+  for_each     = (var.target_groups != null) ? { for item in var.target_groups : item.key => item } : {}
+  common       = var.common
+  target_group = each.value
+}
+
+#--------------------------------------------------------------------
+# ALB listeners
+#--------------------------------------------------------------------
+module "alb_listeners" {
+  source   = "git::https://github.com/njibrigthain100/Cognitech-terraform-iac-modules.git//terraform/modules/alb-listeners?ref=v1.2.90"
+  for_each = (var.alb_listeners != null) ? { for item in var.alb_listeners : item.key => item } : {}
+  common   = var.common
+  listener = each.value
+}
+
+#--------------------------------------------------------------------
+# ALB listener rules
+#--------------------------------------------------------------------
+module "alb_listener_rules" {
+  source   = "git::https://github.com/njibrigthain100/Cognitech-terraform-iac-modules.git//terraform/modules/alb-listener-rule?ref=v1.2.92"
+  for_each = (var.alb_listener_rules != null) ? { for item in var.alb_listener_rules : item.index_key => item } : {}
+  common   = var.common
+  rule     = each.value
+}
+
+
+#--------------------------------------------------------------------
+# NLB listeners
+#--------------------------------------------------------------------
+module "nlb_listeners" {
+  source       = "git::https://github.com/njibrigthain100/Cognitech-terraform-iac-modules.git//terraform/modules/nlb-listener?ref=v1.2.90"
+  for_each     = (var.nlb_listeners != null) ? { for item in var.nlb_listeners : item.name => item } : {}
+  common       = var.common
+  nlb_listener = each.value
 }
 
 
