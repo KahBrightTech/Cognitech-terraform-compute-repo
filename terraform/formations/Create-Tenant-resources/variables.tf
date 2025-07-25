@@ -1,11 +1,12 @@
 variable "common" {
   description = "Common variables used by all resources"
   type = object({
-    global        = bool
-    tags          = map(string)
-    account_name  = string
-    region_prefix = string
-    region        = string
+    global           = bool
+    tags             = map(string)
+    account_name     = string
+    region_prefix    = string
+    region           = string
+    account_name_abr = optional(string)
   })
   default = null
 }

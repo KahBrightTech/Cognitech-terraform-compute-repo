@@ -53,7 +53,6 @@ dependency "shared_services" {
 terraform {
   source = "../../../../..//formations/Create-Tenant-resources"
 }
-
 #-------------------------------------------------------
 # Inputs 
 #-------------------------------------------------------
