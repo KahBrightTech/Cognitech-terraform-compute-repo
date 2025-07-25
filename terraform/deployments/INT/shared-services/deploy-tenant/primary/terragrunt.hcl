@@ -116,7 +116,7 @@ inputs = {
           type     = "forward"
           target_groups = [
             {
-              tg_name = "acct_tg"
+              tg_name = "acct-tg"
               weight  = 99
             }
           ]
@@ -138,7 +138,6 @@ inputs = {
       name         = "acct-tg"
       protocol     = "HTTPS"
       port         = 443
-      vpc_name     = local.vpc_name
       vpc_name_abr = "${local.vpc_name_abr}"
       health_check = {
         protocol = "HTTPS"
