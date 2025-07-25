@@ -60,11 +60,11 @@ variable "ec2_instances" {
   default = null
 }
 
-
 variable "alb_listeners" {
   description = "Load Balancer listener configuration"
   type = list(object({
-    alb_arn          = string
+    key              = optional(string)
+    alb_arn          = optional(string)
     alb_key          = optional(string)
     action           = optional(string, "forward")
     port             = number
@@ -72,7 +72,7 @@ variable "alb_listeners" {
     ssl_policy       = optional(string)
     certificate_arn  = optional(string)
     alt_alb_hostname = optional(string)
-    vpc_id           = string
+    vpc_id           = optional(string)
     vpc_name         = optional(string)
     fixed_response = optional(object({
       content_type = optional(string, "text/plain")
@@ -84,16 +84,17 @@ variable "alb_listeners" {
       certificate_arn = string
     })))
     target_group = optional(object({
-      name     = string
-      port     = number
-      protocol = string
-      attachment = optional(list(object({
-        target_id = string
-        port      = number
+      name         = optional(string)
+      port         = optional(number)
+      protocol     = optional(string)
+      vpc_name_abr = optional(string)
+      attachments = optional(list(object({
+        target_id = optional(string)
+        port      = optional(number)
       })))
       stickiness = optional(object({
-        enabled         = bool
-        type            = string
+        enabled         = optional(bool)
+        type            = optional(string)
         cookie_duration = optional(number)
         cookie_name     = optional(string)
       }))
@@ -107,7 +108,6 @@ variable "alb_listeners" {
   }))
   default = null
 }
-
 variable "alb_listener_rules" {
   description = "ALB Listener Rule Configuration"
   type = list(object({
@@ -147,31 +147,32 @@ variable "nlb_listeners" {
     key             = optional(string)
     name            = optional(string)
     nlb_key         = optional(string)
-    nlb_arn         = string
+    nlb_arn         = optional(string)
     action          = optional(string, "forward")
     port            = number
     protocol        = string
     ssl_policy      = optional(string)
     certificate_arn = optional(string)
-    vpc_id          = string
+    vpc_id          = optional(string)
     vpc_name        = optional(string)
     sni_certificates = optional(list(object({
-      domain_name     = string
-      certificate_arn = string
+      domain_name     = optional(string)
+      certificate_arn = optional(string)
     })))
     target_group = optional(object({
-      name     = string
-      port     = number
-      protocol = string
-      attachments = optional(object({
+      name         = optional(string)
+      port         = optional(number)
+      protocol     = optional(string)
+      vpc_name_abr = optional(string)
+      attachments = optional(list(object({
         target_id      = optional(string)
         port           = optional(number)
         ec2_key        = optional(string)
         use_private_ip = optional(bool, false) # If true, use private IP of the EC2 instance
-      }))
+      })))
       stickiness = optional(object({
-        enabled         = bool
-        type            = string
+        enabled         = optional(bool)
+        type            = optional(string)
         cookie_duration = optional(number)
         cookie_name     = optional(string)
       }))
@@ -197,10 +198,12 @@ variable "target_groups" {
     preserve_client_ip = optional(bool)
     target_type        = optional(string, "instance")
     tags               = optional(map(string))
-    vpc_id             = string
+    vpc_id             = optional(string)
+    vpc_name           = optional(string)
+    vpc_name_abr       = optional(string)
     attachments = optional(list(object({
-      target_id = string
-      port      = number
+      target_id = optional(string)
+      port      = optional(number)
     })))
     stickiness = optional(object({
       enabled         = bool
@@ -217,4 +220,3 @@ variable "target_groups" {
   }))
   default = null
 }
-
