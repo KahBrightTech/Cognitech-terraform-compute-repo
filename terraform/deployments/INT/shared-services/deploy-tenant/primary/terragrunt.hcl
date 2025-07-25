@@ -69,7 +69,7 @@ inputs = {
     {
       index         = "ans"
       name          = "ansible-server"
-      attach_tg     = ["acct_tg"]
+      attach_tg     = ["acct-tg"]
       name_override = "INTPP-SHR-L-ANSIBLE-01"
       ami_config = {
         os_release_date = "AL2023"
