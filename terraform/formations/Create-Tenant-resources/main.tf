@@ -53,7 +53,7 @@ module "hosted_zones" {
 # Target groups
 #--------------------------------------------------------------------
 module "target_groups" {
-  source       = "git::https://github.com/njibrigthain100/Cognitech-terraform-iac-modules.git//terraform/modules/Target-groups?ref=v1.2.90"
+  source       = "git::https://github.com/njibrigthain100/Cognitech-terraform-iac-modules.git//terraform/modules/Target-groups?ref=v1.2.92"
   for_each     = (var.target_groups != null) ? { for item in var.target_groups : item.key => item } : {}
   common       = var.common
   target_group = each.value
@@ -76,9 +76,22 @@ module "alb_listener_rules" {
   source   = "git::https://github.com/njibrigthain100/Cognitech-terraform-iac-modules.git//terraform/modules/alb-listener-rule?ref=v1.2.92"
   for_each = (var.alb_listener_rules != null) ? { for item in var.alb_listener_rules : item.index_key => item } : {}
   common   = var.common
-  rule     = each.value
+  rule = [
+    for item in each.value.rules : merge(
+      item,
+      {
+        listener_arn = each.value.listener_key != null ? module.alb_listeners[each.value.listener_key].alb_listener_arn : each.value.listener_arn
+        target_groups = [
+          for tg in item.target_groups :
+          {
+            arn    = tg.tg_name != null ? module.target_groups[tg.tg_name].target_group_arn : tg.arn
+            weight = tg.weight
+          }
+        ]
+      }
+    )
+  ]
 }
-
 
 #--------------------------------------------------------------------
 # NLB listeners

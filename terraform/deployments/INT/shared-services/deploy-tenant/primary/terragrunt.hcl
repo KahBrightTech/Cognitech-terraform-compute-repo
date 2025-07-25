@@ -27,6 +27,8 @@ locals {
   state_bucket       = local.region_context == "primary" ? "${local.account_name}-${include.cloud.locals.region_prefix.primary}-${local.vpc_name}-config-bucket" : "${local.account_name}-${include.cloud.locals.region_prefix.secondary}-${local.vpc_name}-config-bucket"
   vpc_name           = "shared-services"
   vpc_name_abr       = "shared"
+  account_id         = include.cloud.locals.account_info[include.env.locals.name_abr].number
+  aws_account_name   = include.cloud.locals.account_info[include.env.locals.name_abr].name
   public_hosted_zone = "${local.vpc_name_abr}.${include.env.locals.public_domain}"
 
   # Composite variables 
