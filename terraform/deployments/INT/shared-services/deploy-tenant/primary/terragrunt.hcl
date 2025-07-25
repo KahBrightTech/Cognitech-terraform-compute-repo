@@ -145,8 +145,7 @@ inputs = {
         port     = "443"
         path     = "/"
       }
-      vpc_name     = local.vpc_name
-      vpc_name_abr = "${local.vpc_name_abr}"
+      vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc.id
     }
   ]
 }
