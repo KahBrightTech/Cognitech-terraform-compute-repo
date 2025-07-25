@@ -15,16 +15,21 @@ include "env" {
 # Locals 
 #-------------------------------------------------------
 locals {
-  deployment      = "tenants-resources"
-  region_context  = "secondary"
-  region          = local.region_context == "primary" ? include.cloud.locals.regions.use1.name : include.cloud.locals.regions.usw2.name
-  region_prefix   = local.region_context == "primary" ? include.cloud.locals.region_prefix.primary : include.cloud.locals.region_prefix.secondary
-  region_blk      = local.region_context == "primary" ? include.cloud.locals.regions.use1 : include.cloud.locals.regions.usw2
-  account_details = include.cloud.locals.account_info[include.env.locals.name_abr]
-  account_name    = local.account_details.name
-  deployment_name = "terraform/${include.env.locals.name_abr}-${local.vpc_name}-${local.deployment}"
-  state_bucket    = local.region_context == "primary" ? "${local.account_name}-${include.cloud.locals.region_prefix.primary}-${local.vpc_name}-config-bucket" : "${local.account_name}-${include.cloud.locals.region_prefix.secondary}-${local.vpc_name}-config-bucket"
-  vpc_name        = "shared-services"
+  deployment         = "tenants-resources"
+  region_context     = "secondary"
+  deploy_globally    = "true"
+  region             = local.region_context == "primary" ? include.cloud.locals.regions.use1.name : include.cloud.locals.regions.usw2.name
+  region_prefix      = local.region_context == "primary" ? include.cloud.locals.region_prefix.primary : include.cloud.locals.region_prefix.secondary
+  region_blk         = local.region_context == "primary" ? include.cloud.locals.regions.use1 : include.cloud.locals.regions.usw2
+  account_details    = include.cloud.locals.account_info[include.env.locals.name_abr]
+  account_name       = local.account_details.name
+  deployment_name    = "terraform/${include.env.locals.name_abr}-${local.vpc_name}-${local.deployment}"
+  state_bucket       = local.region_context == "primary" ? "${local.account_name}-${include.cloud.locals.region_prefix.primary}-${local.vpc_name}-config-bucket" : "${local.account_name}-${include.cloud.locals.region_prefix.secondary}-${local.vpc_name}-config-bucket"
+  vpc_name           = "shared-services"
+  vpc_name_abr       = "shared"
+  account_id         = include.cloud.locals.account_info[include.env.locals.name_abr].number
+  aws_account_name   = include.cloud.locals.account_info[include.env.locals.name_abr].name
+  public_hosted_zone = "${local.vpc_name_abr}.${include.env.locals.public_domain}"
 
   # Composite variables 
   tags = merge(
@@ -48,19 +53,19 @@ dependency "shared_services" {
 terraform {
   source = "../../../../..//formations/Create-Tenant-resources"
 }
-
 #-------------------------------------------------------
 # Inputs 
 #-------------------------------------------------------
 inputs = {
   common = {
-    global        = local.deploy_globally
-    account_name  = include.cloud.locals.account_info[include.env.locals.name_abr].name
-    region_prefix = local.region_prefix
-    tags          = local.tags
-    region        = local.region
+    global           = local.deploy_globally
+    account_name     = include.cloud.locals.account_info[include.env.locals.name_abr].name
+    region_prefix    = local.region_prefix
+    tags             = local.tags
+    region           = local.region
+    account_name_abr = include.env.locals.name_abr
   }
-  ec2s = [
+  ec2_instances = [
     {
       index         = "ans"
       name          = "ansible-server"
@@ -131,8 +136,8 @@ inputs = {
   nlb_listeners = []
   target_groups = [
     {
-      key      = "acct_tg"
-      name     = "acct_tg"
+      key      = "acct-tg"
+      name     = "acct-tg"
       protocol = "HTTPS"
       port     = 443
       health_check = {
@@ -140,8 +145,8 @@ inputs = {
         port     = "443"
         path     = "/"
       }
-      vpc_name     = local.vpc_name
-      vpc_name_abr = "${local.vpc_name_abr}"
+      vpc_id   = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
+      vpc_name = local.vpc_name
     }
   ]
 }
@@ -176,3 +181,6 @@ generate "aws-providers" {
   }
   EOF
 }
+
+
+

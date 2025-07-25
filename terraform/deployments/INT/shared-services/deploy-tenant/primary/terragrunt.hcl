@@ -140,6 +140,7 @@ inputs = {
       name     = "acct-tg"
       protocol = "HTTPS"
       port     = 443
+      vpc_name = local.vpc_name
       health_check = {
         protocol = "HTTPS"
         port     = "443"
