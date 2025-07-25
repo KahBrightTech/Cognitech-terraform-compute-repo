@@ -136,8 +136,8 @@ inputs = {
   nlb_listeners = []
   target_groups = [
     {
-      key      = "acct_tg"
-      name     = "acct_tg"
+      key      = "acct-tg"
+      name     = "acct-tg"
       protocol = "HTTPS"
       port     = 443
       health_check = {
