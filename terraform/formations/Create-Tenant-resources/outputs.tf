@@ -4,7 +4,7 @@
 #-------------------------------------------------------
 output "ec2" {
   description = "The EC2 instance details"
-  value       = module.ec2
+  value       = module.ec2_instance
 }
 
 #-------------------------------------------------------
