@@ -84,8 +84,6 @@ inputs = {
       custom_tags = {
         "Name"       = "INTPP-SHR-L-ANSIBLE-01"
         "DNS_Suffix" = "shr.cognitech.com"
-
-
       }
       ebs_device_volume = {
         name                  = "xvdb"
@@ -136,21 +134,21 @@ inputs = {
   nlb_listeners = []
   target_groups = [
     {
-      key      = "acct-tg"
-      name     = "acct-tg"
-      protocol = "HTTPS"
-      port     = 443
+      key          = "acct-tg"
+      name         = "acct-tg"
+      protocol     = "HTTPS"
+      port         = 443
+      vpc_name     = local.vpc_name
+      vpc_name_abr = "${local.vpc_name_abr}"
       health_check = {
         protocol = "HTTPS"
         port     = "443"
         path     = "/"
       }
-      vpc_id   = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
-      vpc_name = local.vpc_name
+      vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
     }
   ]
 }
-
 #-------------------------------------------------------
 # State Configuration
 #-------------------------------------------------------
