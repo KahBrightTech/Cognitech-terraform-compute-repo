@@ -111,6 +111,7 @@ inputs = {
       certificate_arn = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.certificates[local.vpc_name].arn
       protocol        = "HTTPS"
       port            = 443
+      vpc_name_abr    = local.vpc_name_abr
       vpc_id          = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
       fixed_response = {
         content_type = "text/plain"
