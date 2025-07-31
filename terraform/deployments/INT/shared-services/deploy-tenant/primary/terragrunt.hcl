@@ -111,12 +111,11 @@ inputs = {
       certificate_arn = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.certificates[local.vpc_name].arn
       protocol        = "HTTPS"
       port            = 443
-      # vpc_name_abr    = local.vpc_name_abr
-      vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
-      target_group = {
-        tg_key   = "etl-tg"
-        protocol = "HTTPS"
-        port     = 443
+      vpc_id          = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
+      fixed_response = {
+        content_type = "text/plain"
+        message_body = "This is a default response from the ETL ALB listener."
+        status_code  = "200"
       }
     }
   ]
@@ -144,6 +143,30 @@ inputs = {
           ]
         }
       ]
+    },
+    {
+      index_key    = "etl"
+      listener_key = "etl"
+      rules = [
+        {
+          key      = "etl"
+          priority = 11
+          type     = "forward"
+          target_groups = [
+            {
+              tg_name = "etl-tg"
+              weight  = 99
+            }
+          ]
+          conditions = [
+            {
+              host_headers = [
+                "etl.${local.public_hosted_zone}",
+              ]
+            }
+          ]
+        }
+      ]
     }
   ]
   nlb_listeners = [
@@ -157,6 +180,8 @@ inputs = {
       vpc_id          = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
       target_group = {
         name         = "ssrs-tg"
+        port         = 443
+        protocol     = "TLS"
         vpc_name_abr = local.vpc_name_abr
         attachments = [
           {
@@ -179,7 +204,20 @@ inputs = {
       name         = "acct-tg"
       protocol     = "HTTPS"
       port         = 443
-      vpc_name_abr = "${local.vpc_name_abr}"
+      vpc_name_abr = local.vpc_name_abr
+      health_check = {
+        protocol = "HTTPS"
+        port     = "443"
+        path     = "/"
+      }
+      vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
+    },
+    {
+      key          = "etl-tg"
+      name         = "etl-tg"
+      protocol     = "HTTPS"
+      port         = 443
+      vpc_name_abr = local.vpc_name_abr
       health_check = {
         protocol = "HTTPS"
         port     = "443"

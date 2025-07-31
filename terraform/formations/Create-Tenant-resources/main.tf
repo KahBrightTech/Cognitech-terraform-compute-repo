@@ -111,11 +111,7 @@ module "nlb_listeners" {
             merge(
               item,
               {
-                target_id = item.ec2_key != null ? (
-                  item.use_public_ip == true ? module.ec2_instance[item.ec2_key].public_ip :
-                  item.use_private_ip == true ? module.ec2_instance[item.ec2_key].private_ip :
-                  module.ec2_instance[item.ec2_key].instance_id
-                ) : item.lambda_function_name != null ? item.lambda_function_name : item.target_id
+                target_id = item.ec2_key != null ? module.ec2_instance[item.ec2_key].instance_id : item.target_id
               }
             )
           ]
