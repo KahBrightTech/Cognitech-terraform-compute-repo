@@ -66,13 +66,12 @@ module "alb_listeners" {
   source = "git::https://github.com/njibrigthain100/Cognitech-terraform-iac-modules.git//terraform/modules/alb-listeners?ref=v1.2.95"
   for_each = (var.alb_listeners != null) ? {
     for item in var.alb_listeners : item.key => item
-    if try(item.target_group, null) != null
   } : {}
   common = var.common
   alb_listener = merge(
     each.value,
     {
-      target_group = each.value.target_group != null ? merge(
+      target_group = try(each.value.target_group, null) != null ? merge(
         each.value.target_group,
         {
           attachments = each.value.target_group.attachments != null ? each.value.target_group.attachments : []
