@@ -104,7 +104,22 @@ inputs = {
       }
     }
   ]
-  alb_listeners = []
+  alb_listeners = [
+    {
+      key             = "etl"
+      alb_arn         = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.load_balancers["etl"].arn
+      certificate_arn = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.certificates[local.vpc_name].arn
+      protocol        = "HTTPS"
+      port            = 443
+      # vpc_name_abr    = local.vpc_name_abr
+      vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
+      target_group = {
+        tg_key   = "etl-tg"
+        protocol = "HTTPS"
+        port     = 443
+      }
+    }
+  ]
   alb_listener_rules = [
     {
       index_key    = "acct"
@@ -131,7 +146,33 @@ inputs = {
       ]
     }
   ]
-  nlb_listeners = []
+  nlb_listeners = [
+    {
+      key             = "ssrs"
+      nlb_key         = "ssrs-nlb"
+      nlb_arn         = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.load_balancers["ssrs"].arn
+      certificate_arn = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.certificates[local.vpc_name].arn
+      protocol        = "TLS"
+      port            = 443
+      # vpc_name_abr    = local.vpc_name_abr
+      vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
+      target_group = {
+        name = "ssrs-tg"
+        attachments = [
+          {
+            ec2_key = "ans"
+            port    = 443
+          }
+        ]
+        health_check = {
+          protocol = "HTTPS"
+          port     = 443
+          path     = "/"
+          matcher  = "200,401"
+        }
+      }
+    }
+  ]
   target_groups = [
     {
       key          = "acct-tg"

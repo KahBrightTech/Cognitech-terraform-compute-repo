@@ -166,10 +166,12 @@ variable "nlb_listeners" {
       protocol     = optional(string)
       vpc_name_abr = optional(string)
       attachments = optional(list(object({
-        target_id      = optional(string)
-        port           = optional(number)
-        ec2_key        = optional(string)
-        use_private_ip = optional(bool, false) # If true, use private IP of the EC2 instance
+        target_id            = optional(string)
+        port                 = optional(number)
+        ec2_key              = optional(string)
+        use_private_ip       = optional(bool, false) # If true, use private IP of the EC2 instance
+        use_public_ip        = optional(bool, false) # If true, use public IP of the EC2 instance
+        lambda_function_name = optional(string)      # Lambda function name for Lambda targets
       })))
       stickiness = optional(object({
         enabled         = optional(bool)
