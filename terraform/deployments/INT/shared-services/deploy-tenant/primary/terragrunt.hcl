@@ -111,7 +111,6 @@ inputs = {
       certificate_arn = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.certificates[local.vpc_name].arn
       protocol        = "HTTPS"
       port            = 443
-      vpc_name_abr    = local.vpc_name_abr
       vpc_id          = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
       fixed_response = {
         content_type = "text/plain"
@@ -180,10 +179,9 @@ inputs = {
       port            = 443
       vpc_id          = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
       target_group = {
-        name         = "ssrs-tg"
-        port         = 443
-        protocol     = "TLS"
-        vpc_name_abr = local.vpc_name_abr
+        name     = "${local.vpc_name_abr}-ssrs-tg"
+        port     = 443
+        protocol = "TLS"
         attachments = [
           {
             ec2_key = "ans"
@@ -201,11 +199,10 @@ inputs = {
   ]
   target_groups = [
     {
-      key          = "acct-tg"
-      name         = "acct-tg"
-      protocol     = "HTTPS"
-      port         = 443
-      vpc_name_abr = local.vpc_name_abr
+      key      = "${local.vpc_name_abr}-acct-tg"
+      name     = "acct-tg"
+      protocol = "HTTPS"
+      port     = 443
       health_check = {
         protocol = "HTTPS"
         port     = "443"
@@ -214,11 +211,10 @@ inputs = {
       vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
     },
     {
-      key          = "etl-tg"
-      name         = "etl-tg"
-      protocol     = "HTTPS"
-      port         = 443
-      vpc_name_abr = local.vpc_name_abr
+      key      = "${local.vpc_name_abr}-etl-tg"
+      name     = "etl-tg"
+      protocol = "HTTPS"
+      port     = 443
       health_check = {
         protocol = "HTTPS"
         port     = "443"
