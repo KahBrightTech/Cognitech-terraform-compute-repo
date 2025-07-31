@@ -154,10 +154,10 @@ inputs = {
       certificate_arn = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.certificates[local.vpc_name].arn
       protocol        = "TLS"
       port            = 443
-      # vpc_name_abr    = local.vpc_name_abr
-      vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
+      vpc_id          = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
       target_group = {
-        name = "ssrs-tg"
+        name         = "ssrs-tg"
+        vpc_name_abr = local.vpc_name_abr
         attachments = [
           {
             ec2_key = "ans"

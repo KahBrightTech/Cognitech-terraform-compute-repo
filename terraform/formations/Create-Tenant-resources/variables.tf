@@ -99,12 +99,12 @@ variable "alb_listeners" {
         cookie_duration = optional(number)
         cookie_name     = optional(string)
       }))
-      health_check = object({
+      health_check = optional(object({
         protocol = optional(string)
         port     = optional(number)
         path     = optional(string)
         matcher  = optional(string)
-      })
+      }))
     }))
   }))
   default = null
