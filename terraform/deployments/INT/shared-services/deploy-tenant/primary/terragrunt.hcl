@@ -107,12 +107,13 @@ inputs = {
   alb_listeners = [
     {
       key             = "etl"
+      action          = "fixed-response"
       alb_arn         = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.load_balancers["etl"].arn
       certificate_arn = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.certificates[local.vpc_name].arn
       protocol        = "HTTPS"
       port            = 443
       vpc_id          = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
-      fixed-response = {
+      fixed_response = {
         content_type = "text/plain"
         message_body = "This is a default response from the ETL ALB listener."
         status_code  = "200"
