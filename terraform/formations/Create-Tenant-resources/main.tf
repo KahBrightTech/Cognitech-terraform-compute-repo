@@ -54,7 +54,7 @@ module "hosted_zones" {
 #--------------------------------------------------------------------
 module "target_groups" {
   source       = "git::https://github.com/njibrigthain100/Cognitech-terraform-iac-modules.git//terraform/modules/Target-groups?ref=v1.3.1"
-  for_each     = (var.target_groups != null) ? { for item in var.target_groups : item.key => item } : {}
+  for_each     = (var.target_groups != null) ? { for item in var.target_groups : item.name => item } : {}
   common       = var.common
   target_group = each.value
 }
