@@ -88,7 +88,7 @@ variable "alb_listeners" {
       name         = optional(string)
       port         = optional(number)
       protocol     = optional(string)
-      target_type  = optional(string, "instance")
+      target_type  = optional(string)
       vpc_name_abr = optional(string)
       attachments = optional(list(object({
         target_id = optional(string)
@@ -167,7 +167,7 @@ variable "nlb_listeners" {
       port         = optional(number)
       protocol     = optional(string)
       vpc_name_abr = optional(string)
-      target_type  = optional(string, "instance")
+      target_type  = optional(string)
       attachments = optional(list(object({
         target_id            = optional(string)
         port                 = optional(number)
