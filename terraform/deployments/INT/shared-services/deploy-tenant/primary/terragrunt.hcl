@@ -169,7 +169,6 @@ inputs = {
       ]
     }
   ]
-
   nlb_listeners = [
     {
       key             = "ssrs"
