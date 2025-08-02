@@ -124,6 +124,7 @@ variable "alb_listener_rules" {
         tg_name = optional(string)
         arn     = optional(string)
         weight  = optional(number)
+        port    = optional(number)
       })))
       conditions = optional(list(object({
         host_headers         = optional(list(string))

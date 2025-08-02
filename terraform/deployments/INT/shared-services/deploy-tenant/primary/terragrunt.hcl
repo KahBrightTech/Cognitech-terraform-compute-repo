@@ -132,6 +132,7 @@ inputs = {
             {
               tg_name = "${local.vpc_name_abr}-acct-tg"
               weight  = 99
+              port    = 443
             }
           ]
           conditions = [
@@ -156,6 +157,7 @@ inputs = {
             {
               tg_name = "${local.vpc_name_abr}-etl-tg"
               weight  = 99
+              port    = 443
             }
           ]
           conditions = [
