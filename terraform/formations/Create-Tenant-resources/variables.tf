@@ -86,9 +86,6 @@ variable "alb_listeners" {
     })))
     target_group = optional(object({
       name         = optional(string)
-      port         = optional(number)
-      protocol     = optional(string)
-      target_type  = optional(string)
       vpc_name_abr = optional(string)
       attachments = optional(list(object({
         target_id = optional(string)
