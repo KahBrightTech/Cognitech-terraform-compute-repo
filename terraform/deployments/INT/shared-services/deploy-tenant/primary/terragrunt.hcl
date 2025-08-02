@@ -119,7 +119,6 @@ inputs = {
       }
     }
   ]
-
   alb_listener_rules = [
     {
       index_key    = "acct"
