@@ -201,8 +201,7 @@ inputs = {
   ]
   target_groups = [
     {
-      key         = "${local.vpc_name_abr}-acct-tg"
-      name        = "acct-tg-443"
+      name        = "${local.vpc_name_abr}-acct-tg"
       protocol    = "HTTPS"
       port        = 443
       target_type = "instance"
