@@ -69,7 +69,7 @@ inputs = {
     {
       index         = "ans"
       name          = "ansible-server"
-      attach_tg     = ["acct-tg"]
+      attach_tg     = ["${local.vpc_name_abr}-etl-tg"]
       name_override = "INTPP-SHR-L-ANSIBLE-01"
       ami_config = {
         os_release_date = "AL2023"
@@ -130,7 +130,7 @@ inputs = {
           type     = "forward"
           target_groups = [
             {
-              tg_name = "acct-tg"
+              tg_name = "${local.vpc_name_abr}-acct-tg"
               weight  = 99
             }
           ]
@@ -154,7 +154,7 @@ inputs = {
           type     = "forward"
           target_groups = [
             {
-              tg_name = "etl-tg"
+              tg_name = "${local.vpc_name_abr}-etl-tg"
               weight  = 99
             }
           ]

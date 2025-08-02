@@ -69,7 +69,7 @@ inputs = {
     {
       index         = "ans"
       name          = "ansible-server"
-      attach_tg     = ["acct_tg"]
+      attach_tg     = ["${local.vpc_name_abr}-etl-tg"]
       name_override = "INTPP-SHR-L-ANSIBLE-01"
       ami_config = {
         os_release_date = "AL2023"
@@ -104,7 +104,21 @@ inputs = {
       }
     }
   ]
-  alb_listeners = []
+  alb_listeners = [
+    {
+      key             = "etl"
+      alb_arn         = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.load_balancers["etl"].arn
+      certificate_arn = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.certificates[local.vpc_name].arn
+      protocol        = "HTTPS"
+      port            = 443
+      vpc_id          = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
+      fixed_response = {
+        content_type = "text/plain"
+        message_body = "This is a default response from the ETL ALB listener."
+        status_code  = "200"
+      }
+    }
+  ]
   alb_listener_rules = [
     {
       index_key    = "acct"
@@ -116,7 +130,7 @@ inputs = {
           type     = "forward"
           target_groups = [
             {
-              tg_name = "acct_tg"
+              tg_name = "acct-tg"
               weight  = 99
             }
           ]
@@ -129,17 +143,78 @@ inputs = {
           ]
         }
       ]
+    },
+    {
+      index_key    = "etl"
+      listener_key = "etl"
+      rules = [
+        {
+          key      = "etl"
+          priority = 11
+          type     = "forward"
+          target_groups = [
+            {
+              tg_name = "etl-tg"
+              weight  = 99
+            }
+          ]
+          conditions = [
+            {
+              host_headers = [
+                "etl.${local.public_hosted_zone}",
+              ]
+            }
+          ]
+        }
+      ]
     }
   ]
-  nlb_listeners = []
+  nlb_listeners = [
+    {
+      key             = "ssrs"
+      nlb_key         = "ssrs-nlb"
+      nlb_arn         = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.load_balancers["ssrs"].arn
+      certificate_arn = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.certificates[local.vpc_name].arn
+      protocol        = "TLS"
+      port            = 443
+      vpc_id          = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
+      target_group = {
+        name     = "${local.vpc_name_abr}-ssrs-tg"
+        port     = 443
+        protocol = "TLS"
+        attachments = [
+          {
+            ec2_key = "ans"
+            port    = 443
+          }
+        ]
+        health_check = {
+          protocol = "HTTPS"
+          port     = 443
+          path     = "/"
+          matcher  = "200,401"
+        }
+      }
+    }
+  ]
   target_groups = [
     {
-      key          = "acct-tg"
-      name         = "acct-tg"
-      protocol     = "HTTPS"
-      port         = 443
-      vpc_name     = local.vpc_name
-      vpc_name_abr = "${local.vpc_name_abr}"
+      key      = "${local.vpc_name_abr}-acct-tg"
+      name     = "acct-tg"
+      protocol = "HTTPS"
+      port     = 443
+      health_check = {
+        protocol = "HTTPS"
+        port     = "443"
+        path     = "/"
+      }
+      vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
+    },
+    {
+      key      = "${local.vpc_name_abr}-etl-tg"
+      name     = "etl-tg"
+      protocol = "HTTPS"
+      port     = 443
       health_check = {
         protocol = "HTTPS"
         port     = "443"
