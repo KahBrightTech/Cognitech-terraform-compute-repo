@@ -85,7 +85,7 @@ module "target_groups" {
 # ALB listeners
 #--------------------------------------------------------------------
 module "alb_listeners" {
-  source = "git::https://github.com/njibrigthain100/Cognitech-terraform-iac-modules.git//terraform/modules/alb-listeners?ref=v1.2.99"
+  source = "git::https://github.com/njibrigthain100/Cognitech-terraform-iac-modules.git//terraform/modules/alb-listeners?ref=v1.3.0"
   for_each = (var.alb_listeners != null) ? {
     for item in var.alb_listeners : item.key => item
   } : {}
