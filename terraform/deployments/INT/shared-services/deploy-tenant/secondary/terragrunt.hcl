@@ -201,7 +201,6 @@ inputs = {
   ]
   target_groups = [
     {
-      key         = "${local.vpc_name_abr}-acct-tg"
       name        = "${local.vpc_name_abr}-acct-tg"
       protocol    = "HTTPS"
       port        = 443
@@ -214,7 +213,6 @@ inputs = {
       vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
     },
     {
-      key         = "${local.vpc_name_abr}-etl-tg"
       name        = "${local.vpc_name_abr}-etl-tg"
       protocol    = "HTTPS"
       port        = 443
