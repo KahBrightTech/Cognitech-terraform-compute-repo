@@ -69,7 +69,7 @@ inputs = {
     {
       index         = "ans"
       name          = "ansible-server"
-      attach_tg     = ["${local.vpc_name_abr}-etl-tg-443"]
+      attach_tg     = ["${local.vpc_name_abr}-etl-tg"]
       name_override = "INTPP-SHR-L-ANSIBLE-01"
       ami_config = {
         os_release_date = "AL2023"
@@ -107,6 +107,7 @@ inputs = {
   alb_listeners = [
     {
       key             = "etl"
+      action          = "fixed-response"
       alb_arn         = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.load_balancers["etl"].arn
       certificate_arn = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.certificates[local.vpc_name].arn
       protocol        = "HTTPS"
@@ -130,7 +131,7 @@ inputs = {
           type     = "forward"
           target_groups = [
             {
-              tg_name = "${local.vpc_name_abr}-acct-tg-443"
+              tg_name = "${local.vpc_name_abr}-acct-tg"
               weight  = 99
             }
           ]
@@ -154,7 +155,7 @@ inputs = {
           type     = "forward"
           target_groups = [
             {
-              tg_name = "${local.vpc_name_abr}-etl-tg-443"
+              tg_name = "${local.vpc_name_abr}-etl-tg"
               weight  = 99
             }
           ]
@@ -179,9 +180,10 @@ inputs = {
       port            = 443
       vpc_id          = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
       target_group = {
-        name     = "${local.vpc_name_abr}-ssrs-tg-443"
-        port     = 443
-        protocol = "TLS"
+        name        = "${local.vpc_name_abr}-ssrs-tg"
+        port        = 443
+        protocol    = "TLS"
+        target_type = "instance"
         attachments = [
           {
             ec2_key = "ans"
@@ -199,10 +201,11 @@ inputs = {
   ]
   target_groups = [
     {
-      key      = "${local.vpc_name_abr}-acct-tg-443"
-      name     = "acct-tg-443"
-      protocol = "HTTPS"
-      port     = 443
+      key         = "${local.vpc_name_abr}-acct-tg"
+      name        = "acct-tg-443"
+      protocol    = "HTTPS"
+      port        = 443
+      target_type = "instance"
       health_check = {
         protocol = "HTTPS"
         port     = "443"
@@ -211,10 +214,11 @@ inputs = {
       vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
     },
     {
-      key      = "${local.vpc_name_abr}-etl-tg-443"
-      name     = "etl-tg-443"
-      protocol = "HTTPS"
-      port     = 443
+      key         = "${local.vpc_name_abr}-etl-tg"
+      name        = "etl-tg-443"
+      protocol    = "HTTPS"
+      port        = 443
+      target_type = "instance"
       health_check = {
         protocol = "HTTPS"
         port     = "443"
