@@ -19,7 +19,7 @@ data "aws_iam_roles" "network_role" {
 # EC2 - Creates ec2 instances
 #--------------------------------------------------------------------
 module "ec2_instance" {
-  source   = "git::https://github.com/njibrigthain100/Cognitech-terraform-iac-modules.git//terraform/modules/EC2-instance?ref=v1.2.98"
+  source   = "git::https://github.com/njibrigthain100/Cognitech-terraform-iac-modules.git//terraform/modules/EC2-instance?ref=v1.2.99"
   for_each = (var.ec2_instances != null) ? { for item in var.ec2_instances : item.index => item } : {}
   common   = var.common
   ec2 = merge(
@@ -53,7 +53,7 @@ module "hosted_zones" {
 # Target groups
 #--------------------------------------------------------------------
 module "target_groups" {
-  source       = "git::https://github.com/njibrigthain100/Cognitech-terraform-iac-modules.git//terraform/modules/Target-groups?ref=v1.2.98"
+  source       = "git::https://github.com/njibrigthain100/Cognitech-terraform-iac-modules.git//terraform/modules/Target-groups?ref=v1.2.99"
   for_each     = (var.target_groups != null) ? { for item in var.target_groups : item.key => item } : {}
   common       = var.common
   target_group = each.value
@@ -63,7 +63,7 @@ module "target_groups" {
 # ALB listeners
 #--------------------------------------------------------------------
 module "alb_listeners" {
-  source = "git::https://github.com/njibrigthain100/Cognitech-terraform-iac-modules.git//terraform/modules/alb-listeners?ref=v1.2.98"
+  source = "git::https://github.com/njibrigthain100/Cognitech-terraform-iac-modules.git//terraform/modules/alb-listeners?ref=v1.2.99"
   for_each = (var.alb_listeners != null) ? {
     for item in var.alb_listeners : item.key => item
   } : {}
@@ -85,7 +85,7 @@ module "alb_listeners" {
 # ALB listener rules
 #--------------------------------------------------------------------
 module "alb_listener_rules" {
-  source   = "git::https://github.com/njibrigthain100/Cognitech-terraform-iac-modules.git//terraform/modules/alb-listener-rule?ref=v1.2.98"
+  source   = "git::https://github.com/njibrigthain100/Cognitech-terraform-iac-modules.git//terraform/modules/alb-listener-rule?ref=v1.2.99"
   for_each = (var.alb_listener_rules != null) ? { for item in var.alb_listener_rules : item.index_key => item } : {}
   common   = var.common
   rule = [
@@ -109,7 +109,7 @@ module "alb_listener_rules" {
 # NLB listeners
 #--------------------------------------------------------------------
 module "nlb_listeners" {
-  source   = "git::https://github.com/njibrigthain100/Cognitech-terraform-iac-modules.git//terraform/modules/nlb-listener?ref=v1.2.98"
+  source   = "git::https://github.com/njibrigthain100/Cognitech-terraform-iac-modules.git//terraform/modules/nlb-listener?ref=v1.2.99"
   for_each = (var.nlb_listeners != null) ? { for item in var.nlb_listeners : item.key => item } : {}
   common   = var.common
   nlb_listener = merge(

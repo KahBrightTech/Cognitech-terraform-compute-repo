@@ -69,7 +69,7 @@ inputs = {
     {
       index         = "ans"
       name          = "ansible-server"
-      attach_tg     = ["${local.vpc_name_abr}-etl-tg"]
+      attach_tg     = ["${local.vpc_name_abr}-etl-tg-443"]
       name_override = "INTPP-SHR-L-ANSIBLE-01"
       ami_config = {
         os_release_date = "AL2023"
@@ -130,9 +130,8 @@ inputs = {
           type     = "forward"
           target_groups = [
             {
-              tg_name = "${local.vpc_name_abr}-acct-tg"
+              tg_name = "${local.vpc_name_abr}-acct-tg-443"
               weight  = 99
-              port    = 443
             }
           ]
           conditions = [
@@ -155,9 +154,8 @@ inputs = {
           type     = "forward"
           target_groups = [
             {
-              tg_name = "${local.vpc_name_abr}-etl-tg"
+              tg_name = "${local.vpc_name_abr}-etl-tg-443"
               weight  = 99
-              port    = 443
             }
           ]
           conditions = [
@@ -181,7 +179,7 @@ inputs = {
       port            = 443
       vpc_id          = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
       target_group = {
-        name     = "${local.vpc_name_abr}-ssrs-tg"
+        name     = "${local.vpc_name_abr}-ssrs-tg-443"
         port     = 443
         protocol = "TLS"
         attachments = [
@@ -201,8 +199,8 @@ inputs = {
   ]
   target_groups = [
     {
-      key      = "${local.vpc_name_abr}-acct-tg"
-      name     = "acct-tg"
+      key      = "${local.vpc_name_abr}-acct-tg-443"
+      name     = "acct-tg-443"
       protocol = "HTTPS"
       port     = 443
       health_check = {
@@ -213,8 +211,8 @@ inputs = {
       vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
     },
     {
-      key      = "${local.vpc_name_abr}-etl-tg"
-      name     = "etl-tg"
+      key      = "${local.vpc_name_abr}-etl-tg-443"
+      name     = "etl-tg-443"
       protocol = "HTTPS"
       port     = 443
       health_check = {
