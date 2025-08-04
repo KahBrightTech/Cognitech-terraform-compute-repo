@@ -15,13 +15,12 @@ data "aws_iam_roles" "network_role" {
   path_prefix = "/aws-reserved/sso.amazonaws.com/"
 }
 
-#--------------------------------------------------------------------`
+#--------------------------------------------------------------------
 # Target groups 
 #--------------------------------------------------------------------
 module "target_groups" {
-  source = "git::https://github.com/njibrigthain100/Cognitech-terraform-iac-modules.git//terraform/modules/Target-groups?ref=v1.3.1"
-  #for_each     = (var.target_groups != null) ? { for item in var.target_groups : (item.key != null ? item.key : item.name) => item } : {}
-  for_each     = (var.target_groups != null) ? { for item in var.target_groups : item.name => item } : {}
+  source       = "git::https://github.com/njibrigthain100/Cognitech-terraform-iac-modules.git//terraform/modules/Target-groups?ref=v1.3.1"
+  for_each     = (var.target_groups != null) ? { for item in var.target_groups : (item.key != null ? item.key : item.name) => item } : {}
   common       = var.common
   target_group = each.value
 }
@@ -59,6 +58,28 @@ module "hosted_zones" {
     }
   )
 }
+
+# #--------------------------------------------------------------------
+# # ALB listeners
+# #--------------------------------------------------------------------
+# module "alb_listeners" {
+#   source = "git::https://github.com/njibrigthain100/Cognitech-terraform-iac-modules.git//terraform/modules/alb-listeners?ref=v1.2.99"
+#   for_each = (var.alb_listeners != null) ? {
+#     for item in var.alb_listeners : item.key => item
+#   } : {}
+#   common = var.common
+#   alb_listener = merge(
+#     each.value,
+#     {
+#       target_group = try(each.value.target_group, null) != null ? merge(
+#         each.value.target_group,
+#         {
+#           attachments = each.value.target_group.attachments != null ? each.value.target_group.attachments : []
+#         }
+#       ) : null
+#     }
+#   )
+# }
 
 #--------------------------------------------------------------------
 # ALB listeners
