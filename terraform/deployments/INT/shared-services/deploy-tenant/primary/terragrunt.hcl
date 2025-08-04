@@ -107,8 +107,8 @@ inputs = {
       name          = "ssrs-server"
       name_override = "INTPP-SHR-L-SSRS-01"
       ami_config = {
-        os_release_date = "W22"
-        os_base_package = "BASE"
+        os_release_date  = "W22"
+        os_base_packages = "BASE"
       }
       associate_public_ip_address = true
       instance_type               = "t3.large"
