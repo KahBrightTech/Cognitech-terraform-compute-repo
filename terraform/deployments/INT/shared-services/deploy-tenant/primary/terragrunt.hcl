@@ -105,7 +105,6 @@ inputs = {
     {
       index         = "ssrs"
       name          = "ssrs-server"
-      attach_tg     = ["${local.vpc_name_abr}-ssrs-tg"]
       name_override = "INTPP-SHR-L-SSRS-01"
       ami_config = {
         os_release_date = "W22"
