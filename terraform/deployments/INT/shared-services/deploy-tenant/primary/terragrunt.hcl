@@ -146,7 +146,7 @@ inputs = {
   ]
   alb_listeners = [
     {
-      key             = "etl"
+      key             = "ans"
       action          = "fixed-response"
       alb_arn         = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.load_balancers["etl"].arn
       certificate_arn = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.certificates[local.vpc_name].arn
