@@ -19,7 +19,7 @@ data "aws_iam_roles" "network_role" {
 # Target groups 
 #--------------------------------------------------------------------
 module "target_groups" {
-  source = "git::https://github.com/njibrigthain100/Cognitech-terraform-iac-modules.git//terraform/modules/Target-groups?ref=v1.3.1"
+  source = "git::https://github.com/njibrigthain100/Cognitech-terraform-iac-modules.git//terraform/modules/Target-groups?ref=v1.3.9"
   #for_each     = (var.target_groups != null) ? { for item in var.target_groups : (item.key != null ? item.key : item.name) => item } : {}
   for_each     = (var.target_groups != null) ? { for item in var.target_groups : item.name => item } : {}
   common       = var.common
@@ -30,7 +30,7 @@ module "target_groups" {
 # EC2 - Creates ec2 instances
 #--------------------------------------------------------------------
 module "ec2_instance" {
-  source   = "git::https://github.com/njibrigthain100/Cognitech-terraform-iac-modules.git//terraform/modules/EC2-instance?ref=v1.3.8"
+  source   = "git::https://github.com/njibrigthain100/Cognitech-terraform-iac-modules.git//terraform/modules/EC2-instance?ref=v1.3.9"
   for_each = (var.ec2_instances != null) ? { for item in var.ec2_instances : item.index => item } : {}
   common   = var.common
   ec2 = merge(
