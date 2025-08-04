@@ -67,10 +67,11 @@ inputs = {
   }
   ec2_instances = [
     {
-      index         = "ans"
-      name          = "ansible-server"
-      attach_tg     = ["${local.vpc_name_abr}-ans-tg"]
-      name_override = "INTPP-SHR-L-ANSIBLE-01"
+      index            = "ans"
+      name             = "ansible-server"
+      backup_plan_name = "${local.aws_account_name}-${local.region_context}-continous-backup"
+      attach_tg        = ["${local.vpc_name_abr}-ans-tg"]
+      name_override    = "INTPP-SHR-L-ANSIBLE-01"
       ami_config = {
         os_release_date = "RHEL9"
       }
@@ -103,9 +104,10 @@ inputs = {
       }
     },
     {
-      index         = "ssrs"
-      name          = "ssrs-server"
-      name_override = "INTPP-SHR-L-SSRS-01"
+      index            = "ssrs"
+      name             = "ssrs-server"
+      backup_plan_name = "${local.aws_account_name}-${local.region_context}-continous-backup"
+      name_override    = "INTPP-SHR-W-SSRS-01"
       ami_config = {
         os_release_date  = "W22"
         os_base_packages = "BASE"

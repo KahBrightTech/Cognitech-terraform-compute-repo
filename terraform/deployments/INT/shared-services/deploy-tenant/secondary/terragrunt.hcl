@@ -67,10 +67,11 @@ inputs = {
   }
   ec2_instances = [
     {
-      index         = "ans"
-      name          = "ansible-server"
-      attach_tg     = ["${local.vpc_name_abr}-ans-tg"]
-      name_override = "INTPP-SHR-L-ANSIBLE-01"
+      index            = "ans"
+      name             = "ansible-server"
+      backup_plan_name = "${local.aws_account_name}-${local.region_context}-continous-backup"
+      attach_tg        = ["${local.vpc_name_abr}-ans-tg"]
+      name_override    = "INTPP-SHR-L-ANSIBLE-01"
       ami_config = {
         os_release_date = "RHEL9"
       }
@@ -103,13 +104,13 @@ inputs = {
       }
     },
     {
-      index         = "ssrs"
-      name          = "ssrs-server"
-      attach_tg     = ["${local.vpc_name_abr}-ssrs-tg"]
-      name_override = "INTPP-SHR-L-SSRS-01"
+      index            = "ssrs"
+      name             = "ssrs-server"
+      backup_plan_name = "${local.aws_account_name}-${local.region_context}-continous-backup"
+      name_override    = "INTPP-SHR-L-SSRS-01"
       ami_config = {
-        os_release_date = "W22"
-        os_base_package = "BASE"
+        os_release_date  = "W22"
+        os_base_packages = "BASE"
       }
       associate_public_ip_address = true
       instance_type               = "t3.large"
@@ -146,7 +147,7 @@ inputs = {
   ]
   alb_listeners = [
     {
-      key             = "etl"
+      key             = "ans"
       action          = "fixed-response"
       alb_arn         = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.load_balancers["etl"].arn
       certificate_arn = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.certificates[local.vpc_name].arn
