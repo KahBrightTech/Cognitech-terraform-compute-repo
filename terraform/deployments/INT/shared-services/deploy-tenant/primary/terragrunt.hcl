@@ -84,6 +84,7 @@ inputs = {
         "Name"           = "INTPP-SHR-L-ANSIBLE-01"
         "DNS_Suffix"     = "shr.cognitech.com"
         "AnsibleInstall" = "True"
+        "CreateUser"     = "True"
       }
       ebs_device_volume = {
         name                  = "xvdf"
@@ -121,6 +122,7 @@ inputs = {
         "Name"           = "INTPP-SHR-W-SSRS-01"
         "DNS_Suffix"     = "shr.cognitech.com"
         "AnsibleInstall" = "True"
+        "CreateUser"     = "True"
       }
       ebs_device_volume = {
         name                  = "xvdf"
