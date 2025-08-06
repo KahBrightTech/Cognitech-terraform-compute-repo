@@ -70,8 +70,8 @@ inputs = {
       index            = "ans"
       name             = "ansible-server"
       backup_plan_name = "${local.aws_account_name}-${local.region_context}-continous-backup"
-      # attach_tg        = ["${local.vpc_name_abr}-ans-tg"]
-      name_override = "INTPP-SHR-L-ANSIBLE-01"
+      attach_tg        = ["${local.vpc_name_abr}-ans-tg"]
+      name_override    = "INTPP-SHR-L-ANSIBLE-01"
       ami_config = {
         os_release_date = "RHEL9"
       }
@@ -124,9 +124,10 @@ inputs = {
       associate_public_ip_address = true
       key_name                    = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name}-key-pair"].name
       custom_tags = {
-        "Name"       = "INTPP-SHR-W-SSRS-01"
-        "DNS_Suffix" = "shr.cognitech.com"
-        "CreateUser" = "True"
+        "Name"           = "INTPP-SHR-W-SSRS-01"
+        "DNS_Suffix"     = "shr.cognitech.com"
+        "CreateUser"     = "True"
+        "PackageInstall" = "True"
       }
       ebs_device_volume = {
         name                  = "xvdf"
@@ -165,9 +166,10 @@ inputs = {
       associate_public_ip_address = true
       key_name                    = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name}-key-pair"].name
       custom_tags = {
-        "Name"       = "INTPP-SHR-W-ETL-01"
-        "DNS_Suffix" = "shr.cognitech.com"
-        "CreateUser" = "True"
+        "Name"           = "INTPP-SHR-W-ETL-01"
+        "DNS_Suffix"     = "shr.cognitech.com"
+        "CreateUser"     = "True"
+        "PackageInstall" = "True"
       }
       ebs_device_volume = {
         name                  = "xvdf"
@@ -193,20 +195,20 @@ inputs = {
     }
   ]
   alb_listeners = [
-    # {
-    #   key             = "ans"
-    #   action          = "fixed-response"
-    #   alb_arn         = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.load_balancers["etl"].arn
-    #   certificate_arn = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.certificates[local.vpc_name].arn
-    #   protocol        = "HTTPS"
-    #   port            = 443
-    #   vpc_id          = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
-    #   fixed_response = {
-    #     content_type = "text/plain"
-    #     message_body = "This is a default response from the ETL ALB listener."
-    #     status_code  = "200"
-    #   }
-    # }
+    {
+      key             = "ans"
+      action          = "fixed-response"
+      alb_arn         = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.load_balancers["etl"].arn
+      certificate_arn = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.certificates[local.vpc_name].arn
+      protocol        = "HTTPS"
+      port            = 443
+      vpc_id          = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
+      fixed_response = {
+        content_type = "text/plain"
+        message_body = "This is a default response from the ETL ALB listener."
+        status_code  = "200"
+      }
+    }
   ]
   alb_listener_rules = [
     # {
@@ -233,30 +235,30 @@ inputs = {
     #     }
     #   ]
     # },
-    # {
-    #   index_key    = "ans"
-    #   listener_key = "ans"
-    #   rules = [
-    #     {
-    #       key      = "ans"
-    #       priority = 11
-    #       type     = "forward"
-    #       target_groups = [
-    #         {
-    #           tg_name = "${local.vpc_name_abr}-ans-tg"
-    #           weight  = 99
-    #         }
-    #       ]
-    #       conditions = [
-    #         {
-    #           host_headers = [
-    #             "ansibletower.${local.public_hosted_zone}",
-    #           ]
-    #         }
-    #       ]
-    #     }
-    #   ]
-    # }
+    {
+      index_key    = "ans"
+      listener_key = "ans"
+      rules = [
+        {
+          key      = "ans"
+          priority = 11
+          type     = "forward"
+          target_groups = [
+            {
+              tg_name = "${local.vpc_name_abr}-ans-tg"
+              weight  = 99
+            }
+          ]
+          conditions = [
+            {
+              host_headers = [
+                "ansibletower.${local.public_hosted_zone}",
+              ]
+            }
+          ]
+        }
+      ]
+    }
   ]
   nlb_listeners = [
     # {
@@ -288,30 +290,30 @@ inputs = {
     # }
   ]
   target_groups = [
-    # {
-    #   name        = "${local.vpc_name_abr}-acct-tg"
-    #   protocol    = "HTTPS"
-    #   port        = 443
-    #   target_type = "instance"
-    #   health_check = {
-    #     protocol = "HTTPS"
-    #     port     = "443"
-    #     path     = "/"
-    #   }
-    #   vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
-    # },
-    # {
-    #   name        = "${local.vpc_name_abr}-ans-tg"
-    #   protocol    = "HTTPS"
-    #   port        = 443
-    #   target_type = "instance"
-    #   health_check = {
-    #     protocol = "HTTPS"
-    #     port     = "443"
-    #     path     = "/"
-    #   }
-    #   vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
-    # }
+    {
+      name        = "${local.vpc_name_abr}-acct-tg"
+      protocol    = "HTTPS"
+      port        = 443
+      target_type = "instance"
+      health_check = {
+        protocol = "HTTPS"
+        port     = "443"
+        path     = "/"
+      }
+      vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
+    },
+    {
+      name        = "${local.vpc_name_abr}-ans-tg"
+      protocol    = "HTTPS"
+      port        = 443
+      target_type = "instance"
+      health_check = {
+        protocol = "HTTPS"
+        port     = "443"
+        path     = "/"
+      }
+      vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
+    }
   ]
 }
 #-------------------------------------------------------
