@@ -70,8 +70,8 @@ inputs = {
       index            = "ans"
       name             = "ansible-server"
       backup_plan_name = "${local.aws_account_name}-${local.region_context}-continous-backup"
-      attach_tg        = ["${local.vpc_name_abr}-ans-tg"]
-      name_override    = "INTPP-SHR-L-ANSIBLE-01"
+      # attach_tg        = ["${local.vpc_name_abr}-ans-tg"]
+      name_override = "INTPP-SHR-L-ANSIBLE-01"
       ami_config = {
         os_release_date = "RHEL9"
       }
@@ -93,6 +93,11 @@ inputs = {
         delete_on_termination = true
         encrypted             = false
       }
+      ebs_root_volume = {
+        volume_size           = 30
+        volume_type           = "gp3"
+        delete_on_termination = true
+      }
       subnet_id     = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].public_subnet[include.env.locals.subnet_prefix.primary].primary_subnet_id
       Schedule_name = "ansible-server-schedule"
       security_group_ids = [
@@ -103,170 +108,170 @@ inputs = {
         zone_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].zones[local.vpc_name_abr].zone_id
         type    = "A"
       }
-    },
-    {
-      index            = "ssrs"
-      name             = "ssrs-server"
-      backup_plan_name = "${local.aws_account_name}-${local.region_context}-continous-backup"
-      name_override    = "INTPP-SHR-W-SSRS-01"
-      ami_config = {
-        os_release_date  = "W19"
-        os_base_packages = "BASE"
-      }
-      associate_public_ip_address = true
-      instance_type               = "t3.large"
-      iam_instance_profile        = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_profiles[local.vpc_name].iam_profiles.name
-      associate_public_ip_address = true
-      key_name                    = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name}-key-pair"].name
-      custom_tags = {
-        "Name"           = "INTPP-SHR-W-SSRS-01"
-        "DNS_Suffix"     = "shr.cognitech.com"
-        "AnsibleInstall" = "True"
-        "CreateUser"     = "True"
-      }
-      ebs_device_volume = {
-        name                  = "xvdf"
-        volume_size           = 30
-        volume_type           = "gp3"
-        delete_on_termination = true
-      }
-      ebs_root_volume = {
-        volume_size           = 50
-        volume_type           = "gp3"
-        delete_on_termination = true
-      }
-      subnet_id     = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].public_subnet[include.env.locals.subnet_prefix.primary].primary_subnet_id
-      Schedule_name = "ansible-server-schedule"
-      security_group_ids = [
-        dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].security_group.app.id
-      ]
-      hosted_zones = {
-        name    = "ssrs01.${dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].zones[local.vpc_name_abr].zone_name}"
-        zone_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].zones[local.vpc_name_abr].zone_id
-        type    = "A"
-      }
     }
+    # {
+    #   index            = "ssrs"
+    #   name             = "ssrs-server"
+    #   backup_plan_name = "${local.aws_account_name}-${local.region_context}-continous-backup"
+    #   name_override    = "INTPP-SHR-W-SSRS-01"
+    #   ami_config = {
+    #     os_release_date  = "W19"
+    #     os_base_packages = "BASE"
+    #   }
+    #   associate_public_ip_address = true
+    #   instance_type               = "t3.large"
+    #   iam_instance_profile        = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_profiles[local.vpc_name].iam_profiles.name
+    #   associate_public_ip_address = true
+    #   key_name                    = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name}-key-pair"].name
+    #   custom_tags = {
+    #     "Name"           = "INTPP-SHR-W-SSRS-01"
+    #     "DNS_Suffix"     = "shr.cognitech.com"
+    #     "AnsibleInstall" = "True"
+    #     "CreateUser"     = "True"
+    #   }
+    #   ebs_device_volume = {
+    #     name                  = "xvdf"
+    #     volume_size           = 30
+    #     volume_type           = "gp3"
+    #     delete_on_termination = true
+    #   }
+    #   ebs_root_volume = {
+    #     volume_size           = 50
+    #     volume_type           = "gp3"
+    #     delete_on_termination = true
+    #   }
+    #   subnet_id     = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].public_subnet[include.env.locals.subnet_prefix.primary].primary_subnet_id
+    #   Schedule_name = "ansible-server-schedule"
+    #   security_group_ids = [
+    #     dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].security_group.app.id
+    #   ]
+    #   hosted_zones = {
+    #     name    = "ssrs01.${dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].zones[local.vpc_name_abr].zone_name}"
+    #     zone_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].zones[local.vpc_name_abr].zone_id
+    #     type    = "A"
+    #   }
+    # }
   ]
   alb_listeners = [
-    {
-      key             = "ans"
-      action          = "fixed-response"
-      alb_arn         = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.load_balancers["etl"].arn
-      certificate_arn = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.certificates[local.vpc_name].arn
-      protocol        = "HTTPS"
-      port            = 443
-      vpc_id          = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
-      fixed_response = {
-        content_type = "text/plain"
-        message_body = "This is a default response from the ETL ALB listener."
-        status_code  = "200"
-      }
-    }
+    # {
+    #   key             = "ans"
+    #   action          = "fixed-response"
+    #   alb_arn         = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.load_balancers["etl"].arn
+    #   certificate_arn = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.certificates[local.vpc_name].arn
+    #   protocol        = "HTTPS"
+    #   port            = 443
+    #   vpc_id          = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
+    #   fixed_response = {
+    #     content_type = "text/plain"
+    #     message_body = "This is a default response from the ETL ALB listener."
+    #     status_code  = "200"
+    #   }
+    # }
   ]
   alb_listener_rules = [
-    {
-      index_key    = "acct"
-      listener_arn = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.load_balancers["acct"].default_listener.arn
-      rules = [
-        {
-          key      = "acct"
-          priority = 10
-          type     = "forward"
-          target_groups = [
-            {
-              tg_name = "${local.vpc_name_abr}-acct-tg"
-              weight  = 99
-            }
-          ]
-          conditions = [
-            {
-              host_headers = [
-                "acct.${local.public_hosted_zone}",
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      index_key    = "ans"
-      listener_key = "ans"
-      rules = [
-        {
-          key      = "ans"
-          priority = 11
-          type     = "forward"
-          target_groups = [
-            {
-              tg_name = "${local.vpc_name_abr}-ans-tg"
-              weight  = 99
-            }
-          ]
-          conditions = [
-            {
-              host_headers = [
-                "ansibletower.${local.public_hosted_zone}",
-              ]
-            }
-          ]
-        }
-      ]
-    }
+    # {
+    #   index_key    = "acct"
+    #   listener_arn = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.load_balancers["acct"].default_listener.arn
+    #   rules = [
+    #     {
+    #       key      = "acct"
+    #       priority = 10
+    #       type     = "forward"
+    #       target_groups = [
+    #         {
+    #           tg_name = "${local.vpc_name_abr}-acct-tg"
+    #           weight  = 99
+    #         }
+    #       ]
+    #       conditions = [
+    #         {
+    #           host_headers = [
+    #             "acct.${local.public_hosted_zone}",
+    #           ]
+    #         }
+    #       ]
+    #     }
+    #   ]
+    # },
+    # {
+    #   index_key    = "ans"
+    #   listener_key = "ans"
+    #   rules = [
+    #     {
+    #       key      = "ans"
+    #       priority = 11
+    #       type     = "forward"
+    #       target_groups = [
+    #         {
+    #           tg_name = "${local.vpc_name_abr}-ans-tg"
+    #           weight  = 99
+    #         }
+    #       ]
+    #       conditions = [
+    #         {
+    #           host_headers = [
+    #             "ansibletower.${local.public_hosted_zone}",
+    #           ]
+    #         }
+    #       ]
+    #     }
+    #   ]
+    # }
   ]
   nlb_listeners = [
-    {
-      key             = "ssrs"
-      nlb_key         = "ssrs-nlb"
-      nlb_arn         = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.load_balancers["ssrs"].arn
-      certificate_arn = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.certificates[local.vpc_name].arn
-      protocol        = "TLS"
-      port            = 443
-      vpc_id          = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
-      target_group = {
-        name        = "${local.vpc_name_abr}-ssrs-tg"
-        port        = 443
-        protocol    = "TLS"
-        target_type = "instance"
-        attachments = [
-          {
-            ec2_key = "ssrs"
-            port    = 443
-          }
-        ]
-        health_check = {
-          protocol = "HTTPS"
-          port     = 443
-          path     = "/"
-          matcher  = "200,401"
-        }
-      }
-    }
+    # {
+    #   key             = "ssrs"
+    #   nlb_key         = "ssrs-nlb"
+    #   nlb_arn         = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.load_balancers["ssrs"].arn
+    #   certificate_arn = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.certificates[local.vpc_name].arn
+    #   protocol        = "TLS"
+    #   port            = 443
+    #   vpc_id          = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
+    #   target_group = {
+    #     name        = "${local.vpc_name_abr}-ssrs-tg"
+    #     port        = 443
+    #     protocol    = "TLS"
+    #     target_type = "instance"
+    #     attachments = [
+    #       {
+    #         ec2_key = "ssrs"
+    #         port    = 443
+    #       }
+    #     ]
+    #     health_check = {
+    #       protocol = "HTTPS"
+    #       port     = 443
+    #       path     = "/"
+    #       matcher  = "200,401"
+    #     }
+    #   }
+    # }
   ]
   target_groups = [
-    {
-      name        = "${local.vpc_name_abr}-acct-tg"
-      protocol    = "HTTPS"
-      port        = 443
-      target_type = "instance"
-      health_check = {
-        protocol = "HTTPS"
-        port     = "443"
-        path     = "/"
-      }
-      vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
-    },
-    {
-      name        = "${local.vpc_name_abr}-ans-tg"
-      protocol    = "HTTPS"
-      port        = 443
-      target_type = "instance"
-      health_check = {
-        protocol = "HTTPS"
-        port     = "443"
-        path     = "/"
-      }
-      vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
-    }
+    # {
+    #   name        = "${local.vpc_name_abr}-acct-tg"
+    #   protocol    = "HTTPS"
+    #   port        = 443
+    #   target_type = "instance"
+    #   health_check = {
+    #     protocol = "HTTPS"
+    #     port     = "443"
+    #     path     = "/"
+    #   }
+    #   vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
+    # },
+    # {
+    #   name        = "${local.vpc_name_abr}-ans-tg"
+    #   protocol    = "HTTPS"
+    #   port        = 443
+    #   target_type = "instance"
+    #   health_check = {
+    #     protocol = "HTTPS"
+    #     port     = "443"
+    #     path     = "/"
+    #   }
+    #   vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
+    # }
   ]
 }
 #-------------------------------------------------------
