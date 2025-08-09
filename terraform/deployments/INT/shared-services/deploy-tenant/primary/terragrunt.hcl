@@ -334,7 +334,7 @@ inputs = {
     {
       key             = "tms"
       nlb_key         = "tms-nlb"
-      nlb_arn         = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.load_balancers["tms"].arn
+      nlb_arn         = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.load_balancers["ssrs"].arn
       certificate_arn = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.certificates[local.vpc_name].arn
       protocol        = "TLS"
       port            = 8443
