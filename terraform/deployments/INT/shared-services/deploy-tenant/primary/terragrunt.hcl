@@ -30,6 +30,10 @@ locals {
   account_id         = include.cloud.locals.account_info[include.env.locals.name_abr].number
   aws_account_name   = include.cloud.locals.account_info[include.env.locals.name_abr].name
   public_hosted_zone = "${local.vpc_name_abr}.${include.env.locals.public_domain}"
+  Misc_tags = {
+    "PrivateHostedZone" = "shared.cognitech.com"
+    "PublicHostedZone"  = "cognitech.com"
+  }
 
   # Composite variables 
   tags = merge(
@@ -80,12 +84,15 @@ inputs = {
   #     iam_instance_profile        = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_profiles[local.vpc_name].iam_profiles.name
   #     associate_public_ip_address = true
   #     key_name                    = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name}-key-pair"].name
-  #     custom_tags = {
-  #       "Name"           = "INTPP-SHR-L-ANSIBLE-01"
-  #       "DNS_Suffix"     = "shr.cognitech.com"
-  #       "AnsibleInstall" = "True"
-  #       "CreateUser"     = "True"
-  #     }
+  #     custom_tags = merge(
+  #       local.Misc_tags,
+  #       {
+  #         "Name"           = "INTPP-SHR-L-ANSIBLE-01"
+  #         "DNS_Prefix"     = "ans01"
+  #         "AnsibleInstall" = "True"
+  #         "CreateUser"     = "True"
+  #       }
+  #     )
   #     ebs_device_volume = {
   #       name                  = "xvdf"
   #       volume_size           = 30
@@ -123,12 +130,15 @@ inputs = {
   #     iam_instance_profile        = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_profiles[local.vpc_name].iam_profiles.name
   #     associate_public_ip_address = true
   #     key_name                    = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name}-key-pair"].name
-  #     custom_tags = {
-  #       "Name"           = "INTPP-SHR-L-TMS-01"
-  #       "DNS_Suffix"     = "shr.cognitech.com"
-  #       "AnsibleInstall" = "True"
-  #       "CreateUser"     = "True"
-  #     }
+  #     custom_tags = merge(
+  #       local.Misc_tags,
+  #       {
+  #         "Name"       = "INTPP-SHR-L-TMS-01"
+  #         "DNS_Prefix" = "tms01"
+  #         "CreateUser" = "True"
+  #       },
+  #       local.Misc_tags
+  #     )
   #     ebs_device_volume = {
   #       name                  = "xvdf"
   #       volume_size           = 30
@@ -166,12 +176,15 @@ inputs = {
   #     iam_instance_profile        = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_profiles[local.vpc_name].iam_profiles.name
   #     associate_public_ip_address = true
   #     key_name                    = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name}-key-pair"].name
-  #     custom_tags = {
-  #       "Name"           = "INTPP-SHR-W-SSRS-01"
-  #       "DNS_Suffix"     = "shr.cognitech.com"
-  #       "CreateUser"     = "True"
-  #       "PackageInstall" = "True"
-  #     }
+  #     custom_tags = merge(
+  #       local.Misc_tags,
+  #       {
+  #         "Name"       = "INTPP-SHR-W-SSRS-01"
+  #         "DNS_Prefix" = "ssrs01"
+  #         "CreateUser" = "True"
+  #       },
+  #       local.Misc_tags
+  #     )
   #     ebs_device_volume = {
   #       name                  = "xvdf"
   #       volume_size           = 30
@@ -208,12 +221,15 @@ inputs = {
   #     iam_instance_profile        = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_profiles[local.vpc_name].iam_profiles.name
   #     associate_public_ip_address = true
   #     key_name                    = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name}-key-pair"].name
-  #     custom_tags = {
-  #       "Name"           = "INTPP-SHR-W-ETL-01"
-  #       "DNS_Suffix"     = "shr.cognitech.com"
-  #       "CreateUser"     = "True"
-  #       "PackageInstall" = "True"
-  #     }
+  #     custom_tags = merge(
+  #       local.Misc_tags,
+  #       {
+  #         "Name"       = "INTPP-SHR-W-ETL-01"
+  #         "DNS_Prefix" = "etl01"
+  #         "CreateUser" = "True"
+  #       },
+  #       local.Misc_tags
+  #     )
   #     ebs_device_volume = {
   #       name                  = "xvdf"
   #       volume_size           = 30
