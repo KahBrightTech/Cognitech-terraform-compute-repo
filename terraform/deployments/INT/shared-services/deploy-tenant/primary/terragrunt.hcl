@@ -293,7 +293,7 @@ inputs = {
         },
         {
           key      = "ecom"
-          priority = 10
+          priority = 11
           type     = "forward"
           target_groups = [
             {
