@@ -385,19 +385,19 @@ inputs = {
         port     = "8081"
       }
       vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
-    },
-    {
-      name        = "${local.vpc_name_abr}-ans-tg"
-      protocol    = "HTTPS"
-      port        = 443
-      target_type = "instance"
-      health_check = {
-        protocol = "HTTPS"
-        port     = "443"
-        path     = "/"
-      }
-      vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
     }
+    # {
+    #   name        = "${local.vpc_name_abr}-ans-tg"
+    #   protocol    = "HTTPS"
+    #   port        = 443
+    #   target_type = "instance"
+    #   health_check = {
+    #     protocol = "HTTPS"
+    #     port     = "443"
+    #     path     = "/"
+    #   }
+    #   vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
+    # }
   ]
 }
 #-------------------------------------------------------
