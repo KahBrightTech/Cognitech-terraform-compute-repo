@@ -116,51 +116,51 @@ inputs = {
     #       type    = "A"
     #     }
     #   },
-    {
-      index            = "docker"
-      name             = "docker-server"
-      backup_plan_name = "${local.aws_account_name}-${local.region_context}-continous-backup"
-      attach_tg        = ["${local.vpc_name_abr}-docker-tg", "${local.vpc_name_abr}-docker2-tg", "${local.vpc_name_abr}-docker3-tg"]
-      name_override    = "INTPP-SHR-L-DOCKER-01"
-      ami_config = {
-        os_release_date = "UBUNTU20"
-      }
-      associate_public_ip_address = true
-      instance_type               = "t3.large"
-      iam_instance_profile        = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_profiles[local.vpc_name].iam_profiles.name
-      associate_public_ip_address = true
-      key_name                    = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name}-key-pair"].name
-      custom_tags = merge(
-        local.Misc_tags,
-        {
-          "Name"       = "INTPP-SHR-L-DOCKER-01"
-          "DNS_Prefix" = "docker01"
-        },
-        local.Misc_tags
-      )
-      ebs_device_volume = {
-        name                  = "xvdf"
-        volume_size           = 30
-        volume_type           = "gp3"
-        delete_on_termination = true
-        encrypted             = false
-      }
-      ebs_root_volume = {
-        volume_size           = 30
-        volume_type           = "gp3"
-        delete_on_termination = true
-      }
-      subnet_id     = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].public_subnet[include.env.locals.subnet_prefix.primary].primary_subnet_id
-      Schedule_name = "ansible-server-schedule"
-      security_group_ids = [
-        dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].security_group.app.id
-      ]
-      hosted_zones = {
-        name    = "docker01.${dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].zones[local.vpc_name_abr].zone_name}"
-        zone_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].zones[local.vpc_name_abr].zone_id
-        type    = "A"
-      }
-    }
+    # {
+    #   index            = "docker"
+    #   name             = "docker-server"
+    #   backup_plan_name = "${local.aws_account_name}-${local.region_context}-continous-backup"
+    #   attach_tg        = ["${local.vpc_name_abr}-docker-tg", "${local.vpc_name_abr}-docker2-tg", "${local.vpc_name_abr}-docker3-tg"]
+    #   name_override    = "INTPP-SHR-L-DOCKER-01"
+    #   ami_config = {
+    #     os_release_date = "UBUNTU20"
+    #   }
+    #   associate_public_ip_address = true
+    #   instance_type               = "t3.large"
+    #   iam_instance_profile        = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_profiles[local.vpc_name].iam_profiles.name
+    #   associate_public_ip_address = true
+    #   key_name                    = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name}-key-pair"].name
+    #   custom_tags = merge(
+    #     local.Misc_tags,
+    #     {
+    #       "Name"       = "INTPP-SHR-L-DOCKER-01"
+    #       "DNS_Prefix" = "docker01"
+    #     },
+    #     local.Misc_tags
+    #   )
+    #   ebs_device_volume = {
+    #     name                  = "xvdf"
+    #     volume_size           = 30
+    #     volume_type           = "gp3"
+    #     delete_on_termination = true
+    #     encrypted             = false
+    #   }
+    #   ebs_root_volume = {
+    #     volume_size           = 30
+    #     volume_type           = "gp3"
+    #     delete_on_termination = true
+    #   }
+    #   subnet_id     = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].public_subnet[include.env.locals.subnet_prefix.primary].primary_subnet_id
+    #   Schedule_name = "ansible-server-schedule"
+    #   security_group_ids = [
+    #     dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].security_group.app.id
+    #   ]
+    #   hosted_zones = {
+    #     name    = "docker01.${dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].zones[local.vpc_name_abr].zone_name}"
+    #     zone_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].zones[local.vpc_name_abr].zone_id
+    #     type    = "A"
+    #   }
+    # }
     #   {
     #     index            = "ssrs"
     #     name             = "ssrs-server"
@@ -269,66 +269,66 @@ inputs = {
     # }
   ]
   alb_listener_rules = [
-    {
-      index_key    = "docker"
-      listener_arn = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.load_balancers["docker"].default_listener.arn
-      rules = [
-        {
-          key      = "docker"
-          priority = 10
-          type     = "forward"
-          target_groups = [
-            {
-              tg_name = "${local.vpc_name_abr}-docker-tg"
-              weight  = 99
-            }
-          ]
-          conditions = [
-            {
-              host_headers = [
-                "greenwood.${local.public_hosted_zone}",
-              ]
-            }
-          ]
-        },
-        {
-          key      = "ecom"
-          priority = 11
-          type     = "forward"
-          target_groups = [
-            {
-              tg_name = "${local.vpc_name_abr}-docker2-tg"
-              weight  = 99
-            }
-          ]
-          conditions = [
-            {
-              host_headers = [
-                "ecommerce.${local.public_hosted_zone}",
-              ]
-            }
-          ]
-        },
-        {
-          key      = "anime"
-          priority = 12
-          type     = "forward"
-          target_groups = [
-            {
-              tg_name = "${local.vpc_name_abr}-docker3-tg"
-              weight  = 99
-            }
-          ]
-          conditions = [
-            {
-              host_headers = [
-                "anime.${local.public_hosted_zone}",
-              ]
-            }
-          ]
-        }
-      ]
-    },
+    # {
+    #   index_key    = "docker"
+    #   listener_arn = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.load_balancers["docker"].default_listener.arn
+    #   rules = [
+    #     {
+    #       key      = "docker"
+    #       priority = 10
+    #       type     = "forward"
+    #       target_groups = [
+    #         {
+    #           tg_name = "${local.vpc_name_abr}-docker-tg"
+    #           weight  = 99
+    #         }
+    #       ]
+    #       conditions = [
+    #         {
+    #           host_headers = [
+    #             "greenwood.${local.public_hosted_zone}",
+    #           ]
+    #         }
+    #       ]
+    #     },
+    #     {
+    #       key      = "ecom"
+    #       priority = 11
+    #       type     = "forward"
+    #       target_groups = [
+    #         {
+    #           tg_name = "${local.vpc_name_abr}-docker2-tg"
+    #           weight  = 99
+    #         }
+    #       ]
+    #       conditions = [
+    #         {
+    #           host_headers = [
+    #             "ecommerce.${local.public_hosted_zone}",
+    #           ]
+    #         }
+    #       ]
+    #     },
+    #     {
+    #       key      = "anime"
+    #       priority = 12
+    #       type     = "forward"
+    #       target_groups = [
+    #         {
+    #           tg_name = "${local.vpc_name_abr}-docker3-tg"
+    #           weight  = 99
+    #         }
+    #       ]
+    #       conditions = [
+    #         {
+    #           host_headers = [
+    #             "anime.${local.public_hosted_zone}",
+    #           ]
+    #         }
+    #       ]
+    #     }
+    #   ]
+    # },
     #   {
     #     index_key    = "ans"
     #     listener_key = "ans"
@@ -411,42 +411,42 @@ inputs = {
     #   }
   ]
   target_groups = [
-    {
-      name        = "${local.vpc_name_abr}-docker-tg"
-      protocol    = "HTTP"
-      port        = 8081
-      target_type = "instance"
-      health_check = {
-        protocol = "HTTP"
-        port     = "8081"
-        path     = "/"
-      }
-      vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
-    },
-    {
-      name        = "${local.vpc_name_abr}-docker2-tg"
-      protocol    = "HTTP"
-      port        = 8080
-      target_type = "instance"
-      health_check = {
-        protocol = "HTTP"
-        port     = "8080"
-        path     = "/"
-      }
-      vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
-    },
-        {
-      name        = "${local.vpc_name_abr}-docker3-tg"
-      protocol    = "HTTP"
-      port        = 8082
-      target_type = "instance"
-      health_check = {
-        protocol = "HTTP"
-        port     = "8082"
-        path     = "/"
-      }
-      vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
-    }
+    # {
+    #   name        = "${local.vpc_name_abr}-docker-tg"
+    #   protocol    = "HTTP"
+    #   port        = 8081
+    #   target_type = "instance"
+    #   health_check = {
+    #     protocol = "HTTP"
+    #     port     = "8081"
+    #     path     = "/"
+    #   }
+    #   vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
+    # },
+    # {
+    #   name        = "${local.vpc_name_abr}-docker2-tg"
+    #   protocol    = "HTTP"
+    #   port        = 8080
+    #   target_type = "instance"
+    #   health_check = {
+    #     protocol = "HTTP"
+    #     port     = "8080"
+    #     path     = "/"
+    #   }
+    #   vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
+    # },
+    #     {
+    #   name        = "${local.vpc_name_abr}-docker3-tg"
+    #   protocol    = "HTTP"
+    #   port        = 8082
+    #   target_type = "instance"
+    #   health_check = {
+    #     protocol = "HTTP"
+    #     port     = "8082"
+    #     path     = "/"
+    #   }
+    #   vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
+    # }
     # {
     #   name        = "${local.vpc_name_abr}-ans-tg"
     #   protocol    = "HTTPS"
