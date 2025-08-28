@@ -120,7 +120,7 @@ inputs = {
       index            = "docker"
       name             = "docker-server"
       backup_plan_name = "${local.aws_account_name}-${local.region_context}-continous-backup"
-      attach_tg        = ["${local.vpc_name_abr}-docker-tg"]
+      attach_tg        = ["${local.vpc_name_abr}-docker-tg", "${local.vpc_name_abr}-docker2-tg"]
       name_override    = "INTPP-SHR-L-DOCKER-01"
       ami_config = {
         os_release_date = "UBUNTU20"
@@ -290,6 +290,24 @@ inputs = {
               ]
             }
           ]
+        },
+        {
+          key      = "docker"
+          priority = 10
+          type     = "forward"
+          target_groups = [
+            {
+              tg_name = "${local.vpc_name_abr}-docker2-tg"
+              weight  = 99
+            }
+          ]
+          conditions = [
+            {
+              host_headers = [
+                "ecommerce.${local.public_hosted_zone}",
+              ]
+            }
+          ]
         }
       ]
     },
@@ -383,6 +401,18 @@ inputs = {
       health_check = {
         protocol = "HTTP"
         port     = "8081"
+        path     = "/"
+      }
+      vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
+    },
+    {
+      name        = "${local.vpc_name_abr}-docker2-tg"
+      protocol    = "HTTP"
+      port        = 8080
+      target_type = "instance"
+      health_check = {
+        protocol = "HTTP"
+        port     = "8080"
         path     = "/"
       }
       vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
