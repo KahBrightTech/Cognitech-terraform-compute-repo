@@ -377,12 +377,13 @@ inputs = {
   target_groups = [
     {
       name        = "${local.vpc_name_abr}-docker-tg"
-      protocol    = "TCP"
+      protocol    = "HTTP"
       port        = 8081
       target_type = "instance"
       health_check = {
-        protocol = "TCP"
+        protocol = "HTTP"
         port     = "8081"
+        path     = "/"
       }
       vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
     }
