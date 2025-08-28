@@ -292,7 +292,7 @@ inputs = {
           ]
         },
         {
-          key      = "docker"
+          key      = "ecom"
           priority = 10
           type     = "forward"
           target_groups = [
