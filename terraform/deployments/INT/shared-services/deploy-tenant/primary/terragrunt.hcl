@@ -383,7 +383,6 @@ inputs = {
       health_check = {
         protocol = "TCP"
         port     = "8081"
-        path     = "/"
       }
       vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
     },
