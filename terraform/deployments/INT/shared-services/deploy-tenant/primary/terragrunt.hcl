@@ -120,7 +120,7 @@ inputs = {
       index            = "docker"
       name             = "docker-server"
       backup_plan_name = "${local.aws_account_name}-${local.region_context}-continous-backup"
-      attach_tg        = ["${local.vpc_name_abr}-docker-tg", "${local.vpc_name_abr}-docker2-tg", "${local.vpc_name_abr}-docker3-tg"]
+      attach_tg        = ["${local.vpc_name_abr}-docker-tg", "${local.vpc_name_abr}-docker2-tg", "${local.vpc_name_abr}-docker3-tg", "${local.vpc_name_abr}-docker4-tg"]
       name_override    = "INTPP-SHR-L-DOCKER-01"
       ami_config = {
         os_release_date = "UBUNTU20"
@@ -327,6 +327,24 @@ inputs = {
               ]
             }
           ]
+        },
+        {
+          key      = "portainer"
+          priority = 13
+          type     = "forward"
+          target_groups = [
+            {
+              tg_name = "${local.vpc_name_abr}-docker4-tg"
+              weight  = 99
+            }
+          ]
+          conditions = [
+            {
+              host_headers = [
+                "portainer.${local.public_hosted_zone}",
+              ]
+            }
+          ]
         }
       ]
     },
@@ -443,6 +461,17 @@ inputs = {
       health_check = {
         protocol = "HTTP"
         port     = "8082"
+      }
+      vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
+    },
+    {
+      name        = "${local.vpc_name_abr}-docker4-tg"
+      protocol    = "HTTP"
+      port        = 8083
+      target_type = "instance"
+      health_check = {
+        protocol = "HTTP"
+        port     = "8083"
       }
       vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
     },
