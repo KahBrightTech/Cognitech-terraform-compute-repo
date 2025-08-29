@@ -421,7 +421,6 @@ target_groups = [
     health_check = {
       protocol = "HTTP"
       port     = "8081"
-      path     = "/"
     }
     vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
   },
@@ -433,7 +432,6 @@ target_groups = [
     health_check = {
       protocol = "HTTP"
       port     = "8080"
-      path     = "/"
     }
     vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
   },
@@ -445,7 +443,6 @@ target_groups = [
     health_check = {
       protocol = "HTTP"
       port     = "8082"
-      path     = "/"
     }
     vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
   }
