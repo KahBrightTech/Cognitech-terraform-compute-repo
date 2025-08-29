@@ -133,8 +133,8 @@ inputs = {
       custom_tags = merge(
         local.Misc_tags,
         {
-          "Name"       = "INTPP-SHR-L-DOCKER-01"
-          "DNS_Prefix" = "docker01"
+          "Name"          = "INTPP-SHR-L-DOCKER-01"
+          "DNS_Prefix"    = "docker01"
           "DockerInstall" = "True"
         },
         local.Misc_tags
@@ -331,7 +331,7 @@ inputs = {
       ]
     },
     {
-      index_key    = "ans"
+      index_key = "ans"
       # listener_key = "ans"
       listener_arn = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.load_balancers["docker"].default_listener.arn
       rules = [
@@ -411,54 +411,54 @@ inputs = {
   #       }
   #     }
   #   }
-#]
-target_groups = [
-  {
-    name        = "${local.vpc_name_abr}-docker-tg"
-    protocol    = "HTTP"
-    port        = 8081
-    target_type = "instance"
-    health_check = {
-      protocol = "HTTP"
-      port     = "8081"
+  #]
+  target_groups = [
+    {
+      name        = "${local.vpc_name_abr}-docker-tg"
+      protocol    = "HTTP"
+      port        = 8081
+      target_type = "instance"
+      health_check = {
+        protocol = "HTTP"
+        port     = "8081"
+      }
+      vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
+    },
+    {
+      name        = "${local.vpc_name_abr}-docker2-tg"
+      protocol    = "HTTP"
+      port        = 8080
+      target_type = "instance"
+      health_check = {
+        protocol = "HTTP"
+        port     = "8080"
+      }
+      vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
+    },
+    {
+      name        = "${local.vpc_name_abr}-docker3-tg"
+      protocol    = "HTTP"
+      port        = 8082
+      target_type = "instance"
+      health_check = {
+        protocol = "HTTP"
+        port     = "8082"
+      }
+      vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
+    },
+    {
+      name        = "${local.vpc_name_abr}-ans-tg"
+      protocol    = "HTTPS"
+      port        = 443
+      target_type = "instance"
+      health_check = {
+        protocol = "HTTPS"
+        port     = "443"
+        path     = "/"
+      }
+      vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
     }
-    vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
-  },
-  {
-    name        = "${local.vpc_name_abr}-docker2-tg"
-    protocol    = "HTTP"
-    port        = 8080
-    target_type = "instance"
-    health_check = {
-      protocol = "HTTP"
-      port     = "8080"
-    }
-    vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
-  },
-      {
-    name        = "${local.vpc_name_abr}-docker3-tg"
-    protocol    = "HTTP"
-    port        = 8082
-    target_type = "instance"
-    health_check = {
-      protocol = "HTTP"
-      port     = "8082"
-    }
-    vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
-  }
-  {
-    name        = "${local.vpc_name_abr}-ans-tg"
-    protocol    = "HTTPS"
-    port        = 443
-    target_type = "instance"
-    health_check = {
-      protocol = "HTTPS"
-      port     = "443"
-      path     = "/"
-    }
-    vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
-  }
-]
+  ]
 }
 #-------------------------------------------------------
 # State Configuration
