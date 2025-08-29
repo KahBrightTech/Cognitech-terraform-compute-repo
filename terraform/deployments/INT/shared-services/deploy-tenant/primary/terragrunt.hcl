@@ -330,7 +330,7 @@ inputs = {
         },
         {
           key      = "portainer"
-          priority = 13
+          priority = 14
           type     = "forward"
           target_groups = [
             {
