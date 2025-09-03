@@ -514,6 +514,7 @@ inputs = {
       desired_capacity = 2
       health_check_type = "ELB"
       health_check_grace_period = 300
+      launch_configuration = "docker"
       subnet_ids = [
         dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].public_subnet[include.env.locals.subnet_prefix.primary].primary_subnet_id,
         dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].public_subnet[include.env.locals.subnet_prefix.secondary].primary_subnet_id
