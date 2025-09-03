@@ -2,10 +2,6 @@
 # Cloud variables 
 #-------------------------------------------------------
 locals {
-
-  repo = {
-    root = get_parent_terragrunt_dir()
-  }
   account_info = {
     mdpp = {
       name   = "mdpreproduction"
