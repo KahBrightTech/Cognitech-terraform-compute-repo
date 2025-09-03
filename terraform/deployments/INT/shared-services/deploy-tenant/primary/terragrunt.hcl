@@ -498,7 +498,6 @@ inputs = {
         os_release_date = "AL2023"
       }
       instance_type               = "t3.medium"
-      # associate_public_ip_address = true  # Removed - let ASG subnet configuration handle this
       # user_data                   = file("${get_parent_terragrunt_dir()}/User_datas/docker.sh")
       vpc_security_group_ids = [
         dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].security_group.app.id
