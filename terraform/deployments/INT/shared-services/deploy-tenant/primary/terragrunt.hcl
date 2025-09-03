@@ -505,6 +505,32 @@ inputs = {
       tags = local.tags
     }
   ]
+  Autoscaling_groups [
+    {
+      key = "docker-asg"
+      name             = "${local.vpc_name_abr}-docker-asg"
+      min_size         = 1
+      max_size         = 5
+      desired_capacity = 2
+      health_check_type = "ELB"
+      health_check_grace_period = 300
+      subnet_ids = [
+        dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].public_subnet[include.env.locals.subnet_prefix.primary].primary_subnet_id,
+        dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].public_subnet[include.env.locals.subnet_prefix.secondary].primary_subnet_id
+      ]
+      timeouts = {
+        delete = "2m"
+      }
+      tags = local.tags
+      additional_tags = [
+        {
+          key   = "Name"
+          value = "${local.vpc_name_abr}-docker-asg"
+          propagate_at_launch = true
+        }
+      ]
+    }
+  ]
 }
 
 #-------------------------------------------------------

@@ -251,6 +251,7 @@ variable "Autoscaling_groups" {
   description = "Auto Scaling configuration"
   type = list(object({
     name                      = optional(string)
+    key                       = optional(string)
     min_size                  = optional(number)
     max_size                  = optional(number)
     health_check_type         = optional(string)
