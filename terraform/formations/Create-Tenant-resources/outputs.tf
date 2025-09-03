@@ -49,3 +49,34 @@ output "target_groups" {
   value       = module.target_groups
 }
 
+#-------------------------------------------------------
+# SSM Document outputs
+#-------------------------------------------------------
+output "ssm_documents" {
+  description = "Output for SSM Documents"
+  value       = module.ssm_documents
+}
+
+#-------------------------------------------------------
+# SSM Document outputs
+#-------------------------------------------------------
+output "ssm_documents" {
+  description = "Output for SSM Documents"
+  value       = module.ssm_documents
+}
+
+#-------------------------------------------------------
+# Launch Template outputs
+#-------------------------------------------------------
+output "launch_templates" {
+  description = "Output for Launch Templates"
+  value       = module.launch_templates
+}
+
+#-------------------------------------------------------
+# Autoscaling groups outputs
+#-------------------------------------------------------
+output "auto_scaling_groups" {
+  description = "Output for Auto Scaling Groups"
+  value       = module.auto_scaling_groups
+}

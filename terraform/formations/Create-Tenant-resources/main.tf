@@ -124,6 +124,31 @@ module "nlb_listeners" {
   )
 }
 
+#--------------------------------------------------------------------
+# Creates Launch template
+# #--------------------------------------------------------------------
+module "launch_templates" {
+  source          = "git::https://github.com/njibrigthain100/Cognitech-terraform-iac-modules.git//terraform/modules/Launch_template?ref=v1.3.14"
+  for_each        = (var.launch_templates != null) ? { for item in var.launch_templates : item.name => item } : {}
+  common          = var.common
+  launch_template = each.value
+}
+
+#--------------------------------------------------------------------
+# Creates Auto Scaling Group
+# #--------------------------------------------------------------------
+module "auto_scaling_groups" {
+  source   = "git::https://github.com/njibrigthain100/Cognitech-terraform-iac-modules.git//terraform/modules/AutoScaling?ref=v1.3.14"
+  for_each = (var.Autoscaling_groups != null) ? { for item in var.Autoscaling_groups : item.name => item } : {}
+  common   = var.common
+  Autoscaling_group = merge(
+    each.value,
+    {
+      launch_configuration = try(module.launch_templates[each.value.key].name, each.value.name)
+      target_group_arn     = try(module.target_groups[each.value.key].arn, each.value.target_group_arn)
+    }
+  )
+}
 
 
 

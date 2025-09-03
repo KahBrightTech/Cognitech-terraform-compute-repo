@@ -223,3 +223,50 @@ variable "target_groups" {
   }))
   default = null
 }
+
+
+variable "launch_templates" {
+  description = "Launch Template configuration"
+  type = list(object({
+    name             = string
+    key              = string
+    instance_profile = optional(string)
+    custom_ami       = optional(string)
+    ami_config = object({
+      os_release_date  = optional(string)
+      os_base_packages = optional(string)
+    })
+    instance_type               = optional(string)
+    key_name                    = optional(string)
+    associate_public_ip_address = optional(bool)
+    vpc_security_group_ids      = optional(list(string))
+    tags                        = optional(map(string))
+    user_data                   = optional(string)
+  }))
+  default = null
+}
+
+
+variable "Autoscaling_groups" {
+  description = "Auto Scaling configuration"
+  type = list(object({
+    name                      = optional(string)
+    min_size                  = optional(number)
+    max_size                  = optional(number)
+    health_check_type         = optional(string)
+    health_check_grace_period = optional(number)
+    force_delete              = optional(bool)
+    desired_capacity          = optional(number)
+    subnet_ids                = optional(list(string))
+    timeouts = optional(object({
+      delete = optional(string)
+    }))
+    tags = optional(map(string))
+    additional_tags = optional(list(object({
+      key                 = string
+      value               = string
+      propagate_at_launch = optional(bool, true)
+    })))
+  }))
+  default = null
+}
