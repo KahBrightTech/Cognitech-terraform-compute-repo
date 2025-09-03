@@ -499,6 +499,7 @@ inputs = {
       }
       instance_type               = "t3.medium"
       associate_public_ip_address = true
+      user_data                   = file("${include.cloud.locals.repo.root}/User_datas/docker.sh")
       vpc_security_group_ids = [
         dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].security_group.app.id
       ]
@@ -507,14 +508,15 @@ inputs = {
   ]
   Autoscaling_groups = [
     {
-      key = "docker-asg"
-      name             = "${local.vpc_name_abr}-docker-asg"
-      min_size         = 1
-      max_size         = 5
-      desired_capacity = 2
-      health_check_type = "ELB"
+      key                       = "docker-asg"
+      name                      = "${local.vpc_name_abr}-docker-asg"
+      min_size                  = 1
+      max_size                  = 5
+      desired_capacity          = 2
+      health_check_type         = "ELB"
       health_check_grace_period = 300
-      launch_configuration = "docker"
+      launch_template_key       = "docker"
+
       subnet_ids = [
         dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].public_subnet[include.env.locals.subnet_prefix.primary].primary_subnet_id,
         dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].public_subnet[include.env.locals.subnet_prefix.secondary].primary_subnet_id
@@ -525,8 +527,8 @@ inputs = {
       tags = local.tags
       additional_tags = [
         {
-          key   = "Name"
-          value = "${local.vpc_name_abr}-docker-asg"
+          key                 = "Name"
+          value               = "${local.vpc_name_abr}-docker-asg"
           propagate_at_launch = true
         }
       ]

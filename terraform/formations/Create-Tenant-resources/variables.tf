@@ -259,6 +259,7 @@ variable "Autoscaling_groups" {
     force_delete              = optional(bool)
     desired_capacity          = optional(number)
     subnet_ids                = optional(list(string))
+    launch_template_key       = optional(string)
     launch_configuration      = optional(string)
     attach_target_groups      = optional(list(string))
     timeouts = optional(object({

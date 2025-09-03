@@ -144,7 +144,7 @@ module "auto_scaling_groups" {
   Autoscaling_group = merge(
     each.value,
     {
-      launch_configuration = try(module.launch_templates[each.value.key].name, each.value.name)
+      launch_configuration = try(module.launch_templates[each.value.launch_template_key].name, each.value.name)
     },
     # Only include attach_target_groups if it's available
     can(module.target_groups[each.value.key].arn) ? {
@@ -153,6 +153,8 @@ module "auto_scaling_groups" {
         attach_target_groups = each.value.attach_target_groups
     } : {})
   )
+
+  depends_on = [module.launch_templates]
 }
 
 
