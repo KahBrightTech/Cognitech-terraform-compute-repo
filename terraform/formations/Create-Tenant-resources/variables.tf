@@ -260,8 +260,11 @@ variable "Autoscaling_groups" {
     desired_capacity          = optional(number)
     subnet_ids                = optional(list(string))
     launch_template_key       = optional(string)
-    launch_configuration      = optional(string)
-    attach_target_groups      = optional(list(string))
+    launch_template = optional(object({
+      id      = string
+      version = optional(string, "$Latest")
+    }))
+    attach_target_groups = optional(list(string))
     timeouts = optional(object({
       delete = optional(string)
     }))

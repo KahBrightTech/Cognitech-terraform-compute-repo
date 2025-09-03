@@ -138,13 +138,13 @@ module "launch_templates" {
 # Creates Auto Scaling Group
 # #--------------------------------------------------------------------
 module "auto_scaling_groups" {
-  source   = "git::https://github.com/njibrigthain100/Cognitech-terraform-iac-modules.git//terraform/modules/AutoScaling?ref=v1.3.17"
+  source   = "git::https://github.com/njibrigthain100/Cognitech-terraform-iac-modules.git//terraform/modules/AutoScaling?ref=v1.3.18"
   for_each = (var.Autoscaling_groups != null) ? { for item in var.Autoscaling_groups : item.name => item } : {}
   common   = var.common
   Autoscaling_group = merge(
     each.value,
     {
-      launch_configuration = try(module.launch_templates[each.value.launch_template_key].name, each.value.name)
+      launch_template = try(module.launch_templates[each.value.launch_template_key].id, each.value.id)
     },
     # Only include attach_target_groups if it's available
     can(module.target_groups[each.value.key].arn) ? {

@@ -506,11 +506,11 @@ inputs = {
       tags = local.tags
     }
   ]
-  
+
   Autoscaling_groups = [
     {
-      key                       = "docker-asg"
-      name                      = "${local.vpc_name_abr}-docker-asg"
+      key                       = "docker"
+      name                      = "${local.vpc_name_abr}-docker"
       min_size                  = 1
       max_size                  = 5
       desired_capacity          = 2
