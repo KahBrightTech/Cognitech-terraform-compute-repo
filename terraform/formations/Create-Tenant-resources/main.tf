@@ -15,7 +15,7 @@ data "aws_iam_roles" "network_role" {
   path_prefix = "/aws-reserved/sso.amazonaws.com/"
 }
 
-#--------------------------------------------------------------------`
+#--------------------------------------------------------------------
 # Target groups 
 #--------------------------------------------------------------------
 module "target_groups" {
@@ -144,7 +144,10 @@ module "auto_scaling_groups" {
   Autoscaling_group = merge(
     each.value,
     {
-      launch_template = try(module.launch_templates[each.value.launch_template_key].id, each.value.id)
+      launch_template = {
+        id      = module.launch_templates[each.value.launch_template_name].id
+        version = "$Latest"
+      }
     },
     # Only include attach_target_groups if it's available
     can(module.target_groups[each.value.key].arn) ? {
