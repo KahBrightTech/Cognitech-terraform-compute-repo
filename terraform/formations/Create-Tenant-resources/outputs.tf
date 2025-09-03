@@ -58,14 +58,6 @@ output "ssm_documents" {
 }
 
 #-------------------------------------------------------
-# SSM Document outputs
-#-------------------------------------------------------
-output "ssm_documents" {
-  description = "Output for SSM Documents"
-  value       = module.ssm_documents
-}
-
-#-------------------------------------------------------
 # Launch Template outputs
 #-------------------------------------------------------
 output "launch_templates" {
