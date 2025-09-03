@@ -505,7 +505,7 @@ inputs = {
       tags = local.tags
     }
   ]
-  Autoscaling_groups [
+  Autoscaling_groups = [
     {
       key = "docker-asg"
       name             = "${local.vpc_name_abr}-docker-asg"
