@@ -145,8 +145,13 @@ module "auto_scaling_groups" {
     each.value,
     {
       launch_configuration = try(module.launch_templates[each.value.key].name, each.value.name)
-      target_group_arn     = try(module.target_groups[each.value.key].arn, each.value.target_group_arn)
-    }
+    },
+    # Only include attach_target_groups if it's available
+    can(module.target_groups[each.value.key].arn) ? {
+      attach_target_groups = module.target_groups[each.value.key].arn
+      } : (each.value.attach_target_groups != null ? {
+        attach_target_groups = each.value.attach_target_groups
+    } : {})
   )
 }
 
