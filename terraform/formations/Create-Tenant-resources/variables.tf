@@ -281,6 +281,7 @@ variable "Autoscaling_groups" {
 variable "ebs_restores" {
   description = "EBS Restore configuration"
   type = list(object({
+    key             = string
     instance_id     = string
     os_type         = string               # "windows" or "linux"
     volume_count    = number               # Number of volumes to create

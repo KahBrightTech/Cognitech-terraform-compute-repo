@@ -535,6 +535,7 @@ inputs = {
   ]
   ebs_restores = [
     {
+      key             = "ans"
       instance_id     = "i-0a5b99197735d9082"
       os_type         = "linux"
       volume_count    = 1
