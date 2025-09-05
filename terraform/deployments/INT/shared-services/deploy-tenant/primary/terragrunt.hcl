@@ -75,7 +75,7 @@ inputs = {
       name             = "ansible-server"
       backup_plan_name = "${local.aws_account_name}-${local.region_context}-continous-backup"
       # attach_tg        = ["${local.vpc_name_abr}-ans-tg"]
-      name_override    = "INTPP-SHR-L-ANSIBLE-01"
+      name_override = "INTPP-SHR-L-ANSIBLE-01"
       ami_config = {
         os_release_date = "RHEL9"
       }
@@ -532,6 +532,15 @@ inputs = {
     #     }
     #   ]
     # }
+  ]
+  ebs_restores = [
+    {
+      instance_id     = "i-0a5b99197735d9082"
+      os_type         = "linux"
+      volume_count    = 1
+      starting_letter = "f"
+      volume_size     = 30
+    }
   ]
 }
 
