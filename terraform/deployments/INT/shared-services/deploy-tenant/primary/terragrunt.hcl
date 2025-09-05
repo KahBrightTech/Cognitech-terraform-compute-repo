@@ -70,52 +70,52 @@ inputs = {
     account_name_abr = include.env.locals.name_abr
   }
   ec2_instances = [
-    {
-      index            = "ans"
-      name             = "ansible-server"
-      backup_plan_name = "${local.aws_account_name}-${local.region_context}-continous-backup"
-      # attach_tg        = ["${local.vpc_name_abr}-ans-tg"]
-      name_override = "INTPP-SHR-L-ANSIBLE-01"
-      ami_config = {
-        os_release_date = "RHEL9"
-      }
-      associate_public_ip_address = true
-      instance_type               = "t3.large"
-      iam_instance_profile        = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_profiles[local.vpc_name].iam_profiles.name
-      associate_public_ip_address = true
-      key_name                    = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name}-key-pair"].name
-      custom_tags = merge(
-        local.Misc_tags,
-        {
-          "Name"           = "INTPP-SHR-L-ANSIBLE-01"
-          "DNS_Prefix"     = "ans01"
-          "AnsibleInstall" = "True"
-          "CreateUser"     = "True"
-        }
-      )
-      ebs_device_volume = {
-        name                  = "xvdf"
-        volume_size           = 30
-        volume_type           = "gp3"
-        delete_on_termination = true
-        encrypted             = false
-      }
-      ebs_root_volume = {
-        volume_size           = 30
-        volume_type           = "gp3"
-        delete_on_termination = true
-      }
-      subnet_id     = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].public_subnet[include.env.locals.subnet_prefix.primary].primary_subnet_id
-      Schedule_name = "ansible-server-schedule"
-      security_group_ids = [
-        dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].security_group.app.id
-      ]
-      hosted_zones = {
-        name    = "ans01.${dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].zones[local.vpc_name_abr].zone_name}"
-        zone_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].zones[local.vpc_name_abr].zone_id
-        type    = "A"
-      }
-    },
+    # {
+    #   index            = "ans"
+    #   name             = "ansible-server"
+    #   backup_plan_name = "${local.aws_account_name}-${local.region_context}-continous-backup"
+    #   # attach_tg        = ["${local.vpc_name_abr}-ans-tg"]
+    #   name_override = "INTPP-SHR-L-ANSIBLE-01"
+    #   ami_config = {
+    #     os_release_date = "RHEL9"
+    #   }
+    #   associate_public_ip_address = true
+    #   instance_type               = "t3.large"
+    #   iam_instance_profile        = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_profiles[local.vpc_name].iam_profiles.name
+    #   associate_public_ip_address = true
+    #   key_name                    = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name}-key-pair"].name
+    #   custom_tags = merge(
+    #     local.Misc_tags,
+    #     {
+    #       "Name"           = "INTPP-SHR-L-ANSIBLE-01"
+    #       "DNS_Prefix"     = "ans01"
+    #       "AnsibleInstall" = "True"
+    #       "CreateUser"     = "True"
+    #     }
+    #   )
+    #   ebs_device_volume = {
+    #     name                  = "xvdf"
+    #     volume_size           = 30
+    #     volume_type           = "gp3"
+    #     delete_on_termination = true
+    #     encrypted             = false
+    #   }
+    #   ebs_root_volume = {
+    #     volume_size           = 30
+    #     volume_type           = "gp3"
+    #     delete_on_termination = true
+    #   }
+    #   subnet_id     = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].public_subnet[include.env.locals.subnet_prefix.primary].primary_subnet_id
+    #   Schedule_name = "ansible-server-schedule"
+    #   security_group_ids = [
+    #     dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].security_group.app.id
+    #   ]
+    #   hosted_zones = {
+    #     name    = "ans01.${dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].zones[local.vpc_name_abr].zone_name}"
+    #     zone_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].zones[local.vpc_name_abr].zone_id
+    #     type    = "A"
+    #   }
+    # },
     # {
     #   index            = "docker"
     #   name             = "docker-server"
@@ -532,16 +532,6 @@ inputs = {
     #     }
     #   ]
     # }
-  ]
-  ebs_restores = [
-    {
-      key             = "ans"
-      instance_id     = "i-0a5b99197735d9082"
-      os_type         = "linux"
-      volume_count    = 1
-      starting_letter = "f"
-      volume_size     = 30
-    }
   ]
 }
 
