@@ -3,9 +3,9 @@
 set -e
 
 # Configuration Variables - Set defaults or use values from Terraform templatefile
-S3_BUCKET="${s3_bucket:-int-preproduction-use1-shared-services-data-xfer}"
-S3_FOLDER_PATH="${s3_folder_path:-docker-compose}"
-COMPOSE_DIR="${compose_dir:-/opt/docker-compose}"
+S3_BUCKET="$${s3_bucket:-int-preproduction-use1-shared-services-data-xfer}"
+S3_FOLDER_PATH="$${s3_folder_path:-docker-compose}"
+COMPOSE_DIR="$${compose_dir:-/opt/docker-compose}"
 
 log() {
   echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1"
@@ -100,14 +100,14 @@ install_aws_cli() {
 }
 
 pull_compose_file() {
-  mkdir -p "${COMPOSE_DIR}"
+  mkdir -p "$${COMPOSE_DIR}"
   log "Pulling docker-compose file from S3..."
-  aws s3 cp "s3://${S3_BUCKET}/${S3_FOLDER_PATH}/compose.yml" "${COMPOSE_DIR}/docker-compose.yml"
+  aws s3 cp "s3://$${S3_BUCKET}/$${S3_FOLDER_PATH}/compose.yml" "$${COMPOSE_DIR}/docker-compose.yml"
   log "Compose file pulled."
 }
 
 run_compose() {
-  cd "${COMPOSE_DIR}"
+  cd "$${COMPOSE_DIR}"
   log "Running docker compose up..."
   if command -v docker compose &> /dev/null; then
     docker compose up -d
