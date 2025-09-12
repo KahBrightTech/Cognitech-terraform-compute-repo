@@ -489,49 +489,49 @@ inputs = {
   #   }
   # ] 
   launch_templates = [
-    {
-      key              = "docker"
-      name             = "${local.vpc_name_abr}-docker"
-      key_name         = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name}-key-pair"].name
-      instance_profile = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_profiles[local.vpc_name].iam_profiles.name
-      ami_config = {
-        os_release_date = "AL2023"
-      }
-      instance_type               = "t3.medium"
-      user_data                   = file("${include.cloud.locals.repo.root}/Bash-script/docker.sh")
-      vpc_security_group_ids = [
-        dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].security_group.app.id
-      ]
-      tags = local.tags
-    }
+    # {
+    #   key              = "docker"
+    #   name             = "${local.vpc_name_abr}-docker"
+    #   key_name         = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name}-key-pair"].name
+    #   instance_profile = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_profiles[local.vpc_name].iam_profiles.name
+    #   ami_config = {
+    #     os_release_date = "AL2023"
+    #   }
+    #   instance_type               = "t3.medium"
+    #   user_data                   = file("${include.cloud.locals.repo.root}/Bash-script/docker.sh")
+    #   vpc_security_group_ids = [
+    #     dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].security_group.app.id
+    #   ]
+    #   tags = local.tags
+    # }
   ]
   Autoscaling_groups = [
-    {
-      key                       = "docker"
-      name                      = "${local.vpc_name_abr}-docker"
-      min_size                  = 1
-      max_size                  = 5
-      desired_capacity          = 2
-      health_check_type         = "ELB"
-      health_check_grace_period = 300
-      launch_template_name       = "${local.vpc_name_abr}-docker"
+    # {
+    #   key                       = "docker"
+    #   name                      = "${local.vpc_name_abr}-docker"
+    #   min_size                  = 1
+    #   max_size                  = 5
+    #   desired_capacity          = 2
+    #   health_check_type         = "ELB"
+    #   health_check_grace_period = 300
+    #   launch_template_name       = "${local.vpc_name_abr}-docker"
 
-      subnet_ids = [
-        dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].public_subnet[include.env.locals.subnet_prefix.primary].primary_subnet_id,
-        dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].public_subnet[include.env.locals.subnet_prefix.secondary].primary_subnet_id
-      ]
-      timeouts = {
-        delete = "2m"
-      }
-      tags = local.tags
-      additional_tags = [
-        {
-          key                 = "Name"
-          value               = "${local.vpc_name_abr}-docker-asg"
-          propagate_at_launch = true
-        }
-      ]
-    }
+    #   subnet_ids = [
+    #     dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].public_subnet[include.env.locals.subnet_prefix.primary].primary_subnet_id,
+    #     dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].public_subnet[include.env.locals.subnet_prefix.secondary].primary_subnet_id
+    #   ]
+    #   timeouts = {
+    #     delete = "2m"
+    #   }
+    #   tags = local.tags
+    #   additional_tags = [
+    #     {
+    #       key                 = "Name"
+    #       value               = "${local.vpc_name_abr}-docker-asg"
+    #       propagate_at_launch = true
+    #     }
+    #   ]
+    # }
   ]
 }
 #-------------------------------------------------------
