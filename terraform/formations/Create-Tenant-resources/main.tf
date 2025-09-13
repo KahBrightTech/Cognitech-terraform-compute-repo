@@ -152,27 +152,17 @@ module "auto_scaling_groups" {
     },
     # Convert target group names to ARNs if attach_target_groups is specified
     each.value.attach_target_groups != null ? {
-      attach_target_groups = [
+      attach_target_groups = compact([
         for tg_name in each.value.attach_target_groups :
         # Check if it's a standalone target group first
         contains(keys(module.target_groups), tg_name) ?
         module.target_groups[tg_name].target_group_arn :
-        # If not found in standalone target groups, check NLB listeners
-        # Create a map of target group names to listener keys
-        contains(keys({
-          for nlb_config in(var.nlb_listeners != null ? var.nlb_listeners : []) :
-          nlb_config.target_group.name => nlb_config.key
-          if nlb_config.target_group != null
-        }), tg_name) ?
-        # For debugging: let's see what attributes are available
-        "DEBUG: Available attributes: ${jsonencode(keys(module.nlb_listeners[{
-          for nlb_config in(var.nlb_listeners != null ? var.nlb_listeners : []) :
-          nlb_config.target_group.name => nlb_config.key
-          if nlb_config.target_group != null
-        }[tg_name]]))}" :
-        # If still not found, this is an error - target group doesn't exist
-        "ERROR: Target group ${tg_name} not found in standalone target_groups or nlb_listeners"
-      ]
+        # Check if it's an NLB listener target group
+        contains(keys(module.nlb_listeners), tg_name) ?
+        module.nlb_listeners[tg_name].nlb_target_group_arn :
+        # If not found in either, return null (will be filtered out by compact)
+        null
+      ])
     } : {}
   )
   depends_on = [module.launch_templates, module.target_groups, module.nlb_listeners]
