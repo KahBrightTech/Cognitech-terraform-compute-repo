@@ -540,8 +540,8 @@ inputs = {
         "${local.vpc_name_abr}-app-tg",
         "${local.vpc_name_abr}-app2-tg",
         "${local.vpc_name_abr}-app3-tg",
-        "${local.vpc_name_abr}-app4-tg"
-        # Temporarily disabled: "${local.vpc_name_abr}-ssrs-tg"
+        "${local.vpc_name_abr}-app4-tg",
+        "${local.vpc_name_abr}-ssrs-tg"
       ]
       subnet_ids = [
         dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].public_subnet[include.env.locals.subnet_prefix.primary].primary_subnet_id,
