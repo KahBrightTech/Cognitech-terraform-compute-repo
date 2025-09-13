@@ -158,17 +158,17 @@ module "auto_scaling_groups" {
         contains(keys(module.target_groups), tg_name) ?
         module.target_groups[tg_name].target_group_arn :
         # If not found in standalone target groups, check NLB listeners
-        # Look for NLB listener that creates a target group with this name
-        length([
-          for nlb_key, nlb_config in(var.nlb_listeners != null ? var.nlb_listeners : []) :
-          nlb_key if nlb_config.target_group != null && nlb_config.target_group.name == tg_name
-        ]) > 0 ?
-        module.nlb_listeners[[
-          for nlb_key, nlb_config in var.nlb_listeners :
-          nlb_key if nlb_config.target_group != null && nlb_config.target_group.name == tg_name
-        ][0]].target_group_arn :
-        # Fallback - could be a direct ARN
-        tg_name
+        # Find the NLB listener key that creates a target group with this name
+        try(
+          module.nlb_listeners[
+            [
+              for nlb_config in(var.nlb_listeners != null ? var.nlb_listeners : []) :
+              nlb_config.key if nlb_config.target_group != null && nlb_config.target_group.name == tg_name
+            ][0]
+          ].target_group_arn,
+          # Fallback - could be a direct ARN or error case
+          tg_name
+        )
       ]
     } : {}
   )
