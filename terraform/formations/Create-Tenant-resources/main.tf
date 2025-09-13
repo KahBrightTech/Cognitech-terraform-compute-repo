@@ -164,11 +164,12 @@ module "auto_scaling_groups" {
           nlb_config.target_group.name => nlb_config.key
           if nlb_config.target_group != null
         }), tg_name) ?
-        module.nlb_listeners[{
+        # For debugging: let's see what attributes are available
+        "DEBUG: Available attributes: ${jsonencode(keys(module.nlb_listeners[{
           for nlb_config in(var.nlb_listeners != null ? var.nlb_listeners : []) :
           nlb_config.target_group.name => nlb_config.key
           if nlb_config.target_group != null
-        }[tg_name]].arn :
+        }[tg_name]]))}" :
         # If still not found, this is an error - target group doesn't exist
         "ERROR: Target group ${tg_name} not found in standalone target_groups or nlb_listeners"
       ]
