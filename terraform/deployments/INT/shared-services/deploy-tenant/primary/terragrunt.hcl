@@ -441,13 +441,13 @@ inputs = {
       target_group = {
         name        = "${local.vpc_name_abr}-ssrs-tg"
         port        = 8081
-        protocol    = "TCP" 
+        protocol    = "TCP"
         target_type = "instance"
         attachments = []
         health_check = {
-          enabled  = true
-          protocol = "TCP"   
-          port     = 8081 
+          protocol = "TCP"
+          port     = 8081
+          matcher  = null 
         }
       }
     }
