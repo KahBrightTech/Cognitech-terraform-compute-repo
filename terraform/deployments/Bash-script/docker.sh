@@ -115,7 +115,7 @@ fetch_docker_credentials() {
   fi
   
   # Fetch credentials with error handling
-  if ! creds_json=$(aws secretsmanager get-secret-value --secret-id int-preproduction-use1-docker-credential --query SecretString --output text 2>/dev/null); then
+  if ! creds_json=$(aws secretsmanager get-secret-value --secret-id int-preproduction-use1-Docker-Credentials --query SecretString --output text 2>/dev/null); then
     log "Error: Failed to fetch Docker credentials from AWS Secrets Manager. Check AWS permissions and secret name."
     return 1
   fi

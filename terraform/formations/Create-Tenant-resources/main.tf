@@ -156,19 +156,9 @@ module "auto_scaling_groups" {
         attach_target_groups = each.value.attach_target_groups
     } : {})
   )
-
   depends_on = [module.launch_templates]
 }
 
-#--------------------------------------------------------------------
-# EBS Restores
-#--------------------------------------------------------------------
-module "ebs_restores" {
-  source      = "git::https://github.com/njibrigthain100/Cognitech-terraform-iac-modules.git//terraform/modules/Restore-volume?ref=v1.3.22"
-  for_each    = (var.ebs_restores != null) ? { for item in var.ebs_restores : item.key => item } : {}
-  common      = var.common
-  ebs_restore = each.value
-}
 
 
 

@@ -278,15 +278,3 @@ variable "Autoscaling_groups" {
   default = null
 }
 
-variable "ebs_restores" {
-  description = "EBS Restore configuration"
-  type = list(object({
-    key             = string
-    instance_id     = string
-    os_type         = string               # "windows" or "linux"
-    volume_count    = number               # Number of volumes to create
-    starting_letter = string               # Starting device letter (e.g., "f" for xvdf)
-    volume_size     = optional(number, 10) # Size for all volumes, defaults to 10GB
-  }))
-  default = null
-}
