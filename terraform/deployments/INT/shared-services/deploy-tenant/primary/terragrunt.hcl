@@ -254,33 +254,33 @@ inputs = {
     #   },
   ]
   alb_listeners = [
-    {
-      key             = "docker"
-      action          = "fixed-response"
-      alb_arn         = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.load_balancers["docker"].arn
-      certificate_arn = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.certificates[local.vpc_name].arn
-      protocol        = "HTTPS"
-      port            = 443
-      vpc_id          = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
-      fixed_response = {
-        content_type = "text/plain"
-        message_body = "This is a default response from the ETL ALB listener."
-        status_code  = "200"
-      }
-    }
+    # {
+    #   key             = "app"
+    #   action          = "fixed-response"
+    #   alb_arn         = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.load_balancers["app"].arn
+    #   certificate_arn = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.certificates[local.vpc_name].arn
+    #   protocol        = "HTTPS"
+    #   port            = 443
+    #   vpc_id          = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
+    #   fixed_response = {
+    #     content_type = "text/plain"
+    #     message_body = "This is a default response from the ETL ALB listener."
+    #     status_code  = "200"
+    #   }
+    # }
   ]
   alb_listener_rules = [
     {
-      index_key    = "docker"
-      listener_arn = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.load_balancers["docker"].default_listener.arn
+      index_key    = "app"
+      listener_arn = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.load_balancers["app"].default_listener.arn
       rules = [
         {
-          key      = "docker"
+          key      = "app"
           priority = 10
           type     = "forward"
           target_groups = [
             {
-              tg_name = "${local.vpc_name_abr}-docker-tg"
+              tg_name = "${local.vpc_name_abr}-app-tg"
               weight  = 99
             }
           ]
@@ -298,7 +298,7 @@ inputs = {
           type     = "forward"
           target_groups = [
             {
-              tg_name = "${local.vpc_name_abr}-docker2-tg"
+              tg_name = "${local.vpc_name_abr}-app2-tg"
               weight  = 99
             }
           ]
@@ -316,7 +316,7 @@ inputs = {
           type     = "forward"
           target_groups = [
             {
-              tg_name = "${local.vpc_name_abr}-docker3-tg"
+              tg_name = "${local.vpc_name_abr}-app3-tg"
               weight  = 99
             }
           ]
@@ -334,7 +334,7 @@ inputs = {
           type     = "forward"
           target_groups = [
             {
-              tg_name = "${local.vpc_name_abr}-docker4-tg"
+              tg_name = "${local.vpc_name_abr}-app4-tg"
               weight  = 99
             }
           ]
