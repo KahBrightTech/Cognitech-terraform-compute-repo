@@ -375,62 +375,82 @@ inputs = {
     #   ]
     # }
   ]
-  # nlb_listeners = [
-  #   {
-  #     key             = "ssrs"
-  #     nlb_key         = "ssrs-nlb"
-  #     nlb_arn         = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.load_balancers["ssrs"].arn
-  #     certificate_arn = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.certificates[local.vpc_name].arn
-  #     protocol        = "TLS"
-  #     port            = 443
-  #     vpc_id          = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
-  #     target_group = {
-  #       name        = "${local.vpc_name_abr}-ssrs-tg"
-  #       port        = 443
-  #       protocol    = "TLS"
-  #       target_type = "instance"
-  #       attachments = [
-  #         {
-  #           ec2_key = "ssrs"
-  #           port    = 443
-  #         }
-  #       ]
-  #       health_check = {
-  #         protocol = "HTTPS"
-  #         port     = 443
-  #         path     = "/"
-  #         matcher  = "200,401"
-  #       }
-  #     }
-  #   },
-  #   {
-  #     key             = "tms"
-  #     nlb_key         = "tms-nlb"
-  #     nlb_arn         = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.load_balancers["ssrs"].arn
-  #     certificate_arn = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.certificates[local.vpc_name].arn
-  #     protocol        = "TLS"
-  #     port            = 8443
-  #     vpc_id          = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
-  #     target_group = {
-  #       name        = "${local.vpc_name_abr}-tms-tg"
-  #       port        = 8443
-  #       protocol    = "TLS"
-  #       target_type = "instance"
-  #       attachments = [
-  #         {
-  #           ec2_key = "tms"
-  #           port    = 8443
-  #         }
-  #       ]
-  #       health_check = {
-  #         protocol = "HTTPS"
-  #         port     = 8443
-  #         path     = "/"
-  #         matcher  = "200,401"
-  #       }
-  #     }
-  #   }
-  #]
+  nlb_listeners = [
+    # {
+    #   key             = "ssrs"
+    #   nlb_key         = "ssrs-nlb"
+    #   nlb_arn         = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.load_balancers["ssrs"].arn
+    #   certificate_arn = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.certificates[local.vpc_name].arn
+    #   protocol        = "TLS"
+    #   port            = 443
+    #   vpc_id          = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
+    #   target_group = {
+    #     name        = "${local.vpc_name_abr}-ssrs-tg"
+    #     port        = 443
+    #     protocol    = "TLS"
+    #     target_type = "instance"
+    #     attachments = [
+    #       {
+    #         ec2_key = "app"
+    #         port    = 443
+    #       }
+    #     ]
+    #     health_check = {
+    #       protocol = "HTTPS"
+    #       port     = 443
+    #       path     = "/"
+    #       matcher  = "200,401"
+    #     }
+    #   }
+    # },
+    # {
+    #   key             = "tms"
+    #   nlb_key         = "tms-nlb"
+    #   nlb_arn         = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.load_balancers["ssrs"].arn
+    #   certificate_arn = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.certificates[local.vpc_name].arn
+    #   protocol        = "TLS"
+    #   port            = 8443
+    #   vpc_id          = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
+    #   target_group = {
+    #     name        = "${local.vpc_name_abr}-tms-tg"
+    #     port        = 8443
+    #     protocol    = "TLS"
+    #     target_type = "instance"
+    #     attachments = [
+    #       {
+    #         ec2_key = "tms"
+    #         port    = 8443
+    #       }
+    #     ]
+    #     health_check = {
+    #       protocol = "HTTPS"
+    #       port     = 8443
+    #       path     = "/"
+    #       matcher  = "200,401"
+    #     }
+    #   }
+    # },
+    {
+      key             = "ssrs"
+      nlb_key         = "ssrs-nlb"
+      nlb_arn         = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.load_balancers["ssrs"].arn
+      certificate_arn = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.certificates[local.vpc_name].arn
+      protocol        = "TLS"
+      port            = 8443
+      vpc_id          = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
+      target_group = {
+        name        = "${local.vpc_name_abr}-ssrs-tg"
+        port        = 443
+        protocol    = "TLS"
+        target_type = "instance"
+        attachments = []
+        health_check = {
+          protocol = "HTTP"
+          port     = 8081
+        }
+      }
+    }
+  ]
 
   target_groups = [
     {
@@ -489,7 +509,7 @@ inputs = {
     #   }
     #   vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
     # }
-  ] 
+  ]
   launch_templates = [
     {
       key              = "app"
@@ -499,8 +519,8 @@ inputs = {
       ami_config = {
         os_release_date = "AL2023"
       }
-      instance_type               = "t3.medium"
-      user_data                   = file("${include.cloud.locals.repo.root}/Bash-script/docker.sh")
+      instance_type = "t3.medium"
+      user_data     = file("${include.cloud.locals.repo.root}/Bash-script/docker.sh")
       vpc_security_group_ids = [
         dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].security_group.app.id
       ]
@@ -516,12 +536,13 @@ inputs = {
       desired_capacity          = 2
       health_check_type         = "ELB"
       health_check_grace_period = 300
-      launch_template_name       = "${local.vpc_name_abr}-app"
-      attach_target_groups     = [
+      launch_template_name      = "${local.vpc_name_abr}-app"
+      attach_target_groups = [
         "${local.vpc_name_abr}-app-tg",
         "${local.vpc_name_abr}-app2-tg",
         "${local.vpc_name_abr}-app3-tg",
-        "${local.vpc_name_abr}-app4-tg"
+        "${local.vpc_name_abr}-app4-tg",
+        "${local.vpc_name_abr}-ssrs-tg"
       ]
       subnet_ids = [
         dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].public_subnet[include.env.locals.subnet_prefix.primary].primary_subnet_id,

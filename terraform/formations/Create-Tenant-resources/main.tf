@@ -109,7 +109,8 @@ module "nlb_listeners" {
       target_group = each.value.target_group != null ? merge(
         each.value.target_group,
         {
-          attachments = [
+          # Only process attachments if they exist and are not empty
+          attachments = (each.value.target_group.attachments != null && length(each.value.target_group.attachments) > 0) ? [
             for item in each.value.target_group.attachments :
             merge(
               item,
@@ -117,7 +118,7 @@ module "nlb_listeners" {
                 target_id = item.ec2_key != null ? module.ec2_instance[item.ec2_key].instance_id : item.target_id
               }
             )
-          ]
+          ] : []
         }
       ) : null
     }
@@ -153,11 +154,18 @@ module "auto_scaling_groups" {
     each.value.attach_target_groups != null ? {
       attach_target_groups = [
         for tg_name in each.value.attach_target_groups :
-        module.target_groups[tg_name].target_group_arn
+        # Check if it's a standalone target group or NLB listener target group
+        contains(keys(module.target_groups), tg_name) ?
+        module.target_groups[tg_name].target_group_arn :
+        # If not found in standalone target groups, look in NLB listeners
+        (contains(keys(module.nlb_listeners), tg_name) ?
+          module.nlb_listeners[tg_name].target_group_arn :
+          tg_name # Fallback to the name itself if not found
+        )
       ]
     } : {}
   )
-  depends_on = [module.launch_templates, module.target_groups]
+  depends_on = [module.launch_templates, module.target_groups, module.nlb_listeners]
 }
 
 
