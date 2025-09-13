@@ -184,7 +184,7 @@ variable "nlb_listeners" {
         protocol = optional(string)
         port     = optional(number)
         path     = optional(string)
-        matcher  = optional(string, "200")
+        matcher  = optional(string)
       })
     }))
   }))

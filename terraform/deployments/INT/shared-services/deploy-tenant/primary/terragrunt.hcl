@@ -441,12 +441,12 @@ inputs = {
       target_group = {
         name        = "${local.vpc_name_abr}-ssrs-tg"
         port        = 8081
-        protocol    = "TCP"  # Changed from HTTP to TCP for TLS listener compatibility
+        protocol    = "TCP" 
         target_type = "instance"
         attachments = []
         health_check = {
-          protocol = "TCP"   # Changed from HTTP to TCP for TLS listener compatibility
-          port     = 8081
+          protocol = "TCP"   
+          port     = 8081 
         }
       }
     }
