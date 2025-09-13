@@ -348,7 +348,7 @@ inputs = {
         }
       ]
     }
-    
+
     # {
     #   index_key = "ans"
     #   # listener_key = "ans"
@@ -431,6 +431,7 @@ inputs = {
   #     }
   #   }
   #]
+  
   target_groups = [
     {
       name        = "${local.vpc_name_abr}-app-tg"

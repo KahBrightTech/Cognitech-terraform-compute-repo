@@ -3,9 +3,9 @@
 set -e
 
 # Configuration Variables - Set defaults or use values from Terraform templatefile
-S3_BUCKET="${s3_bucket:-int-preproduction-use1-shared-services-data-xfer}"
-S3_FOLDER_PATH="${s3_folder_path:-docker-compose}"
-COMPOSE_DIR="${compose_dir:-/opt/docker-compose}"
+S3_BUCKET="$${s3_bucket:-int-preproduction-use1-shared-services-data-xfer}"
+S3_FOLDER_PATH="$${s3_folder_path:-docker-compose}"
+COMPOSE_DIR="$${compose_dir:-/opt/docker-compose}"
 
 log() {
   echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1"
@@ -13,9 +13,9 @@ log() {
 
 # Debug: Print configuration values
 log "Configuration values:"
-log "S3_BUCKET: ${S3_BUCKET}"
-log "S3_FOLDER_PATH: ${S3_FOLDER_PATH}"
-log "COMPOSE_DIR: ${COMPOSE_DIR}"
+log "S3_BUCKET: $${S3_BUCKET}"
+log "S3_FOLDER_PATH: $${S3_FOLDER_PATH}"
+log "COMPOSE_DIR: $${COMPOSE_DIR}"
 
 # Detect OS
 ios_id=""
@@ -187,12 +187,12 @@ install_aws_cli() {
 }
 
 pull_compose_file() {
-  mkdir -p "${COMPOSE_DIR}"
+  mkdir -p "$${COMPOSE_DIR}"
   log "Pulling docker-compose file from S3..."
-  log "S3 URI: s3://${S3_BUCKET}/${S3_FOLDER_PATH}/compose.yml"
-  log "Target path: ${COMPOSE_DIR}/docker-compose.yml"
+  log "S3 URI: s3://$${S3_BUCKET}/$${S3_FOLDER_PATH}/compose.yml"
+  log "Target path: $${COMPOSE_DIR}/docker-compose.yml"
   
-  if aws s3 cp "s3://${S3_BUCKET}/${S3_FOLDER_PATH}/compose.yml" "${COMPOSE_DIR}/docker-compose.yml"; then
+  if aws s3 cp "s3://$${S3_BUCKET}/$${S3_FOLDER_PATH}/compose.yml" "$${COMPOSE_DIR}/docker-compose.yml"; then
     log "Compose file pulled successfully."
   else
     log "Error: Failed to pull compose file from S3. Check bucket name, path, and AWS permissions."
@@ -201,7 +201,7 @@ pull_compose_file() {
 }
 
 run_compose() {
-  cd "${COMPOSE_DIR}"
+  cd "$${COMPOSE_DIR}"
   log "Running docker compose up..."
   
   # Check if docker-compose (standalone) is available first
