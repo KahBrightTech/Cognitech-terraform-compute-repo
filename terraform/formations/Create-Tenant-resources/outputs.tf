@@ -42,6 +42,20 @@ output "nlb_listeners" {
 }
 
 #-------------------------------------------------------
+# NLB listener debug output
+#-------------------------------------------------------
+output "nlb_listeners_debug" {
+  description = "Debug output for NLB Listeners structure"
+  value = var.nlb_listeners != null ? {
+    for listener in var.nlb_listeners :
+    listener.key => {
+      config        = listener
+      module_output = try(module.nlb_listeners[listener.key], "not_found")
+    }
+  } : {}
+}
+
+#-------------------------------------------------------
 # Target Group outputs  
 #-------------------------------------------------------
 output "target_groups" {

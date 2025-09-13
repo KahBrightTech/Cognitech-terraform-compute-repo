@@ -451,7 +451,6 @@ inputs = {
       }
     }
   ]
-  
   target_groups = [
     {
       name        = "${local.vpc_name_abr}-app-tg"

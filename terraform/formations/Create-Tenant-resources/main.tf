@@ -168,7 +168,7 @@ module "auto_scaling_groups" {
           for nlb_config in(var.nlb_listeners != null ? var.nlb_listeners : []) :
           nlb_config.target_group.name => nlb_config.key
           if nlb_config.target_group != null
-        }[tg_name]].target_group_arn :
+        }[tg_name]].arn :
         # If still not found, this is an error - target group doesn't exist
         "ERROR: Target group ${tg_name} not found in standalone target_groups or nlb_listeners"
       ]
