@@ -154,21 +154,26 @@ module "auto_scaling_groups" {
     each.value.attach_target_groups != null ? {
       attach_target_groups = [
         for tg_name in each.value.attach_target_groups :
-        # Check if it's a standalone target group or NLB listener target group
+        # Check if it's a standalone target group first
         contains(keys(module.target_groups), tg_name) ?
         module.target_groups[tg_name].target_group_arn :
-        # If not found in standalone target groups, look in NLB listeners
-        (contains(keys(module.nlb_listeners), tg_name) ?
-          module.nlb_listeners[tg_name].target_group_arn :
-          tg_name # Fallback to the name itself if not found
-        )
+        # If not found in standalone target groups, check NLB listeners
+        # Look for NLB listener that creates a target group with this name
+        length([
+          for nlb_key, nlb_config in(var.nlb_listeners != null ? var.nlb_listeners : []) :
+          nlb_key if nlb_config.target_group != null && nlb_config.target_group.name == tg_name
+        ]) > 0 ?
+        module.nlb_listeners[[
+          for nlb_key, nlb_config in var.nlb_listeners :
+          nlb_key if nlb_config.target_group != null && nlb_config.target_group.name == tg_name
+        ][0]].target_group_arn :
+        # Fallback - could be a direct ARN
+        tg_name
       ]
     } : {}
   )
   depends_on = [module.launch_templates, module.target_groups, module.nlb_listeners]
 }
-
-
 
 
 
