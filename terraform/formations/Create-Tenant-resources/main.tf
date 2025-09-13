@@ -159,12 +159,12 @@ module "auto_scaling_groups" {
         module.target_groups[tg_name].target_group_arn :
         # Check if it's an NLB listener target group by finding a listener with matching target group name
         length([
-          for listener_key, listener_config in var.nlb_listeners :
-          listener_key if listener_config.target_group != null && listener_config.target_group.name == tg_name
+          for listener in var.nlb_listeners :
+          listener.key if listener.target_group != null && listener.target_group.name == tg_name
         ]) > 0 ?
         module.nlb_listeners[[
-          for listener_key, listener_config in var.nlb_listeners :
-          listener_key if listener_config.target_group != null && listener_config.target_group.name == tg_name
+          for listener in var.nlb_listeners :
+          listener.key if listener.target_group != null && listener.target_group.name == tg_name
         ][0]].nlb_target_group_arn :
         # If not found in either, return null (will be filtered out by compact)
         null
