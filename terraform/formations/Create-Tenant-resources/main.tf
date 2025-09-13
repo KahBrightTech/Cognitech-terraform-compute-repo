@@ -149,12 +149,13 @@ module "auto_scaling_groups" {
         version = "$Latest"
       }
     },
-    # Only include attach_target_groups if it's available
-    can(module.target_groups[each.value.key].arn) ? {
-      attach_target_groups = module.target_groups[each.value.key].arn
-      } : (each.value.attach_target_groups != null ? {
-        attach_target_groups = each.value.attach_target_groups
-    } : {})
+    # Convert target group names to ARNs if attach_target_groups is specified
+    each.value.attach_target_groups != null ? {
+      attach_target_groups = [
+        for tg_name in each.value.attach_target_groups :
+        module.target_groups[tg_name].target_group_arn
+      ]
+    } : {}
   )
   depends_on = [module.launch_templates, module.target_groups]
 }
