@@ -444,6 +444,11 @@ inputs = {
         protocol    = "TCP" 
         target_type = "instance"
         attachments = []
+        health_check = {
+          enabled  = true
+          protocol = "TCP"   
+          port     = 8081 
+        }
       }
     }
   ]
