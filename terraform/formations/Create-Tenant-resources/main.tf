@@ -158,17 +158,19 @@ module "auto_scaling_groups" {
         contains(keys(module.target_groups), tg_name) ?
         module.target_groups[tg_name].target_group_arn :
         # If not found in standalone target groups, check NLB listeners
-        # Find the NLB listener key that creates a target group with this name
-        try(
-          module.nlb_listeners[
-            [
-              for nlb_config in(var.nlb_listeners != null ? var.nlb_listeners : []) :
-              nlb_config.key if nlb_config.target_group != null && nlb_config.target_group.name == tg_name
-            ][0]
-          ].target_group_arn,
-          # Fallback - could be a direct ARN or error case
-          tg_name
-        )
+        # Create a map of target group names to listener keys
+        contains(keys({
+          for nlb_config in(var.nlb_listeners != null ? var.nlb_listeners : []) :
+          nlb_config.target_group.name => nlb_config.key
+          if nlb_config.target_group != null
+        }), tg_name) ?
+        module.nlb_listeners[{
+          for nlb_config in(var.nlb_listeners != null ? var.nlb_listeners : []) :
+          nlb_config.target_group.name => nlb_config.key
+          if nlb_config.target_group != null
+        }[tg_name]].target_group_arn :
+        # If still not found, this is an error - target group doesn't exist
+        "ERROR: Target group ${tg_name} not found in standalone target_groups or nlb_listeners"
       ]
     } : {}
   )
