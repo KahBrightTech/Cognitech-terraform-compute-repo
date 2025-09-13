@@ -447,7 +447,6 @@ inputs = {
         health_check = {
           protocol = "TCP"
           port     = 8081
-          matcher  = null 
         }
       }
     }
