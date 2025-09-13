@@ -156,7 +156,7 @@ module "auto_scaling_groups" {
         attach_target_groups = each.value.attach_target_groups
     } : {})
   )
-  depends_on = [module.launch_templates]
+  depends_on = [module.launch_templates, module.target_groups]
 }
 
 
