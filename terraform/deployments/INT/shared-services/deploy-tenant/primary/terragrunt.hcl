@@ -349,31 +349,31 @@ inputs = {
     #     }
     #   ]
     # },
-    {
-      index_key = "ans"
-      # listener_key = "ans"
-      listener_arn = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.load_balancers["app"].default_listener.arn
-      rules = [
-        {
-          key      = "ans"
-          priority = 13
-          type     = "forward"
-          target_groups = [
-            {
-              tg_name = "${local.vpc_name_abr}-ans-tg"
-              weight  = 99
-            }
-          ]
-          conditions = [
-            {
-              host_headers = [
-                "ansibletower.${local.public_hosted_zone}",
-              ]
-            }
-          ]
-        }
-      ]
-    }
+    # {
+    #   index_key = "ans"
+    #   # listener_key = "ans"
+    #   listener_arn = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.load_balancers["app"].default_listener.arn
+    #   rules = [
+    #     {
+    #       key      = "ans"
+    #       priority = 13
+    #       type     = "forward"
+    #       target_groups = [
+    #         {
+    #           tg_name = "${local.vpc_name_abr}-ans-tg"
+    #           weight  = 99
+    #         }
+    #       ]
+    #       conditions = [
+    #         {
+    #           host_headers = [
+    #             "ansibletower.${local.public_hosted_zone}",
+    #           ]
+    #         }
+    #       ]
+    #     }
+    #   ]
+    # }
   ]
   nlb_listeners = [
     # {
