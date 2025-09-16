@@ -649,7 +649,8 @@ inputs = {
           "Name"         = "INTPP-SHR-W-SSRS-02"
         }
       )
-      account_id    = local.account_id
+      account_id = local.account_id
+    }
   ]
 }
 #-------------------------------------------------------
