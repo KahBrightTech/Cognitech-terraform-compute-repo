@@ -78,3 +78,11 @@ output "auto_scaling_groups" {
   description = "Output for Auto Scaling Groups"
   value       = module.auto_scaling_groups
 }
+
+#-------------------------------------------------------
+# DR volume restores outputs
+#-------------------------------------------------------
+output "dr_volume_restores" {
+  description = "Output for DR Volume Restores"
+  value       = module.dr_volume_restores
+}

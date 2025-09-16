@@ -278,3 +278,17 @@ variable "Autoscaling_groups" {
   default = null
 }
 
+variable "dr_volume_restores" {
+  description = "Disaster Recovery Volume Restore configuration"
+  type = list(object({
+    key                  = string
+    name                 = optional(string)
+    source_instance_name = string
+    target_instance_name = string
+    target_az            = string
+    device_names         = list(string)
+    restore_volume_tags  = map(string)
+    account_id           = string
+  }))
+  default = null
+}

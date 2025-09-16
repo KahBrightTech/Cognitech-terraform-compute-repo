@@ -30,7 +30,7 @@ module "target_groups" {
 # EC2 - Creates ec2 instances
 #--------------------------------------------------------------------
 module "ec2_instance" {
-  source   = "git::https://github.com/njibrigthain100/Cognitech-terraform-iac-modules.git//terraform/modules/EC2-instance?ref=v1.3.32"
+  source   = "git::https://github.com/njibrigthain100/Cognitech-terraform-iac-modules.git//terraform/modules/EC2-instance?ref=v1.3.34"
   for_each = (var.ec2_instances != null) ? { for item in var.ec2_instances : item.index => item } : {}
   common   = var.common
   ec2 = merge(
@@ -174,5 +174,12 @@ module "auto_scaling_groups" {
   depends_on = [module.launch_templates, module.target_groups, module.nlb_listeners]
 }
 
-
-
+#--------------------------------------------------------------------
+# EBS Recovery
+# #--------------------------------------------------------------------
+module "ebs_recovery" {
+  source            = "git::https://github.com/njibrigthain100/Cognitech-terraform-iac-modules.git//terraform/modules/EBSRecovery?ref=v1.3.34"
+  for_each          = (var.dr_volume_restores != null) ? { for item in var.dr_volume_restores : item.key => item } : {}
+  common            = var.common
+  dr_volume_restore = each.value
+}
