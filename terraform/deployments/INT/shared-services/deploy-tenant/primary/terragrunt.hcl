@@ -639,7 +639,7 @@ inputs = {
         },
         {
           device_name = "xvdi"
-          size        = 30
+          size        = 75
         }
       ]
       restore_volume_tags = merge(
@@ -650,6 +650,7 @@ inputs = {
         }
       )
       account_id = local.account_id
+      stop_instance = false
     }
   ]
 }

@@ -292,6 +292,7 @@ variable "dr_volume_restores" {
     }))
     restore_volume_tags = map(string)
     account_id          = string
+    stop_instance       = optional(bool, true)
   }))
   default = null
 }
