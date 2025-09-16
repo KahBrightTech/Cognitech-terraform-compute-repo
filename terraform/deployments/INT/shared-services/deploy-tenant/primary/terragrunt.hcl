@@ -651,6 +651,7 @@ inputs = {
       )
       account_id    = local.account_id
       stop_instance = false
+      operation_type = "resize"
     }
   ]
 }
