@@ -281,6 +281,7 @@ variable "Autoscaling_groups" {
 variable "dr_volume_restores" {
   description = "Disaster Recovery Volume Restore configuration"
   type = list(object({
+    key                  = string
     name                 = optional(string)
     source_instance_name = string
     target_instance_name = string
