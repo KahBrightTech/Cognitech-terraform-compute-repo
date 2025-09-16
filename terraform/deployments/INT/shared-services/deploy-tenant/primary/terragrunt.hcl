@@ -620,21 +620,22 @@ inputs = {
   #   }
   # ]
   dr_volume_restores = [
-    key                  = "ssrs1"
-    source_instance_name = "INTPP-SHR-W-SSRS-01"
-    target_instance_name = "INTPP-SHR-W-SSRS-02"
-    target_az            = "us-east-1a"
-    device_names         = ["xvdf", "xvdg", "xvdh", "xvdi"]
-    restore_volume_tags = merge(
-      local.Misc_tags,
-      {
-        "RestoredFrom" = "INTPP-SHR-W-SSRS-01"
-        "Name"         = "INTPP-SHR-W-SSRS-02"
-      }
-    )
-    account_id = local.account_id
+    {
+      key                  = "ssrs1"
+      source_instance_name = "INTPP-SHR-W-SSRS-01"
+      target_instance_name = "INTPP-SHR-W-SSRS-02"
+      target_az            = "us-east-1a"
+      device_names         = ["xvdf", "xvdg", "xvdh", "xvdi"]
+      restore_volume_tags = merge(
+        local.Misc_tags,
+        {
+          "RestoredFrom" = "INTPP-SHR-W-SSRS-01"
+          "Name"         = "INTPP-SHR-W-SSRS-02"
+        }
+      )
+      account_id = local.account_id
+    }
   ]
-
 }
 
 #-------------------------------------------------------
