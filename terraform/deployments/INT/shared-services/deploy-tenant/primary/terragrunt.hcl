@@ -250,12 +250,7 @@ inputs = {
           "WinRMInstall" = "True"
         }
       )
-      # ebs_device_volume = {
-      #   name                  = "xvdf"
-      #   volume_size           = 30
-      #   volume_type           = "gp3"
-      #   delete_on_termination = true
-      # }
+      ebs_device_volume = []
       ebs_root_volume = {
         volume_size           = 50
         volume_type           = "gp3"
