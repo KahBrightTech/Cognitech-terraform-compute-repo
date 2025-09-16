@@ -639,7 +639,7 @@ inputs = {
         },
         {
           device_name = "xvdi"
-          size        = 90
+          size        = 80
         }
       ]
       restore_volume_tags = merge(
