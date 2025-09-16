@@ -161,112 +161,111 @@ inputs = {
     #     type    = "A"
     #   }
     # }
-
-    {
-      index            = "ssrs1"
-      name             = "ssrs-server"
-      backup_plan_name = "${local.aws_account_name}-${local.region_context}-continous-backup"
-      name_override    = "INTPP-SHR-W-SSRS-01"
-      ami_config = {
-        os_release_date  = "W22"
-        os_base_packages = "BASE"
-      }
-      associate_public_ip_address = true
-      instance_type               = "t3.large"
-      iam_instance_profile        = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_profiles[local.vpc_name].iam_profiles.name
-      associate_public_ip_address = true
-      key_name                    = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name}-key-pair"].name
-      custom_tags = merge(
-        local.Misc_tags,
-        {
-          "Name"         = "INTPP-SHR-W-SSRS-01"
-          "DNS_Prefix"   = "ssrs01"
-          "CreateUser"   = "True"
-          "WinRMInstall" = "True"
-        }
-      )
-      ebs_device_volume = [
-        {
-          name                  = "xvdf"
-          volume_size           = 30
-          volume_type           = "gp3"
-          delete_on_termination = true
-        },
-        {
-          name                  = "xvdg"
-          volume_size           = 30
-          volume_type           = "gp3"
-          delete_on_termination = true
-        },
-        {
-          name                  = "xvdh"
-          volume_size           = 30
-          volume_type           = "gp3"
-          delete_on_termination = true
-        },
-        {
-          name                  = "xvdi"
-          volume_size           = 30
-          volume_type           = "gp3"
-          delete_on_termination = true
-        }
-      ]
-      ebs_root_volume = {
-        volume_size           = 50
-        volume_type           = "gp3"
-        delete_on_termination = true
-      }
-      subnet_id     = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].public_subnet[include.env.locals.subnet_prefix.primary].primary_subnet_id
-      Schedule_name = "ansible-server-schedule"
-      security_group_ids = [
-        dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].security_group.app.id
-      ]
-      hosted_zones = {
-        name    = "ssrs01.${dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].zones[local.vpc_name_abr].zone_name}"
-        zone_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].zones[local.vpc_name_abr].zone_id
-        type    = "A"
-      }
-    },
-    {
-      index            = "ssrs2"
-      name             = "ssrs-server"
-      backup_plan_name = "${local.aws_account_name}-${local.region_context}-continous-backup"
-      name_override    = "INTPP-SHR-W-SSRS-02"
-      ami_config = {
-        os_release_date  = "W22"
-        os_base_packages = "BASE"
-      }
-      associate_public_ip_address = true
-      instance_type               = "t3.large"
-      iam_instance_profile        = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_profiles[local.vpc_name].iam_profiles.name
-      associate_public_ip_address = true
-      key_name                    = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name}-key-pair"].name
-      custom_tags = merge(
-        local.Misc_tags,
-        {
-          "Name"         = "INTPP-SHR-W-SSRS-02"
-          "DNS_Prefix"   = "ssrs02"
-          "CreateUser"   = "True"
-          "WinRMInstall" = "True"
-        }
-      )
-      ebs_device_volume = []
-      ebs_root_volume = {
-        volume_size           = 50
-        volume_type           = "gp3"
-        delete_on_termination = true
-      }
-      subnet_id     = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].public_subnet[include.env.locals.subnet_prefix.primary].primary_subnet_id
-      Schedule_name = "ansible-server-schedule"
-      security_group_ids = [
-        dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].security_group.app.id
-      ]
-      hosted_zones = {
-        name    = "ssrs02.${dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].zones[local.vpc_name_abr].zone_name}"
-        zone_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].zones[local.vpc_name_abr].zone_id
-        type    = "A"
-      }
-    },
+    # {
+    #   index            = "ssrs1"
+    #   name             = "ssrs-server"
+    #   backup_plan_name = "${local.aws_account_name}-${local.region_context}-continous-backup"
+    #   name_override    = "INTPP-SHR-W-SSRS-01"
+    #   ami_config = {
+    #     os_release_date  = "W22"
+    #     os_base_packages = "BASE"
+    #   }
+    #   associate_public_ip_address = true
+    #   instance_type               = "t3.large"
+    #   iam_instance_profile        = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_profiles[local.vpc_name].iam_profiles.name
+    #   associate_public_ip_address = true
+    #   key_name                    = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name}-key-pair"].name
+    #   custom_tags = merge(
+    #     local.Misc_tags,
+    #     {
+    #       "Name"         = "INTPP-SHR-W-SSRS-01"
+    #       "DNS_Prefix"   = "ssrs01"
+    #       "CreateUser"   = "True"
+    #       "WinRMInstall" = "True"
+    #     }
+    #   )
+    #   ebs_device_volume = [
+    #     {
+    #       name                  = "xvdf"
+    #       volume_size           = 30
+    #       volume_type           = "gp3"
+    #       delete_on_termination = true
+    #     },
+    #     {
+    #       name                  = "xvdg"
+    #       volume_size           = 30
+    #       volume_type           = "gp3"
+    #       delete_on_termination = true
+    #     },
+    #     {
+    #       name                  = "xvdh"
+    #       volume_size           = 30
+    #       volume_type           = "gp3"
+    #       delete_on_termination = true
+    #     },
+    #     {
+    #       name                  = "xvdi"
+    #       volume_size           = 30
+    #       volume_type           = "gp3"
+    #       delete_on_termination = true
+    #     }
+    #   ]
+    #   ebs_root_volume = {
+    #     volume_size           = 50
+    #     volume_type           = "gp3"
+    #     delete_on_termination = true
+    #   }
+    #   subnet_id     = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].public_subnet[include.env.locals.subnet_prefix.primary].primary_subnet_id
+    #   Schedule_name = "ansible-server-schedule"
+    #   security_group_ids = [
+    #     dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].security_group.app.id
+    #   ]
+    #   hosted_zones = {
+    #     name    = "ssrs01.${dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].zones[local.vpc_name_abr].zone_name}"
+    #     zone_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].zones[local.vpc_name_abr].zone_id
+    #     type    = "A"
+    #   }
+    # },
+    # {
+    #   index            = "ssrs2"
+    #   name             = "ssrs-server"
+    #   backup_plan_name = "${local.aws_account_name}-${local.region_context}-continous-backup"
+    #   name_override    = "INTPP-SHR-W-SSRS-02"
+    #   ami_config = {
+    #     os_release_date  = "W22"
+    #     os_base_packages = "BASE"
+    #   }
+    #   associate_public_ip_address = true
+    #   instance_type               = "t3.large"
+    #   iam_instance_profile        = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_profiles[local.vpc_name].iam_profiles.name
+    #   associate_public_ip_address = true
+    #   key_name                    = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name}-key-pair"].name
+    #   custom_tags = merge(
+    #     local.Misc_tags,
+    #     {
+    #       "Name"         = "INTPP-SHR-W-SSRS-02"
+    #       "DNS_Prefix"   = "ssrs02"
+    #       "CreateUser"   = "True"
+    #       "WinRMInstall" = "True"
+    #     }
+    #   )
+    #   ebs_device_volume = []
+    #   ebs_root_volume = {
+    #     volume_size           = 50
+    #     volume_type           = "gp3"
+    #     delete_on_termination = true
+    #   }
+    #   subnet_id     = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].public_subnet[include.env.locals.subnet_prefix.primary].primary_subnet_id
+    #   Schedule_name = "ansible-server-schedule"
+    #   security_group_ids = [
+    #     dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].security_group.app.id
+    #   ]
+    #   hosted_zones = {
+    #     name    = "ssrs02.${dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].zones[local.vpc_name_abr].zone_name}"
+    #     zone_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].zones[local.vpc_name_abr].zone_id
+    #     type    = "A"
+    #   }
+    # },
     # {
     #   index            = "etl"
     #   name             = "etl-server"
@@ -618,40 +617,40 @@ inputs = {
   #     ]
   #   }
   # ]
-  dr_volume_restores = [
-    {
-      key                  = "ssrs1"
-      source_instance_name = "INTPP-SHR-W-SSRS-01"
-      target_instance_name = "INTPP-SHR-W-SSRS-02"
-      target_az            = "us-east-1a"
-      device_volumes = [
-        {
-          device_name = "xvdf"
-          size        = 50
-        },
-        {
-          device_name = "xvdg"
-          size        = 50
-        },
-        {
-          device_name = "xvdh"
-          size        = 50
-        },
-        {
-          device_name = "xvdi"
-          size        = 80
-        }
-      ]
-      restore_volume_tags = merge(
-        local.Misc_tags,
-        {
-          "RestoredFrom" = "INTPP-SHR-W-SSRS-01"
-          "Name"         = "INTPP-SHR-W-SSRS-02"
-        }
-      )
-      account_id = local.account_id
-    }
-  ]
+  # dr_volume_restores = [
+  #   {
+  #     key                  = "ssrs1"
+  #     source_instance_name = "INTPP-SHR-W-SSRS-01"
+  #     target_instance_name = "INTPP-SHR-W-SSRS-02"
+  #     target_az            = "us-east-1a"
+  #     device_volumes = [
+  #       {
+  #         device_name = "xvdf"
+  #         size        = 50
+  #       },
+  #       {
+  #         device_name = "xvdg"
+  #         size        = 50
+  #       },
+  #       {
+  #         device_name = "xvdh"
+  #         size        = 50
+  #       },
+  #       {
+  #         device_name = "xvdi"
+  #         size        = 80
+  #       }
+  #     ]
+  #     restore_volume_tags = merge(
+  #       local.Misc_tags,
+  #       {
+  #         "RestoredFrom" = "INTPP-SHR-W-SSRS-01"
+  #         "Name"         = "INTPP-SHR-W-SSRS-02"
+  #       }
+  #     )
+  #     account_id = local.account_id
+  #   }
+  # ]
 }
 #-------------------------------------------------------
 # State Configuration
