@@ -650,9 +650,6 @@ inputs = {
         }
       )
       account_id    = local.account_id
-      stop_instance = false
-      resize        = true
-    }
   ]
 }
 #-------------------------------------------------------
