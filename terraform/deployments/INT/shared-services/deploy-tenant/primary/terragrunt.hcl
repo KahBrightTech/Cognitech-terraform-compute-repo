@@ -161,6 +161,7 @@ inputs = {
     #     type    = "A"
     #   }
     # }
+    
     {
       index            = "ssrs1"
       name             = "ssrs-server"
@@ -266,7 +267,7 @@ inputs = {
         type    = "A"
       }
     },
-    
+
     # {
     #   index            = "etl"
     #   name             = "etl-server"

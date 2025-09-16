@@ -30,7 +30,7 @@ module "target_groups" {
 # EC2 - Creates ec2 instances
 #--------------------------------------------------------------------
 module "ec2_instance" {
-  source   = "git::https://github.com/njibrigthain100/Cognitech-terraform-iac-modules.git//terraform/modules/EC2-instance?ref=v1.3.31"
+  source   = "git::https://github.com/njibrigthain100/Cognitech-terraform-iac-modules.git//terraform/modules/EC2-instance?ref=v1.3.32"
   for_each = (var.ec2_instances != null) ? { for item in var.ec2_instances : item.index => item } : {}
   common   = var.common
   ec2 = merge(
