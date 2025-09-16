@@ -627,15 +627,15 @@ inputs = {
       device_volumes = [
         {
           device_name = "xvdf"
-          size        = 30
+          size        = 50
         },
         {
           device_name = "xvdg"
-          size        = 30
+          size        = 50
         },
         {
           device_name = "xvdh"
-          size        = 30
+          size        = 50
         },
         {
           device_name = "xvdi"
