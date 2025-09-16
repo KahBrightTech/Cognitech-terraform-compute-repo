@@ -626,28 +626,20 @@ inputs = {
       target_az            = "us-east-1a"
       device_volumes = [
         {
-          name                  = "xvdf"
-          volume_size           = 30
-          volume_type           = "gp3"
-          delete_on_termination = true
+          device_name = "xvdf"
+          size        = 30
         },
         {
-          name                  = "xvdg"
-          volume_size           = 30
-          volume_type           = "gp3"
-          delete_on_termination = true
+          device_name = "xvdg"
+          size        = 30
         },
         {
-          name                  = "xvdh"
-          volume_size           = 30
-          volume_type           = "gp3"
-          delete_on_termination = true
+          device_name = "xvdh"
+          size        = 30
         },
         {
-          name                  = "xvdi"
-          volume_size           = 30
-          volume_type           = "gp3"
-          delete_on_termination = true
+          device_name = "xvdi"
+          size        = 30
         }
       ]
       restore_volume_tags = merge(
