@@ -178,7 +178,7 @@ module "auto_scaling_groups" {
 # EBS Recovery
 # #--------------------------------------------------------------------
 module "ebs_recovery" {
-  source            = "git::https://github.com/njibrigthain100/Cognitech-terraform-iac-modules.git//terraform/modules/EBSRecovery?ref=v1.3.35"
+  source            = "git::https://github.com/njibrigthain100/Cognitech-terraform-iac-modules.git//terraform/modules/EBSRecovery?ref=v1.3.36"
   for_each          = (var.dr_volume_restores != null) ? { for item in var.dr_volume_restores : item.key => item } : {}
   common            = var.common
   dr_volume_restore = each.value
