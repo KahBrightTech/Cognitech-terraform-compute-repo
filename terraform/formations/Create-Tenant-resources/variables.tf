@@ -281,16 +281,14 @@ variable "Autoscaling_groups" {
 variable "dr_volume_restores" {
   description = "Disaster Recovery Volume Restore configuration"
   type = list(object({
-    key                  = string
     name                 = optional(string)
     source_instance_name = string
     target_instance_name = string
     target_az            = string
-    device_names         = list(string)
-    device_volumes = optional(map(object({
+    device_volumes = map(object({
       device_name = string
       size        = optional(number) # Size in GB, if not specified uses snapshot size
-    })))
+    }))
     restore_volume_tags = map(string)
     account_id          = string
   }))

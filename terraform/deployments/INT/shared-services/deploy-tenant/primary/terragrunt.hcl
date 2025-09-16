@@ -624,7 +624,6 @@ inputs = {
       source_instance_name = "INTPP-SHR-W-SSRS-01"
       target_instance_name = "INTPP-SHR-W-SSRS-02"
       target_az            = "us-east-1a"
-      # device_names         = ["xvdf", "xvdg", "xvdh", "xvdi"]
       device_volumes = [
         {
           name                  = "xvdf"
