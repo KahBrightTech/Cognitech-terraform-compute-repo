@@ -639,7 +639,7 @@ inputs = {
         },
         {
           device_name = "xvdi"
-          size        = 75
+          size        = 60
         }
       ]
       restore_volume_tags = merge(
@@ -649,7 +649,7 @@ inputs = {
           "Name"         = "INTPP-SHR-W-SSRS-02"
         }
       )
-      account_id = local.account_id
+      account_id    = local.account_id
       stop_instance = false
     }
   ]
