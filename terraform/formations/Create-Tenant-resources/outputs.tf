@@ -84,5 +84,5 @@ output "auto_scaling_groups" {
 #-------------------------------------------------------
 output "dr_volume_restores" {
   description = "Output for DR Volume Restores"
-  value       = module.dr_volume_restores
+  value       = module.ebs_recovery
 }
