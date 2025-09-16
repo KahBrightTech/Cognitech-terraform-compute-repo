@@ -624,7 +624,34 @@ inputs = {
       source_instance_name = "INTPP-SHR-W-SSRS-01"
       target_instance_name = "INTPP-SHR-W-SSRS-02"
       target_az            = "us-east-1a"
-      device_names         = ["xvdf", "xvdg", "xvdh", "xvdi"]
+      # device_names         = ["xvdf", "xvdg", "xvdh", "xvdi"]
+      device_volumes = 
+      [
+        {
+          name                  = "xvdf"
+          volume_size           = 30
+          volume_type           = "gp3"
+          delete_on_termination = true
+        },
+        {
+          name                  = "xvdg"
+          volume_size           = 30
+          volume_type           = "gp3"
+          delete_on_termination = true
+        },
+        {
+          name                  = "xvdh"
+          volume_size           = 30
+          volume_type           = "gp3"
+          delete_on_termination = true
+        },
+        {
+          name                  = "xvdi"
+          volume_size           = 30
+          volume_type           = "gp3"
+          delete_on_termination = true
+        }
+      ]
       restore_volume_tags = merge(
         local.Misc_tags,
         {

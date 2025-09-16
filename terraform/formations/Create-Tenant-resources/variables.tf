@@ -287,8 +287,12 @@ variable "dr_volume_restores" {
     target_instance_name = string
     target_az            = string
     device_names         = list(string)
-    restore_volume_tags  = map(string)
-    account_id           = string
+    device_volumes = optional(map(object({
+      device_name = string
+      size        = optional(number) # Size in GB, if not specified uses snapshot size
+    })))
+    restore_volume_tags = map(string)
+    account_id          = string
   }))
   default = null
 }
