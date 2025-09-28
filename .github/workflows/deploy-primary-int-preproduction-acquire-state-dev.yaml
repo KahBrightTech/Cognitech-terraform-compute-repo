@@ -1,4 +1,4 @@
-name: Deploy-primary-int-acquire-state-dev
+name: Deploy-primary-int-preproduction-acquire-state-dev
 
 on:
   push:
@@ -6,8 +6,8 @@ on:
       - main # Run on push to the main branch
       - "*" # Run on push to any feature branch
     paths:
-      - ".github/workflows/deploy-primary-int-acquire-state-dev.yaml"
-      - "terraform/deployments/INT/dev/acquire-state/primary/**/*"
+      - ".github/workflows/deploy-primary-int-preproduction-acquire-state-dev.yaml"
+      - "terraform/deployments/int-preproduction/Dev/acquire-state/primary/**/*"
   workflow_dispatch:
     inputs:
       terragrunt_action:
@@ -26,7 +26,7 @@ on:
 env:
   IAM_ROLE: arn:aws:iam::730335294148:role/int-OIDCGitHubRole-role
   REGION: us-east-1
-  DEPLOYMENT_PATH: terraform/deployments/INT/dev/acquire-state/primary
+  DEPLOYMENT_PATH: terraform/deployments/int-preproduction/Dev/acquire-state/primary
 
 permissions:
   packages: write
