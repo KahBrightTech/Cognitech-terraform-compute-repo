@@ -16,23 +16,24 @@ include "env" {
 #-------------------------------------------------------
 locals {
 
-  deployment      = "acquire-tfstate"
-  region_context  = "primary"
-  region          = local.region_context == "primary" ? include.cloud.locals.regions.use1.name : include.cloud.locals.regions.usw2.name
-  region_prefix   = local.region_context == "primary" ? include.cloud.locals.region_prefix.primary : include.cloud.locals.region_prefix.secondary
-  region_blk      = local.region_context == "primary" ? include.cloud.locals.regions.use1 : include.cloud.locals.regions.usw2
-  account_details = include.cloud.locals.account_info[include.env.locals.name_abr]
-  account_name    = local.account_details.name
-  deployment_name = "terraform/${include.env.locals.name_abr}-${local.vpc_name}-${local.deployment}"
-  state_bucket    = local.region_context == "primary" ? "${local.account_name}-${include.cloud.locals.region_prefix.primary}-${local.vpc_name}-config-bucket" : "${local.account_name}-${include.cloud.locals.region_prefix.secondary}-${local.vpc_name}-config-bucket"
-  vpc_name        = "shared-services"
-
+  deployment       = "acquire-tfstate"
+  region_context   = "primary"
+  region           = local.region_context == "primary" ? include.cloud.locals.regions.use1.name : include.cloud.locals.regions.usw2.name
+  region_prefix    = local.region_context == "primary" ? include.cloud.locals.region_prefix.primary : include.cloud.locals.region_prefix.secondary
+  region_blk       = local.region_context == "primary" ? include.cloud.locals.regions.use1 : include.cloud.locals.regions.usw2
+  account_details  = include.cloud.locals.account_info[include.env.locals.name_abr]
+  account_name     = local.account_details.name
+  deployment_name  = "terraform/${include.env.locals.repo_name}-${local.aws_account_name}-${local.deployment}-${local.vpc_name}-${local.region_context}"
+  state_bucket     = local.region_context == "primary" ? "${local.account_name}-${include.cloud.locals.region_prefix.primary}-${local.vpc_name}-config-bucket" : "${local.account_name}-${include.cloud.locals.region_prefix.secondary}-${local.vpc_name}-config-bucket"
+  vpc_name         = "shared-services"
+  account_id       = include.cloud.locals.account_info[include.env.locals.name_abr].number
+  aws_account_name = include.cloud.locals.account_info[include.env.locals.name_abr].name
   # Composite variables 
   tags = merge(
     include.env.locals.tags,
     {
       Environment = "shr"
-      ManagedBy   = "terraform:${local.deployment_name}"
+      ManagedBy   = "${local.deployment_name}"
     }
   )
 }
@@ -51,7 +52,7 @@ inputs = {
     {
       name            = "Shared"
       bucket_name     = include.env.locals.network_config_state.bucket_name[local.region_context]
-      bucket_key      = "terraform/${include.env.locals.name_abr}-${local.vpc_name}-${local.region_context}/terraform.tfstate"
+      bucket_key      = "terraform/${include.env.locals.repo_name}-${local.aws_account_name}-${include.env.locals.network_deployment_types.shared_services}-${local.vpc_name}-${local.region_context}/terraform.tfstate"
       lock_table_name = include.env.locals.network_config_state.remote_dynamodb_table
     }
   ]

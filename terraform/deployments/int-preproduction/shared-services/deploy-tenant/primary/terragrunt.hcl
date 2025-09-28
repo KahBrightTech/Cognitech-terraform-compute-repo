@@ -15,7 +15,7 @@ include "env" {
 # Locals 
 #-------------------------------------------------------
 locals {
-  deployment         = "tenants-resources"
+  deployment         = "deploy-tenant"
   region_context     = "primary"
   deploy_globally    = "true"
   region             = local.region_context == "primary" ? include.cloud.locals.regions.use1.name : include.cloud.locals.regions.usw2.name
@@ -220,6 +220,7 @@ inputs = {
     #       "DNS_Prefix"   = "ssrs01"
     #       "CreateUser"   = "True"
     #       "WinRMInstall" = "True"
+    #       "WindowsBannerConfig" = "True"
     #     }
     #   )
     #   ebs_device_volume = [
@@ -285,6 +286,7 @@ inputs = {
     #       "DNS_Prefix"   = "ssrs02"
     #       "CreateUser"   = "True"
     #       "WinRMInstall" = "True"
+    #       "WindowsBannerConfig" = "True"
     #     }
     #   )
     #   ebs_device_volume = []
@@ -324,6 +326,7 @@ inputs = {
     #       "Name"       = "INTPP-SHR-W-ETL-01"
     #       "DNS_Prefix" = "etl01"
     #       "CreateUser" = "True"
+    #       "WindowsBannerConfig" = "True"
     #     }
     #   )
     #   ebs_device_volume = {
