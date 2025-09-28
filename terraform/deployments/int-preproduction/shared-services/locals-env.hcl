@@ -3,6 +3,7 @@ locals {
 
   # Simple variables 
   name_abr  = "intpp"
+  network_repo = "cognitech-terraform-network-repo"
   repo_name = "cognitech-terraform-compute-repo"
   network_deployment_types = {
     shared_services = "Shared-account"
