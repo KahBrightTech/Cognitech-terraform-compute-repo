@@ -128,7 +128,6 @@ jobs:
       - name: Apply Terragrunt
         working-directory: ${{ env.DEPLOYMENT_PATH }}
         run: terragrunt run-all apply --terragrunt-non-interactive
-
   Destroy:
     needs: Plan
     runs-on: ubuntu-latest
