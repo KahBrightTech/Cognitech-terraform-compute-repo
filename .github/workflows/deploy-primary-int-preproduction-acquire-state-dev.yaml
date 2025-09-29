@@ -7,7 +7,7 @@ on:
       - "*" # Run on push to any feature branch
     paths:
       - ".github/workflows/deploy-primary-int-preproduction-acquire-state-dev.yaml"
-      - "terraform/deployments/int-preproduction/Dev/acquire-state/primary/**"
+      - "terraform/deployments/int-preproduction/Dev/acquire-state/primary/**/*"
   workflow_dispatch:
     inputs:
       terragrunt_action:
