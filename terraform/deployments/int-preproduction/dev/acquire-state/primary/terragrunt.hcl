@@ -24,10 +24,11 @@ locals {
   account_details  = include.cloud.locals.account_info[include.env.locals.name_abr]
   account_name     = local.account_details.name
   deployment_name  = "terraform/${include.env.locals.repo_name}-${local.aws_account_name}-${local.deployment}-${local.vpc_name}-${local.region_context}"
-  state_bucket     = local.region_context == "primary" ? "${local.account_name}-${include.cloud.locals.region_prefix.primary}-shared-services-config-bucket" : "${local.account_name}-${include.cloud.locals.region_prefix.secondary}-${local.vpc_name}-config-bucket"
+  state_bucket     = local.region_context == "primary" ? "${local.account_name}-${include.cloud.locals.region_prefix.primary}-${local.shared_vpc_name}-config-bucket" : "${local.account_name}-${include.cloud.locals.region_prefix.secondary}-${local.vpc_name}-config-bucket"
   account_id       = include.cloud.locals.account_info[include.env.locals.name_abr].number
   aws_account_name = include.cloud.locals.account_info[include.env.locals.name_abr].name
   ## Updates these variables as per the product/service
+  shared_vpc_name = "shared-services"
   vpc_name     = "development"
   vpc_name_abr = "dev"
   # Composite variables 
@@ -54,7 +55,7 @@ inputs = {
     {
       name            = "Shared"
       bucket_name     = include.env.locals.network_config_state.bucket_name[local.region_context]
-      bucket_key      = "terraform/${include.env.locals.network_repo}-${local.aws_account_name}-${include.env.locals.network_deployment_types.shared_services}-${local.vpc_name}-${local.region_context}/terraform.tfstate"
+      bucket_key      = "terraform/${include.env.locals.network_repo}-${local.aws_account_name}-${include.env.locals.network_deployment_types.shared_services}-${local.shared_vpc_name}-${local.region_context}/terraform.tfstate"
       lock_table_name = include.env.locals.network_config_state.remote_dynamodb_table
     },
     {
