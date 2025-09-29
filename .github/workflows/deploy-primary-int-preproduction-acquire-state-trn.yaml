@@ -7,7 +7,7 @@ on:
       - "*" # Run on push to any feature branch
     paths:
       - ".github/workflows/deploy-primary-int-preproduction-acquire-state-trn.yaml"
-      - "terraform/deployments/int-preproduction/Trn/acquire-state/primary/**/*"
+      - "terraform/deployments/int-preproduction/trn/acquire-state/primary/**/*"
   workflow_dispatch:
     inputs:
       terragrunt_action:
@@ -26,7 +26,7 @@ on:
 env:
   IAM_ROLE: arn:aws:iam::730335294148:role/int-OIDCGitHubRole-role
   REGION: us-east-1
-  DEPLOYMENT_PATH: terraform/deployments/int-preproduction/Trn/acquire-state/primary
+  DEPLOYMENT_PATH: terraform/deployments/int-preproduction/trn/acquire-state/primary
 
 permissions:
   packages: write
