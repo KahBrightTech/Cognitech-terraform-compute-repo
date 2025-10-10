@@ -15,7 +15,6 @@ include "env" {
 # Locals 
 #-------------------------------------------------------
 locals {
-  deployment         = "deploy-tenant"
   region_context     = "primary"
   deploy_globally    = "true"
   region             = local.region_context == "primary" ? include.cloud.locals.regions.use1.name : include.cloud.locals.regions.usw2.name
@@ -23,13 +22,15 @@ locals {
   region_blk         = local.region_context == "primary" ? include.cloud.locals.regions.use1 : include.cloud.locals.regions.usw2
   account_details    = include.cloud.locals.account_info[include.env.locals.name_abr]
   account_name       = local.account_details.name
-  deployment_name    = "terraform/${include.env.locals.name_abr}-${local.vpc_name}-${local.deployment}"
+  deployment_name    = "terraform/${include.env.locals.repo_name}-${local.aws_account_name}-${local.deployment}-${local.vpc_name}-${local.region_context}"
   state_bucket       = local.region_context == "primary" ? "${local.account_name}-${include.cloud.locals.region_prefix.primary}-${local.vpc_name}-config-bucket" : "${local.account_name}-${include.cloud.locals.region_prefix.secondary}-${local.vpc_name}-config-bucket"
-  vpc_name           = "shared-services"
-  vpc_name_abr       = "shared"
   account_id         = include.cloud.locals.account_info[include.env.locals.name_abr].number
   aws_account_name   = include.cloud.locals.account_info[include.env.locals.name_abr].name
   public_hosted_zone = "${local.vpc_name_abr}.${include.env.locals.public_domain}"
+  deployment         = "deploy-tenant"
+  ## Updates these variables as per the product/service
+  vpc_name     = "shared-services"
+  vpc_name_abr = "shared"
   Misc_tags = {
     "PrivateHostedZone" = "shared.cognitech.com"
     "PublicHostedZone"  = "cognitech.com"
@@ -351,6 +352,47 @@ inputs = {
     #     type    = "A"
     #   }
     # }
+    {
+      index            = "mid"
+      name             = "mid-server"
+      backup_plan_name = "${local.aws_account_name}-${local.region_context}-continous-backup"
+      name_override    = "INTPP-SHR-W-MID-01"
+      ami_config = {
+        os_release_date  = "W22"
+        os_base_packages = "BASE"
+      }
+      associate_public_ip_address = true
+      instance_type               = "t3.large"
+      iam_instance_profile        = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_profiles[local.vpc_name].iam_profiles.name
+      associate_public_ip_address = true
+      key_name                    = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name}-key-pair"].name
+      custom_tags = merge(
+        local.Misc_tags,
+        {
+          "Name"                = "INTPP-SHR-W-MID-01"
+          "DNS_Prefix"          = "mid01"
+          "CreateUser"          = "True"
+          "WinRMInstall"        = "True"
+          "WindowsBannerConfig" = "True"
+        }
+      )
+      ebs_device_volume = []
+      ebs_root_volume = {
+        volume_size           = 50
+        volume_type           = "gp3"
+        delete_on_termination = true
+      }
+      subnet_id     = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].public_subnet[include.env.locals.subnet_prefix.primary].primary_subnet_id
+      Schedule_name = "ansible-server-schedule"
+      security_group_ids = [
+        dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].security_group.app.id
+      ]
+      hosted_zones = {
+        name    = "mid01.${dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].zones[local.vpc_name_abr].zone_name}"
+        zone_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].zones[local.vpc_name_abr].zone_id
+        type    = "A"
+      }
+    }
   ]
   alb_listeners = [
     # {
