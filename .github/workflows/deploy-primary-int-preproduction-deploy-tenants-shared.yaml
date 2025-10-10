@@ -7,7 +7,7 @@ on:
       - "*" # Run on push to any feature branch
     paths:
       - ".github/workflows/deploy-primary-int-preproduction-deploy-tenants-shared.yaml"
-      - "terraform/deployments/int-preproduction/shared-services/deploy-tenant/primary/terragrunt.hcl/**/*"
+      - "terraform/deployments/int-preproduction/shared-services/deploy-tenant/primary/**/*"
   workflow_dispatch:
     inputs:
       terragrunt_action:
@@ -26,7 +26,7 @@ on:
 env:
   IAM_ROLE: arn:aws:iam::730335294148:role/int-OIDCGitHubRole-role
   REGION: us-east-1
-  DEPLOYMENT_PATH: terraform/deployments/int-preproduction/shared-services/deploy-tenant/primary/terragrunt.hcl
+  DEPLOYMENT_PATH: terraform/deployments/int-preproduction/shared-services/deploy-tenant/primary
 
 permissions:
   packages: write
