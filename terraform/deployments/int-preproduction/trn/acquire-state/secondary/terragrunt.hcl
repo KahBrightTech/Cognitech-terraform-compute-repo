@@ -23,7 +23,7 @@ locals {
   region_blk       = local.region_context == "primary" ? include.cloud.locals.regions.use1 : include.cloud.locals.regions.usw2
   account_details  = include.cloud.locals.account_info[include.env.locals.name_abr]
   account_name     = local.account_details.name
-  deployment_name  = "terraform/${include.env.locals.repo_name}-${local.aws_account_name}-${local.deployment}-${local.vpc_name}-${local.region_context}"
+  deployment_name  = "terraform/${include.env.locals.repo_name}-${local.aws_account_name}-${local.vpc_name_abr}-${local.deployment}-${local.region_context}"
   state_bucket     = local.region_context == "primary" ? "${local.account_name}-${include.cloud.locals.region_prefix.primary}-${local.shared_vpc_name}-config-bucket" : "${local.account_name}-${include.cloud.locals.region_prefix.secondary}-${local.vpc_name}-config-bucket"
   account_id       = include.cloud.locals.account_info[include.env.locals.name_abr].number
   aws_account_name = include.cloud.locals.account_info[include.env.locals.name_abr].name
@@ -35,7 +35,7 @@ locals {
   tags = merge(
     include.env.locals.tags,
     {
-      Environment = "dev"
+      Environment = "trn"
       ManagedBy   = "${local.deployment_name}"
     }
   )
