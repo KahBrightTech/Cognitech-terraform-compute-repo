@@ -15,25 +15,25 @@ include "env" {
 # Locals 
 #-------------------------------------------------------
 locals {
-  region_context     = "primary"
-  deploy_globally    = "true"
-  region             = local.region_context == "primary" ? include.cloud.locals.regions.use1.name : include.cloud.locals.regions.usw2.name
-  region_prefix      = local.region_context == "primary" ? include.cloud.locals.region_prefix.primary : include.cloud.locals.region_prefix.secondary
-  region_blk         = local.region_context == "primary" ? include.cloud.locals.regions.use1 : include.cloud.locals.regions.usw2
-  account_details    = include.cloud.locals.account_info[include.env.locals.name_abr]
-  account_name       = local.account_details.name
-  deployment_name    = "terraform/${include.cloud.locals.repo_name}-${local.aws_account_name}-${local.vpc_name_abr}-${local.deployment}-${local.region_context}"
-  state_bucket       = local.region_context == "primary" ? "${local.account_name}-${include.cloud.locals.region_prefix.primary}-${local.vpc_name_abr}-config-bucket" : "${local.account_name}-${include.cloud.locals.region_prefix.secondary}-${local.vpc_name_abr}-config-bucket"
-  account_id         = include.cloud.locals.account_info[include.env.locals.name_abr].number
-  aws_account_name   = include.cloud.locals.account_info[include.env.locals.name_abr].name
-  public_hosted_zone = "${local.vpc_name_abr}.${include.env.locals.public_domain}"
-  deployment         = "deploy-tenant"
+  region_context   = "primary"
+  deploy_globally  = "true"
+  region           = local.region_context == "primary" ? include.cloud.locals.regions.use1.name : include.cloud.locals.regions.usw2.name
+  region_prefix    = local.region_context == "primary" ? include.cloud.locals.region_prefix.primary : include.cloud.locals.region_prefix.secondary
+  region_blk       = local.region_context == "primary" ? include.cloud.locals.regions.use1 : include.cloud.locals.regions.usw2
+  account_details  = include.cloud.locals.account_info[include.env.locals.name_abr]
+  account_name     = local.account_details.name
+  deployment_name  = "terraform/${include.cloud.locals.repo_name}-${local.aws_account_name}-${local.vpc_name_abr}-${local.deployment}-${local.region_context}"
+  state_bucket     = local.region_context == "primary" ? "${local.account_name}-${include.cloud.locals.region_prefix.primary}-${local.vpc_name_abr}-config-bucket" : "${local.account_name}-${include.cloud.locals.region_prefix.secondary}-${local.vpc_name_abr}-config-bucket"
+  account_id       = include.cloud.locals.account_info[include.env.locals.name_abr].number
+  aws_account_name = include.cloud.locals.account_info[include.env.locals.name_abr].name
+  # public_hosted_zone = "${local.vpc_name_abr}.${include.env.locals.public_domain}"
+  deployment = "deploy-tenant"
   ## Updates these variables as per the product/service
   vpc_name     = "shared-services"
   vpc_name_abr = "shared"
   Misc_tags = {
     "PrivateHostedZone" = "shared.cognitech.com"
-    "PublicHostedZone"  = "cognitech.com"
+    # "PublicHostedZone"  = "cognitech.com"
   }
 
   # Composite variables 
@@ -70,90 +70,87 @@ inputs = {
     account_name_abr = include.env.locals.name_abr
   }
   ec2_instances = [
-    # {
-    #   index            = "nfs"
-    #   name             = "ansible-server"
-    #   backup_plan_name = "${local.aws_account_name}-${local.region_context}-continous-backup"
-    #   name_override    = "INTPP-SHR-L-NFS-01"
-    #   ami_config = {
-    #     os_release_date = "AL2023"
-    #   }
-    #   associate_public_ip_address = true
-    #   instance_type               = "t3.large"
-    #   iam_instance_profile        = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_profiles[local.vpc_name].iam_profiles.name
-    #   associate_public_ip_address = true
-    #   key_name                    = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name}-key-pair"].name
-    #   custom_tags = merge(
-    #     local.Misc_tags,
-    #     {
-    #       "Name"       = "INTPP-SHR-L-NFS-01"
-    #       "DNS_Prefix" = "nfs01"
-    #       "CreateUser" = "True"
-    #     }
-    #   )
-    #   ebs_device_volume = []
-    #   ebs_root_volume = {
-    #     volume_size           = 30
-    #     volume_type           = "gp3"
-    #     delete_on_termination = true
-    #   }
-    #   subnet_id     = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].public_subnet[include.env.locals.subnet_prefix.primary].primary_subnet_id
-    #   Schedule_name = "nfs-server-schedule"
-    #   security_group_ids = [
-    #     dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].security_group.app.id
-    #   ]
-    #   hosted_zones = {
-    #     name    = "nfs01.${dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].zones[local.vpc_name_abr].zone_name}"
-    #     zone_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].zones[local.vpc_name_abr].zone_id
-    #     type    = "A"
-    #   }
-    # },
-    #{
-    #   index            = "ans"
-    #   name             = "ansible-server"
-    #   backup_plan_name = "${local.aws_account_name}-${local.region_context}-continous-backup"
-    #   attach_tg        = ["${local.vpc_name_abr}-ans-tg"]
-    #   name_override    = "INTPP-SHR-L-ANSIBLE-01"
-    #   ami_config = {
-    #     os_release_date = "RHEL9"
-    #   }
-    #   associate_public_ip_address = true
-    #   instance_type               = "t3.large"
-    #   iam_instance_profile        = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_profiles[local.vpc_name].iam_profiles.name
-    #   associate_public_ip_address = true
-    #   key_name                    = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name}-key-pair"].name
-    #   custom_tags = merge(
-    #     local.Misc_tags,
-    #     {
-    #       "Name"           = "INTPP-SHR-L-ANSIBLE-01"
-    #       "DNS_Prefix"     = "ans01"
-    #       "AnsibleInstall" = "True"
-    #       "CreateUser"     = "True"
-    #     }
-    #   )
-    #   ebs_device_volume = {
-    #     name                  = "xvdf"
-    #     volume_size           = 30
-    #     volume_type           = "gp3"
-    #     delete_on_termination = true
-    #     encrypted             = false
-    #   }
-    #   ebs_root_volume = {
-    #     volume_size           = 30
-    #     volume_type           = "gp3"
-    #     delete_on_termination = true
-    #   }
-    #   subnet_id     = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].public_subnet[include.env.locals.subnet_prefix.primary].primary_subnet_id
-    #   Schedule_name = "ansible-server-schedule"
-    #   security_group_ids = [
-    #     dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].security_group.app.id
-    #   ]
-    #   hosted_zones = {
-    #     name    = "ans01.${dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].zones[local.vpc_name_abr].zone_name}"
-    #     zone_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].zones[local.vpc_name_abr].zone_id
-    #     type    = "A"
-    #   }
-    # },
+    {
+      index            = "bastion1"
+      name             = "bastion-server"
+      backup_plan_name = "${local.aws_account_name}-${local.region_context}-continous-backup"
+      name_override    = "INTPP-SHR-W-BASTION-01"
+      ami_config = {
+        os_release_date  = "W22"
+        os_base_packages = "BASE"
+      }
+      associate_public_ip_address = true
+      instance_type               = "t3.large"
+      iam_instance_profile        = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_profiles[local.vpc_name].iam_profiles.name
+      associate_public_ip_address = true
+      key_name                    = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name}-key-pair"].name
+      custom_tags = merge(
+        local.Misc_tags,
+        {
+          "Name"                = "INTPP-SHR-W-BASTION-01"
+          "DNS_Prefix"          = "bastions01"
+          "CreateUser"          = "True"
+          "WinRMInstall"        = "True"
+          "WindowsBannerConfig" = "True"
+          PuttyInstall          = "True"
+        }
+      )
+      ebs_device_volume = []
+      ebs_root_volume = {
+        volume_size           = 20
+        volume_type           = "gp3"
+        delete_on_termination = true
+      }
+      subnet_id     = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].public_subnet[include.env.locals.subnet_prefix.primary].primary_subnet_id
+      Schedule_name = "ansible-server-schedule"
+      security_group_ids = [
+        dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].security_group.bastion.id
+      ]
+      hosted_zones = {
+        name    = "bastions01.${dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].zones[local.vpc_name_abr].zone_name}"
+        zone_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].zones[local.vpc_name_abr].zone_id
+        type    = "A"
+      }
+    },
+    {
+      index            = "ans"
+      name             = "ansible-server"
+      backup_plan_name = "${local.aws_account_name}-${local.region_context}-continous-backup"
+      attach_tg        = ["${local.vpc_name_abr}-ans-tg"]
+      name_override    = "INTPP-SHR-L-ANSIBLE-01"
+      ami_config = {
+        os_release_date = "RHEL9"
+      }
+      associate_public_ip_address = true
+      instance_type               = "t3.large"
+      iam_instance_profile        = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_profiles[local.vpc_name].iam_profiles.name
+      associate_public_ip_address = false
+      key_name                    = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name}-key-pair"].name
+      custom_tags = merge(
+        local.Misc_tags,
+        {
+          "Name"           = "INTPP-SHR-L-ANSIBLE-01"
+          "DNS_Prefix"     = "ans01"
+          "AnsibleInstall" = "True"
+          "CreateUser"     = "True"
+        }
+      )
+      ebs_root_volume = {
+        volume_size           = 15
+        volume_type           = "gp3"
+        delete_on_termination = true
+      }
+      subnet_id     = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].public_subnet[include.env.locals.subnet_prefix.primary].primary_subnet_id
+      Schedule_name = "ansible-server-schedule"
+      security_group_ids = [
+        dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].security_group.app.id
+      ]
+      hosted_zones = {
+        name    = "ans01.${dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].zones[local.vpc_name_abr].zone_name}"
+        zone_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].zones[local.vpc_name_abr].zone_id
+        type    = "A"
+      }
+    },
     # {
     #   index            = "docker"
     #   name             = "docker-server"
