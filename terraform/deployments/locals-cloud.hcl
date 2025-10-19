@@ -10,38 +10,37 @@ locals {
     native          = "Native-products"
   }
   account_info = {
-    mdpp = {
-      name   = "mdpreproduction"
-      number = "485147667400"
-    }
-    mdp = {
-      name   = "mdproduction"
-      number = "730335294148"
-    }
-    tpp = {
-      name   = "trn-preproduction"
-      number = "485147667400"
-    }
-
-    tp = {
-      name   = "trn-production"
-      number = "730335294148"
-    }
     intpp = {
       name   = "int-preproduction"
       number = "730335294148"
     }
     intp = {
       name   = "int-production"
-      number = "388927731914"
-    }
-    qapp = {
-      name   = "qa-preproduction"
       number = "271457809232"
     }
-    devpp = {
-      name   = "dev-preproduction"
+    mdpp = {
+      name   = "md-preproduction"
       number = "533267408704"
+    }
+    mdp = {
+      name   = "md-production"
+      number = "388927731914"
+    }
+    vapp = {
+      name   = "va-preproduction"
+      number = "526645041140"
+    }
+    vap = {
+      name   = "va-production"
+      number = "882680178335"
+    }
+    mgmnt = {
+      name   = "management"
+      number = "485147667400"
+    }
+    ntw = {
+      name   = "network"
+      number = "637423478842"
     }
   }
   billing_code_number = {
