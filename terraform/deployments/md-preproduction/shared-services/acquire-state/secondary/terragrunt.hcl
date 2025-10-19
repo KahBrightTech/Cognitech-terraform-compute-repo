@@ -53,7 +53,7 @@ inputs = {
     {
       name            = "Shared"
       bucket_name     = include.env.locals.network_config_state.bucket_name[local.region_context]
-      bucket_key      = "terraform/${include.env.locals.network_repo}-${local.aws_account_name}-${include.env.locals.network_deployment_types.shared_services}-${local.vpc_name}-${local.region_context}/terraform.tfstate"
+      bucket_key      = "terraform/${include.cloud.locals.network_repo}-${local.aws_account_name}-${include.cloud.locals.network_deployment_types.shared_services}-${local.region_context}/terraform.tfstate"
       lock_table_name = include.env.locals.network_config_state.remote_dynamodb_table
     }
   ]
