@@ -61,7 +61,7 @@ inputs = {
     {
       name            = "Tenant"
       bucket_name     = include.env.locals.network_config_state.bucket_name[local.region_context]
-      bucket_key      = "terraform/${include.cloud.locals.network_repo}-${local.aws_account_name}-${include.cloud.locals.network_deployment_types.tenant}-${local.vpc_name_abr}-${local.region_context}/terraform.tfstate"
+      bucket_key      = "terraform/${include.cloud.locals.network_repo}-${local.aws_account_name}-${include.cloud.locals.network_deployment_types.tenant}-${local.vpc_name}-${local.region_context}/terraform.tfstate"
       lock_table_name = include.env.locals.network_config_state.remote_dynamodb_table
     }
   ]
