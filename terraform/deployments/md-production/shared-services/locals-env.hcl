@@ -16,7 +16,7 @@ locals {
   # public_domain   = "cognitechllc.org"
   network_config_state = {
     bucket_name = {
-      primary   = "md-prod-us-east-1-network-config-state  "
+      primary   = "md-prod-us-east-1-network-config-state"
       secondary = "md-prod-us-west-2-network-config-state"
     }
     key_shared_services      = "${local.name_abr}-shared-services"
