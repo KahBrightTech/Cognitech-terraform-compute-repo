@@ -32,8 +32,7 @@ locals {
   vpc_name     = "shared-services"
   vpc_name_abr = "shared"
   Misc_tags = {
-    "PrivateHostedZone" = "shared.cognitech.com"
-    # "PublicHostedZone"  = "cognitech.com"
+    "PrivateHostedZone" = "mdprod.com"
   }
 
   # Composite variables 
@@ -82,7 +81,6 @@ inputs = {
       associate_public_ip_address = true
       instance_type               = "t3.large"
       iam_instance_profile        = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_profiles[local.vpc_name_abr].iam_profiles.name
-      associate_public_ip_address = true
       key_name                    = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name_abr}-key-pair"].name
       custom_tags = merge(
         local.Misc_tags,
@@ -97,7 +95,7 @@ inputs = {
       )
       ebs_device_volume = []
       ebs_root_volume = {
-        volume_size           = 20
+        volume_size           = 30
         volume_type           = "gp3"
         delete_on_termination = true
       }
@@ -124,7 +122,6 @@ inputs = {
       associate_public_ip_address = false
       instance_type               = "t3.large"
       iam_instance_profile        = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_profiles[local.vpc_name_abr].iam_profiles.name
-      associate_public_ip_address = false
       key_name                    = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name_abr}-key-pair"].name
       custom_tags = merge(
         local.Misc_tags,
@@ -163,7 +160,6 @@ inputs = {
       associate_public_ip_address = false
       instance_type               = "t3.large"
       iam_instance_profile        = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_profiles[local.vpc_name_abr].iam_profiles.name
-      associate_public_ip_address = true
       key_name                    = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name_abr}-key-pair"].name
       custom_tags = merge(
         local.Misc_tags,
@@ -191,7 +187,6 @@ inputs = {
       }
     }
   ]
-  
   alb_listeners = [
     # {
     #   key             = "app"
@@ -499,6 +494,7 @@ inputs = {
     #   }
   ]
 }
+
 #-------------------------------------------------------
 # State Configuration
 #-------------------------------------------------------
