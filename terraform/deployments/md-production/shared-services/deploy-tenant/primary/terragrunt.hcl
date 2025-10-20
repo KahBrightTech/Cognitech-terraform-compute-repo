@@ -97,7 +97,7 @@ inputs = {
       )
       ebs_device_volume = []
       ebs_root_volume = {
-        volume_size           = 30
+        volume_size           = 20
         volume_type           = "gp3"
         delete_on_termination = true
       }
@@ -191,7 +191,7 @@ inputs = {
       }
     }
   ]
-
+  
   alb_listeners = [
     # {
     #   key             = "app"
