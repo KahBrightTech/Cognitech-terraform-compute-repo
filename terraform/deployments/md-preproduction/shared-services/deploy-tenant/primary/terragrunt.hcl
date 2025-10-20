@@ -140,10 +140,10 @@ inputs = {
         volume_type           = "gp3"
         delete_on_termination = true
       }
-      subnet_id     = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].private_subnet[include.env.locals.subnet_prefix.primary].primary_subnet_id
+      subnet_id     = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].private_subnet[include.env.locals.subnet_prefix.primary].primary_subnet_id
       Schedule_name = "ansible-server-schedule"
       security_group_ids = [
-        dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].security_group.app.id
+        dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].security_group.app.id
       ]
       hosted_zones = {
         name    = "ans01.${dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].zones[local.vpc_name_abr].zone_name}"
@@ -182,7 +182,7 @@ inputs = {
       subnet_id     = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].private_subnet[include.env.locals.subnet_prefix.primary].primary_subnet_id
       Schedule_name = "ansible-server-schedule"
       security_group_ids = [
-        dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].security_group.app.id
+        dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].security_group.app.id
       ]
       hosted_zones = {
         name    = "etl01.${dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].zones[local.vpc_name_abr].zone_name}"
