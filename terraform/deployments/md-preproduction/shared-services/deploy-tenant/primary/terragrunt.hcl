@@ -82,7 +82,6 @@ inputs = {
       associate_public_ip_address = true
       instance_type               = "t3.large"
       iam_instance_profile        = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_profiles[local.vpc_name_abr].iam_profiles.name
-      associate_public_ip_address = true
       key_name                    = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name_abr}-key-pair"].name
       custom_tags = merge(
         local.Misc_tags,
@@ -124,7 +123,6 @@ inputs = {
       associate_public_ip_address = false
       instance_type               = "t3.large"
       iam_instance_profile        = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_profiles[local.vpc_name_abr].iam_profiles.name
-      associate_public_ip_address = false
       key_name                    = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name_abr}-key-pair"].name
       custom_tags = merge(
         local.Misc_tags,
@@ -163,7 +161,6 @@ inputs = {
       associate_public_ip_address = false
       instance_type               = "t3.large"
       iam_instance_profile        = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_profiles[local.vpc_name_abr].iam_profiles.name
-      associate_public_ip_address = true
       key_name                    = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name_abr}-key-pair"].name
       custom_tags = merge(
         local.Misc_tags,
