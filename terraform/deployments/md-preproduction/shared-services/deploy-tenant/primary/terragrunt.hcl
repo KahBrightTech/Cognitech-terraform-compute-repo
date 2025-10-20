@@ -81,9 +81,9 @@ inputs = {
       }
       associate_public_ip_address = true
       instance_type               = "t3.large"
-      iam_instance_profile        = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_profiles[local.vpc_name].iam_profiles.name
+      iam_instance_profile        = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_profiles[local.vpc_name_abr].iam_profiles.name
       associate_public_ip_address = true
-      key_name                    = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name}-key-pair"].name
+      key_name                    = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name_abr}-key-pair"].name
       custom_tags = merge(
         local.Misc_tags,
         {
@@ -101,14 +101,14 @@ inputs = {
         volume_type           = "gp3"
         delete_on_termination = true
       }
-      subnet_id     = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].public_subnet[include.env.locals.subnet_prefix.primary].primary_subnet_id
+      subnet_id     = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].public_subnet[include.env.locals.subnet_prefix.primary].primary_subnet_id
       Schedule_name = "ansible-server-schedule"
       security_group_ids = [
-        dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].security_group.bastion.id
+        dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].security_group.bastion.id
       ]
       hosted_zones = {
-        name    = "bastions01.${dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].zones[local.vpc_name_abr].zone_name}"
-        zone_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].zones[local.vpc_name_abr].zone_id
+        name    = "bastions01.${dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].zones[local.vpc_name_abr].zone_name}"
+        zone_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].zones[local.vpc_name_abr].zone_id
         type    = "A"
       }
     },
@@ -116,16 +116,16 @@ inputs = {
       index            = "ans"
       name             = "ansible-server"
       backup_plan_name = "${local.aws_account_name}-${local.region_context}-continous-backup"
-      attach_tg        = ["${local.vpc_name_abr}-ans-tg"]
-      name_override    = "INTPP-SHR-L-ANSIBLE-01"
+      # attach_tg        = ["${local.vpc_name_abr}-ans-tg"]
+      name_override = "INTPP-SHR-L-ANSIBLE-01"
       ami_config = {
         os_release_date = "RHEL9"
       }
-      associate_public_ip_address = true
-      instance_type               = "t3.large"
-      iam_instance_profile        = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_profiles[local.vpc_name].iam_profiles.name
       associate_public_ip_address = false
-      key_name                    = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name}-key-pair"].name
+      instance_type               = "t3.large"
+      iam_instance_profile        = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_profiles[local.vpc_name_abr].iam_profiles.name
+      associate_public_ip_address = false
+      key_name                    = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name_abr}-key-pair"].name
       custom_tags = merge(
         local.Misc_tags,
         {
@@ -140,256 +140,56 @@ inputs = {
         volume_type           = "gp3"
         delete_on_termination = true
       }
-      subnet_id     = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].public_subnet[include.env.locals.subnet_prefix.primary].primary_subnet_id
+      subnet_id     = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].private_subnet[include.env.locals.subnet_prefix.primary].primary_subnet_id
       Schedule_name = "ansible-server-schedule"
       security_group_ids = [
         dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].security_group.app.id
       ]
       hosted_zones = {
-        name    = "ans01.${dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].zones[local.vpc_name_abr].zone_name}"
-        zone_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].zones[local.vpc_name_abr].zone_id
+        name    = "ans01.${dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].zones[local.vpc_name_abr].zone_name}"
+        zone_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].zones[local.vpc_name_abr].zone_id
         type    = "A"
       }
     },
-    # {
-    #   index            = "docker"
-    #   name             = "docker-server"
-    #   backup_plan_name = "${local.aws_account_name}-${local.region_context}-continous-backup"
-    #   attach_tg        = ["${local.vpc_name_abr}-docker-tg", "${local.vpc_name_abr}-docker2-tg", "${local.vpc_name_abr}-docker3-tg", "${local.vpc_name_abr}-docker4-tg"]
-    #   name_override    = "INTPP-SHR-L-DOCKER-01"
-    #   ami_config = {
-    #     os_release_date = "UBUNTU20"
-    #   }
-    #   associate_public_ip_address = true
-    #   instance_type               = "t3.large"
-    #   iam_instance_profile        = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_profiles[local.vpc_name].iam_profiles.name
-    #   associate_public_ip_address = true
-    #   key_name                    = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name}-key-pair"].name
-    #   custom_tags = merge(
-    #     local.Misc_tags,
-    #     {
-    #       "Name"          = "INTPP-SHR-L-DOCKER-01"
-    #       "DNS_Prefix"    = "docker01"
-    #       "DockerInstall" = "True"
-    #     },
-    #     local.Misc_tags
-    #   )
-    #   ebs_device_volume = {
-    #     name                  = "xvdf"
-    #     volume_size           = 30
-    #     volume_type           = "gp3"
-    #     delete_on_termination = true
-    #     encrypted             = false
-    #   }
-    #   ebs_root_volume = {
-    #     volume_size           = 30
-    #     volume_type           = "gp3"
-    #     delete_on_termination = true
-    #   }
-    #   subnet_id     = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].public_subnet[include.env.locals.subnet_prefix.primary].primary_subnet_id
-    #   Schedule_name = "ansible-server-schedule"
-    #   security_group_ids = [
-    #     dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].security_group.app.id
-    #   ]
-    #   hosted_zones = {
-    #     name    = "docker01.${dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].zones[local.vpc_name_abr].zone_name}"
-    #     zone_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].zones[local.vpc_name_abr].zone_id
-    #     type    = "A"
-    #   }
-    # }
-    # {
-    #   index            = "ssrs1"
-    #   name             = "ssrs-server"
-    #   backup_plan_name = "${local.aws_account_name}-${local.region_context}-continous-backup"
-    #   name_override    = "INTPP-SHR-W-SSRS-01"
-    #   ami_config = {
-    #     os_release_date  = "W22"
-    #     os_base_packages = "BASE"
-    #   }
-    #   associate_public_ip_address = true
-    #   instance_type               = "t3.large"
-    #   iam_instance_profile        = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_profiles[local.vpc_name].iam_profiles.name
-    #   associate_public_ip_address = true
-    #   key_name                    = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name}-key-pair"].name
-    #   custom_tags = merge(
-    #     local.Misc_tags,
-    #     {
-    #       "Name"         = "INTPP-SHR-W-SSRS-01"
-    #       "DNS_Prefix"   = "ssrs01"
-    #       "CreateUser"   = "True"
-    #       "WinRMInstall" = "True"
-    #       "WindowsBannerConfig" = "True"
-    #     }
-    #   )
-    #   ebs_device_volume = [
-    #     {
-    #       name                  = "xvdf"
-    #       volume_size           = 30
-    #       volume_type           = "gp3"
-    #       delete_on_termination = true
-    #     },
-    #     {
-    #       name                  = "xvdg"
-    #       volume_size           = 30
-    #       volume_type           = "gp3"
-    #       delete_on_termination = true
-    #     },
-    #     {
-    #       name                  = "xvdh"
-    #       volume_size           = 30
-    #       volume_type           = "gp3"
-    #       delete_on_termination = true
-    #     },
-    #     {
-    #       name                  = "xvdi"
-    #       volume_size           = 30
-    #       volume_type           = "gp3"
-    #       delete_on_termination = true
-    #     }
-    #   ]
-    #   ebs_root_volume = {
-    #     volume_size           = 50
-    #     volume_type           = "gp3"
-    #     delete_on_termination = true
-    #   }
-    #   subnet_id     = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].public_subnet[include.env.locals.subnet_prefix.primary].primary_subnet_id
-    #   Schedule_name = "ansible-server-schedule"
-    #   security_group_ids = [
-    #     dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].security_group.app.id
-    #   ]
-    #   hosted_zones = {
-    #     name    = "ssrs01.${dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].zones[local.vpc_name_abr].zone_name}"
-    #     zone_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].zones[local.vpc_name_abr].zone_id
-    #     type    = "A"
-    #   }
-    # },
-    # {
-    #   index            = "ssrs2"
-    #   name             = "ssrs-server"
-    #   backup_plan_name = "${local.aws_account_name}-${local.region_context}-continous-backup"
-    #   name_override    = "INTPP-SHR-W-SSRS-02"
-    #   ami_config = {
-    #     os_release_date  = "W22"
-    #     os_base_packages = "BASE"
-    #   }
-    #   associate_public_ip_address = true
-    #   instance_type               = "t3.large"
-    #   iam_instance_profile        = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_profiles[local.vpc_name].iam_profiles.name
-    #   associate_public_ip_address = true
-    #   key_name                    = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name}-key-pair"].name
-    #   custom_tags = merge(
-    #     local.Misc_tags,
-    #     {
-    #       "Name"         = "INTPP-SHR-W-SSRS-02"
-    #       "DNS_Prefix"   = "ssrs02"
-    #       "CreateUser"   = "True"
-    #       "WinRMInstall" = "True"
-    #       "WindowsBannerConfig" = "True"
-    #     }
-    #   )
-    #   ebs_device_volume = []
-    #   ebs_root_volume = {
-    #     volume_size           = 50
-    #     volume_type           = "gp3"
-    #     delete_on_termination = true
-    #   }
-    #   subnet_id     = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].public_subnet[include.env.locals.subnet_prefix.primary].primary_subnet_id
-    #   Schedule_name = "ansible-server-schedule"
-    #   security_group_ids = [
-    #     dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].security_group.app.id
-    #   ]
-    #   hosted_zones = {
-    #     name    = "ssrs02.${dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].zones[local.vpc_name_abr].zone_name}"
-    #     zone_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].zones[local.vpc_name_abr].zone_id
-    #     type    = "A"
-    #   }
-    # },
-    # {
-    #   index            = "etl"
-    #   name             = "etl-server"
-    #   backup_plan_name = "${local.aws_account_name}-${local.region_context}-continous-backup"
-    #   name_override    = "INTPP-SHR-W-ETL-01"
-    #   ami_config = {
-    #     os_release_date  = "W22"
-    #     os_base_packages = "BASE"
-    #   }
-    #   associate_public_ip_address = true
-    #   instance_type               = "t3.large"
-    #   iam_instance_profile        = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_profiles[local.vpc_name].iam_profiles.name
-    #   associate_public_ip_address = true
-    #   key_name                    = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name}-key-pair"].name
-    #   custom_tags = merge(
-    #     local.Misc_tags,
-    #     {
-    #       "Name"       = "INTPP-SHR-W-ETL-01"
-    #       "DNS_Prefix" = "etl01"
-    #       "CreateUser" = "True"
-    #       "WindowsBannerConfig" = "True"
-    #     }
-    #   )
-    #   ebs_device_volume = {
-    #     name                  = "xvdf"
-    #     volume_size           = 30
-    #     volume_type           = "gp3"
-    #     delete_on_termination = true
-    #   }
-    #   ebs_root_volume = {
-    #     volume_size           = 50
-    #     volume_type           = "gp3"
-    #     delete_on_termination = true
-    #   }
-    #   subnet_id     = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].public_subnet[include.env.locals.subnet_prefix.primary].primary_subnet_id
-    #   Schedule_name = "ansible-server-schedule"
-    #   security_group_ids = [
-    #     dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].security_group.app.id
-    #   ]
-    #   hosted_zones = {
-    #     name    = "etl01.${dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].zones[local.vpc_name_abr].zone_name}"
-    #     zone_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].zones[local.vpc_name_abr].zone_id
-    #     type    = "A"
-    #   }
-    # }
-    # {
-    #   index            = "mid"
-    #   name             = "mid-server"
-    #   backup_plan_name = "${local.aws_account_name}-${local.region_context}-continous-backup"
-    #   name_override    = "INTPP-SHR-W-MID-01"
-    #   ami_config = {
-    #     os_release_date  = "W22"
-    #     os_base_packages = "BASE"
-    #   }
-    #   associate_public_ip_address = true
-    #   instance_type               = "t3.large"
-    #   iam_instance_profile        = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_profiles[local.vpc_name].iam_profiles.name
-    #   associate_public_ip_address = true
-    #   key_name                    = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name}-key-pair"].name
-    #   custom_tags = merge(
-    #     local.Misc_tags,
-    #     {
-    #       "Name"                = "INTPP-SHR-W-MID-01"
-    #       "DNS_Prefix"          = "mid01"
-    #       "CreateUser"          = "True"
-    #       "WinRMInstall"        = "True"
-    #       "WindowsBannerConfig" = "True"
-    #     }
-    #   )
-    #   ebs_device_volume = []
-    #   ebs_root_volume = {
-    #     volume_size           = 50
-    #     volume_type           = "gp3"
-    #     delete_on_termination = true
-    #   }
-    #   subnet_id     = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].public_subnet[include.env.locals.subnet_prefix.primary].primary_subnet_id
-    #   Schedule_name = "ansible-server-schedule"
-    #   security_group_ids = [
-    #     dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].security_group.app.id
-    #   ]
-    #   hosted_zones = {
-    #     name    = "mid01.${dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].zones[local.vpc_name_abr].zone_name}"
-    #     zone_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].zones[local.vpc_name_abr].zone_id
-    #     type    = "A"
-    #   }
-    # }
+    {
+      index            = "etl"
+      name             = "etl-server"
+      backup_plan_name = "${local.aws_account_name}-${local.region_context}-continous-backup"
+      name_override    = "INTPP-SHR-W-ETL-01"
+      ami_config = {
+        os_release_date  = "W22"
+        os_base_packages = "BASE"
+      }
+      associate_public_ip_address = false
+      instance_type               = "t3.large"
+      iam_instance_profile        = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_profiles[local.vpc_name_abr].iam_profiles.name
+      associate_public_ip_address = true
+      key_name                    = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name_abr}-key-pair"].name
+      custom_tags = merge(
+        local.Misc_tags,
+        {
+          "Name"                = "INTPP-SHR-W-ETL-01"
+          "DNS_Prefix"          = "etl01"
+          "CreateUser"          = "True"
+          "WindowsBannerConfig" = "True"
+        }
+      )
+      ebs_root_volume = {
+        volume_size           = 50
+        volume_type           = "gp3"
+        delete_on_termination = true
+      }
+      subnet_id     = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].private_subnet[include.env.locals.subnet_prefix.primary].primary_subnet_id
+      Schedule_name = "ansible-server-schedule"
+      security_group_ids = [
+        dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].security_group.app.id
+      ]
+      hosted_zones = {
+        name    = "etl01.${dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].zones[local.vpc_name_abr].zone_name}"
+        zone_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].zones[local.vpc_name_abr].zone_id
+        type    = "A"
+      }
+    }
   ]
   alb_listeners = [
     # {
@@ -646,91 +446,57 @@ inputs = {
     #   vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
     # }
   ]
-  # launch_templates = [
-  #   {
-  #     key              = "app"
-  #     name             = "${local.vpc_name_abr}-app"
-  #     key_name         = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name}-key-pair"].name
-  #     instance_profile = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_profiles[local.vpc_name].iam_profiles.name
-  #     ami_config = {
-  #       os_release_date = "AL2023"
-  #     }
-  #     instance_type = "t3.medium"
-  #     user_data     = file("${include.cloud.locals.repo.root}/Bash-script/docker.sh")
-  #     vpc_security_group_ids = [
-  #       dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].security_group.app.id
-  #     ]
-  #     tags = local.tags
-  #   }
-  # ]
-  # Autoscaling_groups = [
-  #   {
-  #     key                       = "app"
-  #     name                      = "${local.vpc_name_abr}-app"
-  #     min_size                  = 1
-  #     max_size                  = 5
-  #     desired_capacity          = 2
-  #     health_check_type         = "ELB"
-  #     health_check_grace_period = 300
-  #     launch_template_name      = "${local.vpc_name_abr}-app"
-  #     attach_target_groups = [
-  #       "${local.vpc_name_abr}-app-tg",
-  #       "${local.vpc_name_abr}-app2-tg",
-  #       "${local.vpc_name_abr}-app3-tg",
-  #       "${local.vpc_name_abr}-app4-tg",
-  #       "${local.vpc_name_abr}-ssrs-tg"
-  #     ]
-  #     subnet_ids = [
-  #       dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].public_subnet[include.env.locals.subnet_prefix.primary].primary_subnet_id,
-  #       dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].public_subnet[include.env.locals.subnet_prefix.secondary].primary_subnet_id
-  #     ]
-  #     timeouts = {
-  #       delete = "10m"
-  #     }
-  #     tags = local.tags
-  #     additional_tags = [
-  #       {
-  #         key                 = "Name"
-  #         value               = "${local.vpc_name_abr}-docker-asg"
-  #         propagate_at_launch = true
-  #       }
-  #     ]
-  #   }
-  # ]
-  # dr_volume_restores = [
-  #   {
-  #     key                  = "ssrs1"
-  #     source_instance_name = "INTPP-SHR-W-SSRS-01"
-  #     target_instance_name = "INTPP-SHR-W-SSRS-02"
-  #     target_az            = "us-east-1a"
-  #     device_volumes = [
-  #       {
-  #         device_name = "xvdf"
-  #         size        = 50
-  #       },
-  #       {
-  #         device_name = "xvdg"
-  #         size        = 50
-  #       },
-  #       {
-  #         device_name = "xvdh"
-  #         size        = 50
-  #       },
-  #       {
-  #         device_name = "xvdi"
-  #         size        = 80
-  #       }
-  #     ]
-  #     restore_volume_tags = merge(
-  #       local.Misc_tags,
-  #       {
-  #         "RestoredFrom" = "INTPP-SHR-W-SSRS-01"
-  #         "Name"         = "INTPP-SHR-W-SSRS-02"
-  #       }
-  #     )
-  #     account_id = local.account_id
-  #   }
-  # ]
+  launch_templates = [
+    #   {
+    #     key              = "app"
+    #     name             = "${local.vpc_name_abr}-app"
+    #     key_name         = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name}-key-pair"].name
+    #     instance_profile = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_profiles[local.vpc_name].iam_profiles.name
+    #     ami_config = {
+    #       os_release_date = "AL2023"
+    #     }
+    #     instance_type = "t3.medium"
+    #     user_data     = file("${include.cloud.locals.repo.root}/Bash-script/docker.sh")
+    #     vpc_security_group_ids = [
+    #       dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].security_group.app.id
+    #     ]
+    #     tags = local.tags
+    #   }
+  ]
+  Autoscaling_groups = [
+    #   {
+    #     key                       = "app"
+    #     name                      = "${local.vpc_name_abr}-app"
+    #     min_size                  = 1
+    #     max_size                  = 5
+    #     desired_capacity          = 2
+    #     health_check_type         = "ELB"
+    #     health_check_grace_period = 300
+    #     launch_template_name      = "${local.vpc_name_abr}-app"
+    #     attach_target_groups = [
+    #       "${local.vpc_name_abr}-app-tg",
+    #       "${local.vpc_name_abr}-app2-tg",
+    #       "${local.vpc_name_abr}-app3-tg",
+    #       "${local.vpc_name_abr}-app4-tg",
+    #       "${local.vpc_name_abr}-ssrs-tg"
+    #     ]
+    #     subnet_ids = [
+    #       dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].public_subnet[include.env.locals.subnet_prefix.primary].primary_subnet_id,
+    #       dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].public_subnet[include.env.locals.subnet_prefix.secondary].primary_subnet_id
+    #     ]
+    #     timeouts = {
+    #       delete = "10m"
+    #     }
+    #     tags = local.tags
+    #     additional_tags = [
+    #       {
+    #         key                 = "Name"
+    #         value               = "${local.vpc_name_abr}-docker-asg"
+    #         propagate_at_launch = true
+    #       }
+    #     ]
+    #   }
+  ]
 }
 #-------------------------------------------------------
 # State Configuration
