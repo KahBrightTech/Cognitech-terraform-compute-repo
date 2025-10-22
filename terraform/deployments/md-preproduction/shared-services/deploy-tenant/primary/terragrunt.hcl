@@ -74,7 +74,7 @@ inputs = {
       index            = "bastion1"
       name             = "bastion-server"
       backup_plan_name = "${local.aws_account_name}-${local.region_context}-continous-backup"
-      name_override    = "INTPP-SHR-W-BASTION-01"
+      name_override    = "MDPP-SHR-W-BASTION-01"
       ami_config = {
         os_release_date  = "W22"
         os_base_packages = "BASE"
@@ -86,7 +86,7 @@ inputs = {
       custom_tags = merge(
         local.Misc_tags,
         {
-          "Name"                = "INTPP-SHR-W-BASTION-01"
+          "Name"                = "MDPP-SHR-W-BASTION-01"
           "DNS_Prefix"          = "bastions01"
           "CreateUser"          = "True"
           "WinRMInstall"        = "True"
@@ -116,7 +116,7 @@ inputs = {
       name             = "ansible-server"
       backup_plan_name = "${local.aws_account_name}-${local.region_context}-continous-backup"
       # attach_tg        = ["${local.vpc_name_abr}-ans-tg"]
-      name_override = "INTPP-SHR-L-ANSIBLE-01"
+      name_override = "MDPP-SHR-L-ANSIBLE-01"
       ami_config = {
         os_release_date = "RHEL9"
       }
@@ -127,7 +127,7 @@ inputs = {
       custom_tags = merge(
         local.Misc_tags,
         {
-          "Name"           = "INTPP-SHR-L-ANSIBLE-01"
+          "Name"           = "MDPP-SHR-L-ANSIBLE-01"
           "DNS_Prefix"     = "ans01"
           "AnsibleInstall" = "True"
           "CreateUser"     = "True"
@@ -153,7 +153,7 @@ inputs = {
       index            = "etl"
       name             = "etl-server"
       backup_plan_name = "${local.aws_account_name}-${local.region_context}-continous-backup"
-      name_override    = "INTPP-SHR-W-ETL-01"
+      name_override    = "MDPP-SHR-W-ETL-01"
       ami_config = {
         os_release_date  = "W22"
         os_base_packages = "BASE"
@@ -165,7 +165,7 @@ inputs = {
       custom_tags = merge(
         local.Misc_tags,
         {
-          "Name"                = "INTPP-SHR-W-ETL-01"
+          "Name"                = "MDPP-SHR-W-ETL-01"
           "DNS_Prefix"          = "etl01"
           "CreateUser"          = "True"
           "WindowsBannerConfig" = "True"
