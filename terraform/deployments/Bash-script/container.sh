@@ -3,10 +3,10 @@
 set -e
 
 # Configuration Variables - Set defaults or use values from Terraform templatefile
-S3_BUCKET="${s3_bucket:-int-preproduction-use1-shared-software-bucket}"
-S3_FOLDER_PATH="${s3_folder_path:-AfricanStore}"
-COMPOSE_DIR="${compose_dir:-/opt/docker-compose}"
-DOCKER_SECRET_NAME="${docker_secret_name:-int-preproduction-use1-docker-auth20251015041509752300000004}"
+S3_BUCKET="$${s3_bucket:-int-preproduction-use1-shared-software-bucket}"
+S3_FOLDER_PATH="$${s3_folder_path:-AfricanStore}"
+COMPOSE_DIR="$${compose_dir:-/opt/docker-compose}"
+DOCKER_SECRET_NAME="$${docker_secret_name:-int-preproduction-use1-docker-auth20251015041509752300000004}"
 
 log() {
   echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1"
