@@ -6,6 +6,11 @@ exec 2>&1
 
 set -e
 
+# Define log function first
+log() {
+  echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1"
+}
+
 log "=== User data script started at $(date) ==="
 
 # Configuration Variables - Hardcoded defaults (can be overridden by environment variables)
@@ -13,10 +18,6 @@ S3_BUCKET="int-preproduction-use1-shared-software-bucket"
 S3_FOLDER_PATH="AfricanStore"
 COMPOSE_DIR="/opt/docker-compose"
 DOCKER_SECRET_NAME="int-preproduction-use1-docker-auth20251015041509752300000004"
-
-log() {
-  echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1"
-}
 
 # Debug: Print configuration values
 log "Configuration values:"
