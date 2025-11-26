@@ -634,7 +634,7 @@ inputs = {
         protocol = "HTTP"
         port     = "8083"
       }
-      vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
+      vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].vpc_id
     },
     # {
     #   name        = "${local.vpc_name_abr}-ans-tg"
@@ -658,22 +658,22 @@ inputs = {
         port     = "80"
         path     = "/"
       }
-      vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
+      vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].vpc_id
     }
   ]
   launch_templates = [
     {
       key              = "afr"
       name             = "${local.vpc_name_abr}-afr"
-      key_name         = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name}-key-pair"].name
-      instance_profile = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_profiles[local.vpc_name].iam_profiles.name
+      key_name         = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name_abr}-key-pair"].name
+      instance_profile = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_profiles[local.vpc_name_abr].iam_profiles.name
       ami_config = {
         os_release_date = "AL2023"
       }
       instance_type = "t3.medium"
       user_data     = file("${include.cloud.locals.repo.root}/Bash-script/container.sh")
       vpc_security_group_ids = [
-        dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].security_group.app.id
+        dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].security_group.app.id
       ]
       tags = local.tags
     }
@@ -696,8 +696,8 @@ inputs = {
         # "${local.vpc_name_abr}-ssrs-tg"
       ]
       subnet_ids = [
-        dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].private_subnet[include.env.locals.subnet_prefix.primary].primary_subnet_id,
-        dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].private_subnet[include.env.locals.subnet_prefix.secondary].primary_subnet_id
+        dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].private_subnet[include.env.locals.subnet_prefix.primary].primary_subnet_id,
+        dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].private_subnet[include.env.locals.subnet_prefix.secondary].primary_subnet_id
       ]
       timeouts = {
         delete = "10m"
