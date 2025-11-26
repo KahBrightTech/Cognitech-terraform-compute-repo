@@ -680,14 +680,14 @@ inputs = {
   ]
   Autoscaling_groups = [
     {
-      key                       = "app"
-      name                      = "${local.vpc_name_abr}-app"
+      key                       = "afr"
+      name                      = "${local.vpc_name_abr}-afr"
       min_size                  = 1
       max_size                  = 5
       desired_capacity          = 2
       health_check_type         = "ELB"
       health_check_grace_period = 300
-      launch_template_name      = "${local.vpc_name_abr}-app"
+      launch_template_name      = "${local.vpc_name_abr}-afr"
       attach_target_groups = [
         "${local.vpc_name_abr}-afr-tg",
         # "${local.vpc_name_abr}-app2-tg",
