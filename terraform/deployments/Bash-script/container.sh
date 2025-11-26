@@ -1,6 +1,12 @@
 #!/bin/bash
 
+# Redirect all output to log file and console
+exec > >(tee -a /var/log/userdata-script.log)
+exec 2>&1
+
 set -e
+
+log "=== User data script started at $(date) ==="
 
 # Configuration Variables - Hardcoded defaults (can be overridden by environment variables)
 S3_BUCKET="int-preproduction-use1-shared-software-bucket"
@@ -281,6 +287,9 @@ main() {
   fi
   
   run_compose
+  
+  log "=== User data script completed successfully at $(date) ==="
+  echo "SUCCESS: User data execution completed" > /var/log/userdata-completion.log
 }
 
 main "$@"
