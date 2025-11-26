@@ -690,10 +690,7 @@ inputs = {
       launch_template_name      = "${local.vpc_name_abr}-afr"
       attach_target_groups = [
         "${local.vpc_name_abr}-afr-tg",
-        # "${local.vpc_name_abr}-app2-tg",
-        # "${local.vpc_name_abr}-app3-tg",
-        "${local.vpc_name_abr}-app4-tg",
-        # "${local.vpc_name_abr}-ssrs-tg"
+        "${local.vpc_name_abr}-app4-tg"
       ]
       subnet_ids = [
         dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].private_subnet[include.env.locals.subnet_prefix.primary].primary_subnet_id,

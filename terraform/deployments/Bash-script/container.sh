@@ -3,9 +3,10 @@
 set -e
 
 # Configuration Variables - Set defaults or use values from Terraform templatefile
-S3_BUCKET="$${s3_bucket:-int-preproduction-use1-shared-software-bucket}"
-S3_FOLDER_PATH="$${s3_folder_path:-AfricanStore}"
-COMPOSE_DIR="$${compose_dir:-/opt/docker-compose}"
+S3_BUCKET="${s3_bucket:-int-preproduction-use1-shared-software-bucket}"
+S3_FOLDER_PATH="${s3_folder_path:-AfricanStore}"
+COMPOSE_DIR="${compose_dir:-/opt/docker-compose}"
+DOCKER_SECRET_NAME="${docker_secret_name:-int-preproduction-use1-docker-auth20251015041509752300000004}"
 
 log() {
   echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1"
@@ -13,9 +14,10 @@ log() {
 
 # Debug: Print configuration values
 log "Configuration values:"
-log "S3_BUCKET: $${S3_BUCKET}"
-log "S3_FOLDER_PATH: $${S3_FOLDER_PATH}"
-log "COMPOSE_DIR: $${COMPOSE_DIR}"
+log "S3_BUCKET: $S3_BUCKET"
+log "S3_FOLDER_PATH: $S3_FOLDER_PATH"
+log "COMPOSE_DIR: $COMPOSE_DIR"
+log "DOCKER_SECRET_NAME: $DOCKER_SECRET_NAME"
 
 # Detect OS
 ios_id=""
@@ -94,6 +96,40 @@ install_docker_compose() {
   fi
 }
 
+upgrade_buildx() {
+  log "Upgrading Docker Buildx to latest version..."
+  
+  # Get the latest buildx version
+  BUILDX_VERSION=$(curl -s https://api.github.com/repos/docker/buildx/releases/latest | grep '"tag_name":' | sed -E 's/.*"v([^"]+)".*/\1/')
+  
+  if [ -z "$BUILDX_VERSION" ]; then
+    log "Warning: Could not determine latest buildx version, using v0.18.0"
+    BUILDX_VERSION="0.18.0"
+  fi
+  
+  log "Installing buildx version $BUILDX_VERSION..."
+  
+  # Create plugin directory if it doesn't exist
+  mkdir -p ~/.docker/cli-plugins
+  
+  # Download and install buildx
+  curl -L "https://github.com/docker/buildx/releases/download/v${BUILDX_VERSION}/buildx-v${BUILDX_VERSION}.linux-amd64" -o ~/.docker/cli-plugins/docker-buildx
+  chmod +x ~/.docker/cli-plugins/docker-buildx
+  
+  # Also install system-wide in /usr/local/lib/docker/cli-plugins if running as root
+  if [ "$EUID" -eq 0 ] && [ "$HOME" != "/root" ]; then
+    mkdir -p /usr/local/lib/docker/cli-plugins
+    cp ~/.docker/cli-plugins/docker-buildx /usr/local/lib/docker/cli-plugins/docker-buildx
+  fi
+  
+  # Verify installation
+  if docker buildx version &> /dev/null; then
+    log "Buildx successfully upgraded to version: $(docker buildx version)"
+  else
+    log "Warning: Buildx installation may have issues"
+  fi
+}
+
 fetch_docker_credentials() {
   log "Fetching Docker credentials from AWS Secrets Manager..."
   
@@ -115,7 +151,7 @@ fetch_docker_credentials() {
   fi
   
   # Fetch credentials with error handling
-  if ! creds_json=$(aws secretsmanager get-secret-value --secret-id int-preproduction-use1-Docker-Credentials --query SecretString --output text 2>/dev/null); then
+  if ! creds_json=$(aws secretsmanager get-secret-value --secret-id "$DOCKER_SECRET_NAME" --query SecretString --output text 2>/dev/null); then
     log "Error: Failed to fetch Docker credentials from AWS Secrets Manager. Check AWS permissions and secret name."
     return 1
   fi
@@ -187,22 +223,22 @@ install_aws_cli() {
 }
 
 pull_compose_file() {
-  mkdir -p "$${COMPOSE_DIR}"
+  mkdir -p "$COMPOSE_DIR"
   log "Pulling all files from S3 africanstore path..."
-  log "S3 URI: s3://$${S3_BUCKET}/$${S3_FOLDER_PATH}/"
-  log "Target path: $${COMPOSE_DIR}/"
+  log "S3 URI: s3://$S3_BUCKET/$S3_FOLDER_PATH/"
+  log "Target path: $COMPOSE_DIR/"
   
   # Sync all files from the S3 folder path to the compose directory
-  if aws s3 sync "s3://$${S3_BUCKET}/$${S3_FOLDER_PATH}/" "$${COMPOSE_DIR}/" --delete; then
+  if aws s3 sync "s3://$S3_BUCKET/$S3_FOLDER_PATH/" "$COMPOSE_DIR/" --delete; then
     log "All files pulled successfully from S3."
     
     # Verify docker-compose.yml exists
-    if [ -f "$${COMPOSE_DIR}/docker-compose.yml" ]; then
+    if [ -f "$COMPOSE_DIR/docker-compose.yml" ]; then
       log "docker-compose.yml found in downloaded files."
     else
-      log "Warning: docker-compose.yml not found in $${COMPOSE_DIR}/"
+      log "Warning: docker-compose.yml not found in $COMPOSE_DIR/"
       log "Available files:"
-      ls -la "$${COMPOSE_DIR}/"
+      ls -la "$COMPOSE_DIR/"
       return 1
     fi
   else
@@ -212,7 +248,7 @@ pull_compose_file() {
 }
 
 run_compose() {
-  cd "$${COMPOSE_DIR}"
+  cd "$COMPOSE_DIR"
   log "Running docker compose up..."
   
   # Check if docker-compose (standalone) is available first
@@ -231,6 +267,7 @@ run_compose() {
 main() {
   install_docker
   install_docker_compose
+  upgrade_buildx
   install_aws_cli
   
   # Docker login is optional - continue even if it fails
