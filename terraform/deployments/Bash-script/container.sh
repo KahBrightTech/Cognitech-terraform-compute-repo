@@ -2,11 +2,11 @@
 
 set -e
 
-# Configuration Variables - Set defaults or use values from Terraform templatefile
-S3_BUCKET="$${s3_bucket:-int-preproduction-use1-shared-software-bucket}"
-S3_FOLDER_PATH="$${s3_folder_path:-AfricanStore}"
-COMPOSE_DIR="$${compose_dir:-/opt/docker-compose}"
-DOCKER_SECRET_NAME="$${docker_secret_name:-int-preproduction-use1-docker-auth20251015041509752300000004}"
+# Configuration Variables - Set defaults or use values from environment
+S3_BUCKET="${S3_BUCKET:-int-preproduction-use1-shared-software-bucket}"
+S3_FOLDER_PATH="${S3_FOLDER_PATH:-AfricanStore}"
+COMPOSE_DIR="${COMPOSE_DIR:-/opt/docker-compose}"
+DOCKER_SECRET_NAME="${DOCKER_SECRET_NAME:-int-preproduction-use1-docker-auth20251015041509752300000004}"
 
 log() {
   echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1"
@@ -14,10 +14,10 @@ log() {
 
 # Debug: Print configuration values
 log "Configuration values:"
-log "S3_BUCKET: $${S3_BUCKET}"
-log "S3_FOLDER_PATH: $${S3_FOLDER_PATH}"
-log "COMPOSE_DIR: $${COMPOSE_DIR}"
-log "DOCKER_SECRET_NAME: $${DOCKER_SECRET_NAME}"
+log "S3_BUCKET: $S3_BUCKET"
+log "S3_FOLDER_PATH: $S3_FOLDER_PATH"
+log "COMPOSE_DIR: $COMPOSE_DIR"
+log "DOCKER_SECRET_NAME: $DOCKER_SECRET_NAME"
 
 # Detect OS
 ios_id=""
@@ -223,22 +223,22 @@ install_aws_cli() {
 }
 
 pull_compose_file() {
-  mkdir -p "$${COMPOSE_DIR}"
+  mkdir -p "$COMPOSE_DIR"
   log "Pulling all files from S3 africanstore path..."
-  log "S3 URI: s3://$${S3_BUCKET}/$${S3_FOLDER_PATH}/"
-  log "Target path: $${COMPOSE_DIR}/"
+  log "S3 URI: s3://$S3_BUCKET/$S3_FOLDER_PATH/"
+  log "Target path: $COMPOSE_DIR/"
   
   # Sync all files from the S3 folder path to the compose directory
-  if aws s3 sync "s3://$${S3_BUCKET}/$${S3_FOLDER_PATH}/" "$${COMPOSE_DIR}/" --delete; then
+  if aws s3 sync "s3://$S3_BUCKET/$S3_FOLDER_PATH/" "$COMPOSE_DIR/" --delete; then
     log "All files pulled successfully from S3."
     
     # Verify docker-compose.yml exists
-    if [ -f "$${COMPOSE_DIR}/docker-compose.yml" ]; then
+    if [ -f "$COMPOSE_DIR/docker-compose.yml" ]; then
       log "docker-compose.yml found in downloaded files."
     else
-      log "Warning: docker-compose.yml not found in $${COMPOSE_DIR}/"
+      log "Warning: docker-compose.yml not found in $COMPOSE_DIR/"
       log "Available files:"
-      ls -la "$${COMPOSE_DIR}/"
+      ls -la "$COMPOSE_DIR/"
       return 1
     fi
   else
@@ -248,7 +248,7 @@ pull_compose_file() {
 }
 
 run_compose() {
-  cd "$${COMPOSE_DIR}"
+  cd "$COMPOSE_DIR"
   log "Running docker compose up..."
   
   # Check if docker-compose (standalone) is available first
