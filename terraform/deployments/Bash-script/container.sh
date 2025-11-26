@@ -100,31 +100,31 @@ upgrade_buildx() {
   log "Upgrading Docker Buildx to latest version..."
   
   # Get the latest buildx version
-  BUILDX_VERSION=$(curl -s https://api.github.com/repos/docker/buildx/releases/latest | grep '"tag_name":' | sed -E 's/.*"v([^"]+)".*/\1/')
+  BUILDX_VERSION=$$(curl -s https://api.github.com/repos/docker/buildx/releases/latest | grep '"tag_name":' | sed -E 's/.*"v([^"]+)".*/\1/')
   
-  if [ -z "$BUILDX_VERSION" ]; then
+  if [ -z "$${BUILDX_VERSION}" ]; then
     log "Warning: Could not determine latest buildx version, using v0.18.0"
     BUILDX_VERSION="0.18.0"
   fi
   
-  log "Installing buildx version $BUILDX_VERSION..."
+  log "Installing buildx version $${BUILDX_VERSION}..."
   
   # Create plugin directory if it doesn't exist
   mkdir -p ~/.docker/cli-plugins
   
   # Download and install buildx
-  curl -L "https://github.com/docker/buildx/releases/download/v${BUILDX_VERSION}/buildx-v${BUILDX_VERSION}.linux-amd64" -o ~/.docker/cli-plugins/docker-buildx
+  curl -L "https://github.com/docker/buildx/releases/download/v$${BUILDX_VERSION}/buildx-v$${BUILDX_VERSION}.linux-amd64" -o ~/.docker/cli-plugins/docker-buildx
   chmod +x ~/.docker/cli-plugins/docker-buildx
   
   # Also install system-wide in /usr/local/lib/docker/cli-plugins if running as root
-  if [ "$EUID" -eq 0 ] && [ "$HOME" != "/root" ]; then
+  if [ "$${EUID}" -eq 0 ] && [ "$${HOME}" != "/root" ]; then
     mkdir -p /usr/local/lib/docker/cli-plugins
     cp ~/.docker/cli-plugins/docker-buildx /usr/local/lib/docker/cli-plugins/docker-buildx
   fi
   
   # Verify installation
   if docker buildx version &> /dev/null; then
-    log "Buildx successfully upgraded to version: $(docker buildx version)"
+    log "Buildx successfully upgraded to version: $$(docker buildx version)"
   else
     log "Warning: Buildx installation may have issues"
   fi

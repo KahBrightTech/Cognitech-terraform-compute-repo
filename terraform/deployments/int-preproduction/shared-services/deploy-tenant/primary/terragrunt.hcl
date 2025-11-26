@@ -678,6 +678,7 @@ inputs = {
       tags = local.tags
     }
   ]
+  
   Autoscaling_groups = [
     {
       key                       = "afrique"
