@@ -11,6 +11,31 @@ log() {
   echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1"
 }
 
+wait_for_package_manager() {
+  local max_attempts=60
+  local attempt=0
+  
+  log "Waiting for package manager lock to be released..."
+  
+  while [ $attempt -lt $max_attempts ]; do
+    if fuser /var/lib/rpm/.rpm.lock >/dev/null 2>&1 || \
+       fuser /var/lib/dnf/dnf.lock >/dev/null 2>&1 || \
+       fuser /var/lib/yum/yumdb >/dev/null 2>&1 || \
+       pgrep -x dnf >/dev/null 2>&1 || \
+       pgrep -x yum >/dev/null 2>&1; then
+      log "Package manager is locked. Waiting... (attempt $((attempt + 1))/$max_attempts)"
+      sleep 10
+      attempt=$((attempt + 1))
+    else
+      log "Package manager is available."
+      return 0
+    fi
+  done
+  
+  log "Warning: Package manager may still be locked after waiting."
+  return 0
+}
+
 log "=== User data script started at $(date) ==="
 
 # Configuration Variables - Hardcoded defaults (can be overridden by environment variables)
@@ -37,6 +62,8 @@ else
 fi
 
 install_docker() {
+  wait_for_package_manager
+  
   case "$ios_id" in
     ubuntu|debian)
       log "Installing Docker on $ios_id..."
@@ -59,12 +86,23 @@ install_docker() {
       # Check Amazon Linux version
       if grep -q "Amazon Linux 2023" /etc/os-release; then
         log "Detected Amazon Linux 2023, using dnf..."
-        dnf install -y docker
+        # Clean cache and retry logic for DNF
+        log "Cleaning DNF cache..."
+        dnf clean all
+        log "Installing Docker..."
+        if ! dnf install -y docker; then
+          log "First attempt failed, cleaning metadata and retrying..."
+          dnf clean metadata
+          dnf makecache
+          dnf install -y docker
+        fi
       elif grep -q "Amazon Linux 2" /etc/os-release; then
         log "Detected Amazon Linux 2, using yum with extras..."
+        yum clean all
         yum install -y docker
       else
         log "Detected older Amazon Linux, using yum..."
+        yum clean all
         yum install -y docker
       fi
       ;;
@@ -72,10 +110,17 @@ install_docker() {
       log "Installing Docker on $ios_id..."
       # Use appropriate package manager based on version
       if command -v dnf &> /dev/null; then
+        dnf clean all
         dnf install -y dnf-utils
         dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-        dnf install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+        if ! dnf install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin; then
+          log "First attempt failed, cleaning metadata and retrying..."
+          dnf clean metadata
+          dnf makecache
+          dnf install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+        fi
       else
+        yum clean all
         yum install -y yum-utils
         yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
         yum install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
