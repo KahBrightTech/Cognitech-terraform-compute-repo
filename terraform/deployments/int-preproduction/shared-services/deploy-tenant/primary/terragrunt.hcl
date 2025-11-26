@@ -631,8 +631,14 @@ inputs = {
       port        = 8083
       target_type = "instance"
       health_check = {
-        protocol = "HTTP"
-        port     = "8083"
+        protocol            = "HTTP"
+        port                = "8083"
+        path                = "/"
+        interval            = 30
+        timeout             = 10
+        healthy_threshold   = 2
+        unhealthy_threshold = 3
+        matcher             = "200-399"
       }
       vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].vpc_id
     },
@@ -654,9 +660,14 @@ inputs = {
       port        = 3000
       target_type = "instance"
       health_check = {
-        protocol = "HTTP"
-        port     = "3000"
-        path     = "/"
+        protocol            = "HTTP"
+        port                = "3000"
+        path                = "/"
+        interval            = 30
+        timeout             = 10
+        healthy_threshold   = 2
+        unhealthy_threshold = 3
+        matcher             = "200-399"
       }
       vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].vpc_id
     }
@@ -686,7 +697,7 @@ inputs = {
       max_size                  = 5
       desired_capacity          = 2
       health_check_type         = "ELB"
-      health_check_grace_period = 300
+      health_check_grace_period = 600
       launch_template_name      = "${local.vpc_name_abr}-afr"
       attach_target_groups = [
         "${local.vpc_name_abr}-afr-tg",
