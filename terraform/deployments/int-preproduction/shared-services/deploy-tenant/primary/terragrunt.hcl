@@ -680,7 +680,7 @@ inputs = {
   ]
   Autoscaling_groups = [
     {
-      key                       = "afr"
+      key                       = "afrique"
       name                      = "${local.vpc_name_abr}-afr"
       min_size                  = 1
       max_size                  = 5
