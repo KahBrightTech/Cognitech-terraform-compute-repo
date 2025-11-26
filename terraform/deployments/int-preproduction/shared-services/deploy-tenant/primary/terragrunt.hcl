@@ -671,7 +671,7 @@ inputs = {
         os_release_date = "AL2023"
       }
       instance_type = "t3.medium"
-      user_data     = file("${include.cloud.locals.repo.root}/Bash-script/docker.sh")
+      user_data     = file("${include.cloud.locals.repo.root}/Bash-script/container.sh")
       vpc_security_group_ids = [
         dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].security_group.app.id
       ]
