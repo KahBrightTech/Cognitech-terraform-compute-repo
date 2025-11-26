@@ -3,10 +3,10 @@
 set -e
 
 # Configuration Variables - Set defaults or use values from environment
-S3_BUCKET="${S3_BUCKET:-int-preproduction-use1-shared-software-bucket}"
-S3_FOLDER_PATH="${S3_FOLDER_PATH:-AfricanStore}"
-COMPOSE_DIR="${COMPOSE_DIR:-/opt/docker-compose}"
-DOCKER_SECRET_NAME="${DOCKER_SECRET_NAME:-int-preproduction-use1-docker-auth20251015041509752300000004}"
+S3_BUCKET="$${S3_BUCKET:-int-preproduction-use1-shared-software-bucket}"
+S3_FOLDER_PATH="$${S3_FOLDER_PATH:-AfricanStore}"
+COMPOSE_DIR="$${COMPOSE_DIR:-/opt/docker-compose}"
+DOCKER_SECRET_NAME="$${DOCKER_SECRET_NAME:-int-preproduction-use1-docker-auth20251015041509752300000004}"
 
 log() {
   echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1"
