@@ -199,9 +199,6 @@ module "eks_worker_nodes" {
         id      = module.launch_templates[each.value.launch_template_name].id
         version = "$Latest"
       }
-    },
-    {
-      disk_size = each.value.disk_size != null ? each.value.disk_size : each.value.launch_template_name != null ? module.launch_templates[each.value.launch_template_name].volume_size : null
     }
   )
 }
