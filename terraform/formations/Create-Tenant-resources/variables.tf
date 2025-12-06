@@ -318,6 +318,7 @@ variable "eks_nodes" {
     version                   = optional(string)
     force_update_version      = optional(bool, false)
     capacity_type             = optional(string, "ON_DEMAND")
+    launch_template_name      = optional(string)
     launch_template = optional(object({
       id      = string
       version = optional(string, "$Latest")
