@@ -193,7 +193,6 @@ module "eks_worker_nodes" {
   for_each = (var.eks_nodes != null) ? { for item in var.eks_nodes : item.key => item } : {}
   common   = var.common
   eks_node_group = merge(
-    each.value,
     {
       launch_template = {
         id      = module.launch_templates[each.value.launch_template_name].id

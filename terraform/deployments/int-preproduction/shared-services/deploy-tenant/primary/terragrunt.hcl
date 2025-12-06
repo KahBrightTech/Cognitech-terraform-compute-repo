@@ -686,7 +686,7 @@ inputs = {
       vpc_security_group_ids = [
         dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].security_group.app.id
       ]
-      root_device_name = "/dev/sda1"
+      root_device_name = "/dev/xvda"
       volume_size      = 20
       tags             = local.tags
     }

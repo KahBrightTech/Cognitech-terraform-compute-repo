@@ -243,7 +243,7 @@ variable "launch_templates" {
     tags                        = optional(map(string))
     user_data                   = optional(string)
     volume_size                 = optional(number)
-    root_device_name            = optional(string) #
+    root_device_name            = optional(string)
   }))
   default = null
 }
