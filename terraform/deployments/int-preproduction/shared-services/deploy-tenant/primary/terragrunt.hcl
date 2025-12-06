@@ -673,23 +673,23 @@ inputs = {
   #   }
   # ]
   launch_templates = [
-    {
-      key              = "cognitech"
-      name             = "${local.vpc_name_abr}-cognitech"
-      key_name         = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name_abr}-key-pair"].name
-      instance_profile = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_profiles[local.vpc_name_abr].iam_profiles.name
-      ami_config = {
-        os_release_date = "EKSAL2023"
-      }
-      instance_type = "t3.medium"
-      # user_data     = file("${include.cloud.locals.repo.root}/Bash-script/container.sh")
-      vpc_security_group_ids = [
-        dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].security_group.app.id
-      ]
-      root_device_name = "/dev/xvda"
-      volume_size      = 20
-      tags             = local.tags
-    }
+    # {
+    #   key              = "cognitech"
+    #   name             = "${local.vpc_name_abr}-cognitech"
+    #   key_name         = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name_abr}-key-pair"].name
+    #   instance_profile = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_profiles[local.vpc_name_abr].iam_profiles.name
+    #   ami_config = {
+    #     os_release_date = "EKSAL2023"
+    #   }
+    #   instance_type = "t3.medium"
+    #   # user_data     = file("${include.cloud.locals.repo.root}/Bash-script/container.sh")
+    #   vpc_security_group_ids = [
+    #     dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].security_group.app.id
+    #   ]
+    #   root_device_name = "/dev/xvda"
+    #   volume_size      = 20
+    #   tags             = local.tags
+    # }
   ]
 
   # Autoscaling_groups = [
@@ -771,7 +771,11 @@ inputs = {
         desired_size         = 2
         max_size             = 4
         min_size             = 1
-        launch_template_name = "${local.vpc_name_abr}-cognitech"
+        instance_types      = ["t3.medium"]
+        ec2_ssh_key         = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name_abr}-key-pair"].name
+        source_security_group_ids = [
+          dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].security_group.app.id
+        ]
         disk_size           = 20
       }
   ]
