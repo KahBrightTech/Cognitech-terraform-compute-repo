@@ -781,6 +781,7 @@ inputs = {
           node-purpose = "general-workloads"
         }
         tags = {
+          Name        = "${local.vpc_name_abr}-eks-node"
           Environment = "int-preproduction"
           NodeGroup   = "${local.vpc_name_abr}-cognitech-ng"
           CreatedBy   = "Terraform"
