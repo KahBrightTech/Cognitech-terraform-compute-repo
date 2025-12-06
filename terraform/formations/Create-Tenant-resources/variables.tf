@@ -308,8 +308,8 @@ variable "eks_nodes" {
     desired_size              = number
     max_size                  = number
     min_size                  = number
-    instance_types            = list(string)
-    ec2_ssh_key               = string
+    instance_types            = optional(list(string))
+    ec2_ssh_key               = optional(string)
     source_security_group_ids = list(string)
     ami_type                  = optional(string)
     disk_size                 = optional(number, 20)

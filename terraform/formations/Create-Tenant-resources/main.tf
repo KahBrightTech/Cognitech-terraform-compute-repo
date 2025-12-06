@@ -129,7 +129,7 @@ module "nlb_listeners" {
 # Creates Launch template
 # #--------------------------------------------------------------------
 module "launch_templates" {
-  source          = "git::https://github.com/njibrigthain100/Cognitech-terraform-iac-modules.git//terraform/modules/Launch_template?ref=v1.4.23"
+  source          = "git::https://github.com/njibrigthain100/Cognitech-terraform-iac-modules.git//terraform/modules/Launch_template?ref=v1.4.28"
   for_each        = (var.launch_templates != null) ? { for item in var.launch_templates : item.name => item } : {}
   common          = var.common
   launch_template = each.value
