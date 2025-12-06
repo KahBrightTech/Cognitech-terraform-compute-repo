@@ -672,23 +672,23 @@ inputs = {
   #     vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].vpc_id
   #   }
   # ]
-  # launch_templates = [
-  #   {
-  #     key              = "afr"
-  #     name             = "${local.vpc_name_abr}-afr"
-  #     key_name         = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name_abr}-key-pair"].name
-  #     instance_profile = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_profiles[local.vpc_name_abr].iam_profiles.name
-  #     ami_config = {
-  #       os_release_date = "AL2023"
-  #     }
-  #     instance_type = "t3.medium"
-  #     user_data     = file("${include.cloud.locals.repo.root}/Bash-script/container.sh")
-  #     vpc_security_group_ids = [
-  #       dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].security_group.app.id
-  #     ]
-  #     tags = local.tags
-  #   }
-  # ]
+  launch_templates = [
+    {
+      key              = "cognitech"
+      name             = "${local.vpc_name_abr}-cognitech"
+      key_name         = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name_abr}-key-pair"].name
+      instance_profile = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_profiles[local.vpc_name_abr].iam_profiles.name
+      ami_config = {
+        os_release_date = "EKSAL2023"
+      }
+      instance_type = "t3.medium"
+      # user_data     = file("${include.cloud.locals.repo.root}/Bash-script/container.sh")
+      vpc_security_group_ids = [
+        dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].security_group.app.id
+      ]
+      tags = local.tags
+    }
+  ]
   # Autoscaling_groups = [
   #   {
   #     key                       = "afrique"
@@ -754,6 +754,22 @@ inputs = {
   #     account_id = local.account_id
   #   }
   # ]
+  eks_nodes = [
+    {
+      key = "cognitech"
+      cluster_name        = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters[local.vpc_name_abr].eks_cluster_id
+      node_group_name    = "${local.vpc_name_abr}-cognitech-ng"
+      node_role_arn     = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.IAM_roles.shared-eks.iam_role_arn
+      subnet_ids       = [
+        dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].public_subnet[include.env.locals.subnet_prefix.primary].primary_subnet_id,
+        dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].public_subnet[include.env.locals.subnet_prefix.secondary].primary_subnet_id
+      ]
+      desired_size    = 2
+      max_size        = 4
+      min_size        = 1
+      launch_template_name = "${local.vpc_name_abr}-cognitech"
+    }
+  ]
 }
 #-------------------------------------------------------
 # State Configuration

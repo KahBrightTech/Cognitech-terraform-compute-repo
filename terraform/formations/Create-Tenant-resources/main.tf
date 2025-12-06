@@ -129,7 +129,7 @@ module "nlb_listeners" {
 # Creates Launch template
 # #--------------------------------------------------------------------
 module "launch_templates" {
-  source          = "git::https://github.com/njibrigthain100/Cognitech-terraform-iac-modules.git//terraform/modules/Launch_template?ref=v1.3.24"
+  source          = "git::https://github.com/njibrigthain100/Cognitech-terraform-iac-modules.git//terraform/modules/Launch_template?ref=v1.4.23"
   for_each        = (var.launch_templates != null) ? { for item in var.launch_templates : item.name => item } : {}
   common          = var.common
   launch_template = each.value
@@ -182,4 +182,23 @@ module "ebs_recovery" {
   for_each          = (var.dr_volume_restores != null) ? { for item in var.dr_volume_restores : item.key => item } : {}
   common            = var.common
   dr_volume_restore = each.value
+}
+
+
+#--------------------------------------------------------------------
+# EKS Worker nodes
+# #--------------------------------------------------------------------
+module "eks_worker_nodes" {
+  source   = "git::https://github.com/njibrigthain100/Cognitech-terraform-iac-modules.git//terraform/modules/EKS-Node-group?ref=v1.4.22"
+  for_each = (var.eks_nodes != null) ? { for item in var.eks_nodes : item.key => item } : {}
+  common   = var.common
+  eks_node_group = merge(
+    each.value,
+    {
+      launch_template = {
+        id      = module.launch_templates[each.value.launch_template_name].id
+        version = "$Latest"
+      }
+    },
+  )
 }

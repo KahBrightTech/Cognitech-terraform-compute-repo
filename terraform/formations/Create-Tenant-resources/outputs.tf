@@ -86,3 +86,11 @@ output "dr_volume_restores" {
   description = "Output for DR Volume Restores"
   value       = module.ebs_recovery
 }
+
+#-------------------------------------------------------
+# EKS Worker nodes outputs
+#-------------------------------------------------------
+output "eks_worker_nodes" {
+  description = "Output for EKS Worker Nodes"
+  value       = module.eks_worker_nodes
+}
