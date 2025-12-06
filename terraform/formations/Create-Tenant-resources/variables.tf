@@ -323,7 +323,7 @@ variable "eks_nodes" {
     use_launch_template       = optional(bool, false)
     launch_template_name      = optional(string)
     launch_template = optional(object({
-      id      = string
+      id      = optional(string)
       version = optional(string, "$Latest")
     }))
   }))

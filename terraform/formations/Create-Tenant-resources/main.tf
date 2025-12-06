@@ -194,11 +194,11 @@ module "eks_worker_nodes" {
   common   = var.common
   eks_node_group = merge(
     each.value,
-    {
+    each.value.use_launch_template ? {
       launch_template = {
-        id      = each.value.use_launch_template ? module.launch_templates[each.value.launch_template_name].id : null
+        id      = module.launch_templates[each.value.launch_template_name].id
         version = "$Latest"
       }
-    }
+    } : {}
   )
 }

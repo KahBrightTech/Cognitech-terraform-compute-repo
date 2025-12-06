@@ -757,7 +757,6 @@ inputs = {
   #     account_id = local.account_id
   #   }
   # ]
-
   eks_nodes = [
       {
         key             = "cognitech"
