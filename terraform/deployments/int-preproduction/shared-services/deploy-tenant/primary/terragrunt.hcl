@@ -776,6 +776,10 @@ inputs = {
           dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].security_group.app.id
         ]
         disk_size           = 20
+        tags = {
+          Name = "${local.vpc_name_abr}-cognitech-ng"
+          CreatedBy = "Terraform"
+        }
       }
   ]
 }
