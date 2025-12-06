@@ -310,7 +310,7 @@ variable "eks_nodes" {
     min_size                  = number
     instance_types            = optional(list(string))
     ec2_ssh_key               = optional(string)
-    source_security_group_ids = list(string)
+    source_security_group_ids = optional(list(string))
     ami_type                  = optional(string)
     disk_size                 = optional(number, 20)
     labels                    = optional(map(string), {})
