@@ -242,6 +242,8 @@ variable "launch_templates" {
     vpc_security_group_ids      = optional(list(string))
     tags                        = optional(map(string))
     user_data                   = optional(string)
+    volume_size                 = optional(number)
+    root_device_name            = optional(string) #
   }))
   default = null
 }
