@@ -196,7 +196,7 @@ module "eks_worker_nodes" {
     each.value,
     {
       launch_template = {
-        id      = module.launch_templates[each.value.launch_template_name].id
+        id      = each.value.use_launch_template ? module.launch_templates[each.value.launch_template_name].id : null
         version = "$Latest"
       }
     }
