@@ -189,7 +189,7 @@ module "ebs_recovery" {
 # EKS Worker nodes
 # #--------------------------------------------------------------------
 module "eks_worker_nodes" {
-  source   = "git::https://github.com/njibrigthain100/Cognitech-terraform-iac-modules.git//terraform/modules/EKS-Node-group?ref=v1.4.27"
+  source   = "git::https://github.com/njibrigthain100/Cognitech-terraform-iac-modules.git//terraform/modules/EKS-Node-group?ref=v1.4.33"
   for_each = (var.eks_nodes != null) ? { for item in var.eks_nodes : item.key => item } : {}
   common   = var.common
   eks_node_group = merge(
