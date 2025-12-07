@@ -410,111 +410,111 @@ inputs = {
     #   }
     # }
   ]
-  # alb_listener_rules = [
-  #   {
-  #     index_key    = "app"
-  #     listener_arn = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.load_balancers["app"].default_listener.arn
-  #     rules = [
-  #       {
-  #         key      = "app"
-  #         priority = 10
-  #         type     = "forward"
-  #         target_groups = [
-  #           {
-  #             tg_name = "${local.vpc_name_abr}-afr-tg"
-  #             weight  = 99
-  #           }
-  #         ]
-  #         conditions = [
-  #           {
-  #             host_headers = [
-  #               "afrique.${local.public_hosted_zone}",
-  #             ]
-  #           }
-  #         ]
-  #       },
-  #       # {
-  #       #   key      = "ecom"
-  #       #   priority = 11
-  #       #   type     = "forward"
-  #       #   target_groups = [
-  #       #     {
-  #       #       tg_name = "${local.vpc_name_abr}-app2-tg"
-  #       #       weight  = 99
-  #       #     }
-  #       #   ]
-  #       #   conditions = [
-  #       #     {
-  #       #       host_headers = [
-  #       #         "ecommerce.${local.public_hosted_zone}",
-  #       #       ]
-  #       #     }
-  #       #   ]
-  #       # },
-  #       # {
-  #       #   key      = "anime"
-  #       #   priority = 12
-  #       #   type     = "forward"
-  #       #   target_groups = [
-  #       #     {
-  #       #       tg_name = "${local.vpc_name_abr}-app3-tg"
-  #       #       weight  = 99
-  #       #     }
-  #       #   ]
-  #       #   conditions = [
-  #       #     {
-  #       #       host_headers = [
-  #       #         "anime.${local.public_hosted_zone}",
-  #       #       ]
-  #       #     }
-  #       #   ]
-  #       # },
-  #       {
-  #         key      = "portainer"
-  #         priority = 14
-  #         type     = "forward"
-  #         target_groups = [
-  #           {
-  #             tg_name = "${local.vpc_name_abr}-app4-tg"
-  #             weight  = 99
-  #           }
-  #         ]
-  #         conditions = [
-  #           {
-  #             host_headers = [
-  #               "portainer.${local.public_hosted_zone}",
-  #             ]
-  #           }
-  #         ]
-  #       }
-  #     ]
-  #   },
-  #   # {
-  #   #   index_key = "afr"
-  #   #   # listener_key = "ans"
-  #   #   listener_arn = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.load_balancers["app"].default_listener.arn
-  #   #   rules = [
-  #   #     {
-  #   #       key      = "afr"
-  #   #       priority = 13
-  #   #       type     = "forward"
-  #   #       target_groups = [
-  #   #         {
-  #   #           tg_name = "${local.vpc_name_abr}-afr-tg"
-  #   #           weight  = 99
-  #   #         }
-  #   #       ]
-  #   #       conditions = [
-  #   #         {
-  #   #           host_headers = [
-  #   #             "afrique.${local.public_hosted_zone}",
-  #   #           ]
-  #   #         }
-  #   #       ]
-  #   #     }
-  #   #   ]
-  #   # }
-  # ]
+  alb_listener_rules = [
+    #   {
+    #     index_key    = "app"
+    #     listener_arn = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.load_balancers["app"].default_listener.arn
+    #     rules = [
+    #       {
+    #         key      = "app"
+    #         priority = 10
+    #         type     = "forward"
+    #         target_groups = [
+    #           {
+    #             tg_name = "${local.vpc_name_abr}-afr-tg"
+    #             weight  = 99
+    #           }
+    #         ]
+    #         conditions = [
+    #           {
+    #             host_headers = [
+    #               "afrique.${local.public_hosted_zone}",
+    #             ]
+    #           }
+    #         ]
+    #       },
+    #       # {
+    #       #   key      = "ecom"
+    #       #   priority = 11
+    #       #   type     = "forward"
+    #       #   target_groups = [
+    #       #     {
+    #       #       tg_name = "${local.vpc_name_abr}-app2-tg"
+    #       #       weight  = 99
+    #       #     }
+    #       #   ]
+    #       #   conditions = [
+    #       #     {
+    #       #       host_headers = [
+    #       #         "ecommerce.${local.public_hosted_zone}",
+    #       #       ]
+    #       #     }
+    #       #   ]
+    #       # },
+    #       # {
+    #       #   key      = "anime"
+    #       #   priority = 12
+    #       #   type     = "forward"
+    #       #   target_groups = [
+    #       #     {
+    #       #       tg_name = "${local.vpc_name_abr}-app3-tg"
+    #       #       weight  = 99
+    #       #     }
+    #       #   ]
+    #       #   conditions = [
+    #       #     {
+    #       #       host_headers = [
+    #       #         "anime.${local.public_hosted_zone}",
+    #       #       ]
+    #       #     }
+    #       #   ]
+    #       # },
+    #       {
+    #         key      = "portainer"
+    #         priority = 14
+    #         type     = "forward"
+    #         target_groups = [
+    #           {
+    #             tg_name = "${local.vpc_name_abr}-app4-tg"
+    #             weight  = 99
+    #           }
+    #         ]
+    #         conditions = [
+    #           {
+    #             host_headers = [
+    #               "portainer.${local.public_hosted_zone}",
+    #             ]
+    #           }
+    #         ]
+    #       }
+    #     ]
+    #   },
+    #   # {
+    #   #   index_key = "afr"
+    #   #   # listener_key = "ans"
+    #   #   listener_arn = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.load_balancers["app"].default_listener.arn
+    #   #   rules = [
+    #   #     {
+    #   #       key      = "afr"
+    #   #       priority = 13
+    #   #       type     = "forward"
+    #   #       target_groups = [
+    #   #         {
+    #   #           tg_name = "${local.vpc_name_abr}-afr-tg"
+    #   #           weight  = 99
+    #   #         }
+    #   #       ]
+    #   #       conditions = [
+    #   #         {
+    #   #           host_headers = [
+    #   #             "afrique.${local.public_hosted_zone}",
+    #   #           ]
+    #   #         }
+    #   #       ]
+    #   #     }
+    #   #   ]
+    #   # }
+  ]
   nlb_listeners = [
     # {
     #   key             = "ssrs"
@@ -591,92 +591,92 @@ inputs = {
     #   }
     # }
   ]
-  # target_groups = [
-  #   # {
-  #   #   name        = "${local.vpc_name_abr}-app-tg"
-  #   #   protocol    = "HTTP"
-  #   #   port        = 8081
-  #   #   target_type = "instance"
-  #   #   health_check = {
-  #   #     protocol = "HTTP"
-  #   #     port     = "8081"
-  #   #   }
-  #   #   vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
-  #   # },
-  #   # {
-  #   #   name        = "${local.vpc_name_abr}-app2-tg"
-  #   #   protocol    = "HTTP"
-  #   #   port        = 8080
-  #   #   target_type = "instance"
-  #   #   health_check = {
-  #   #     protocol = "HTTP"
-  #   #     port     = "8080"
-  #   #   }
-  #   #   vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
-  #   # },
-  #   # {
-  #   #   name        = "${local.vpc_name_abr}-app3-tg"
-  #   #   protocol    = "HTTP"
-  #   #   port        = 8082
-  #   #   target_type = "instance"
-  #   #   health_check = {
-  #   #     protocol = "HTTP"
-  #   #     port     = "8082"
-  #   #   }
-  #   #   vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
-  #   # },
-  #   {
-  #     name        = "${local.vpc_name_abr}-app4-tg"
-  #     protocol    = "HTTP"
-  #     port        = 8083
-  #     target_type = "instance"
-  #     health_check = {
-  #       protocol            = "HTTP"
-  #       port                = "8083"
-  #       path                = "/"
-  #       interval            = 30
-  #       timeout             = 10
-  #       healthy_threshold   = 2
-  #       unhealthy_threshold = 3
-  #       matcher             = "200-399"
-  #     }
-  #     vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].vpc_id
-  #   },
-  #   # {
-  #   #   name        = "${local.vpc_name_abr}-ans-tg"
-  #   #   protocol    = "HTTPS"
-  #   #   port        = 443
-  #   #   target_type = "instance"
-  #   #   health_check = {
-  #   #     protocol = "HTTPS"
-  #   #     port     = "443"
-  #   #     path     = "/"
-  #   #   }
-  #   #   vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
-  #   # },
-  #   {
-  #     name        = "${local.vpc_name_abr}-afr-tg"
-  #     protocol    = "HTTP"
-  #     port        = 3000
-  #     target_type = "instance"
-  #     health_check = {
-  #       protocol            = "HTTP"
-  #       port                = "3000"
-  #       path                = "/"
-  #       interval            = 30
-  #       timeout             = 10
-  #       healthy_threshold   = 2
-  #       unhealthy_threshold = 3
-  #       matcher             = "200-399"
-  #     }
-  #     vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].vpc_id
-  #   }
-  # ]
+  target_groups = [
+    #   # {
+    #   #   name        = "${local.vpc_name_abr}-app-tg"
+    #   #   protocol    = "HTTP"
+    #   #   port        = 8081
+    #   #   target_type = "instance"
+    #   #   health_check = {
+    #   #     protocol = "HTTP"
+    #   #     port     = "8081"
+    #   #   }
+    #   #   vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
+    #   # },
+    #   # {
+    #   #   name        = "${local.vpc_name_abr}-app2-tg"
+    #   #   protocol    = "HTTP"
+    #   #   port        = 8080
+    #   #   target_type = "instance"
+    #   #   health_check = {
+    #   #     protocol = "HTTP"
+    #   #     port     = "8080"
+    #   #   }
+    #   #   vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
+    #   # },
+    #   # {
+    #   #   name        = "${local.vpc_name_abr}-app3-tg"
+    #   #   protocol    = "HTTP"
+    #   #   port        = 8082
+    #   #   target_type = "instance"
+    #   #   health_check = {
+    #   #     protocol = "HTTP"
+    #   #     port     = "8082"
+    #   #   }
+    #   #   vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
+    #   # },
+    #   {
+    #     name        = "${local.vpc_name_abr}-app4-tg"
+    #     protocol    = "HTTP"
+    #     port        = 8083
+    #     target_type = "instance"
+    #     health_check = {
+    #       protocol            = "HTTP"
+    #       port                = "8083"
+    #       path                = "/"
+    #       interval            = 30
+    #       timeout             = 10
+    #       healthy_threshold   = 2
+    #       unhealthy_threshold = 3
+    #       matcher             = "200-399"
+    #     }
+    #     vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].vpc_id
+    #   },
+    #   # {
+    #   #   name        = "${local.vpc_name_abr}-ans-tg"
+    #   #   protocol    = "HTTPS"
+    #   #   port        = 443
+    #   #   target_type = "instance"
+    #   #   health_check = {
+    #   #     protocol = "HTTPS"
+    #   #     port     = "443"
+    #   #     path     = "/"
+    #   #   }
+    #   #   vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
+    #   # },
+    #   {
+    #     name        = "${local.vpc_name_abr}-afr-tg"
+    #     protocol    = "HTTP"
+    #     port        = 3000
+    #     target_type = "instance"
+    #     health_check = {
+    #       protocol            = "HTTP"
+    #       port                = "3000"
+    #       path                = "/"
+    #       interval            = 30
+    #       timeout             = 10
+    #       healthy_threshold   = 2
+    #       unhealthy_threshold = 3
+    #       matcher             = "200-399"
+    #     }
+    #     vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].vpc_id
+    #   }
+  ]
   launch_templates = [
     {
-      key              = "cognitech"
-      name             = "${local.vpc_name_abr}-cognitech"
-      key_name         = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name_abr}-key-pair"].name
+      key      = "cognitech"
+      name     = "${local.vpc_name_abr}-cognitech"
+      key_name = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name_abr}-key-pair"].name
       # instance_profile = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_profiles[local.vpc_name_abr].iam_profiles.name # Not needed for EKS nodes
       ami_config = {
         os_release_date = "EKSAL2023"
@@ -688,98 +688,101 @@ inputs = {
       ]
       root_device_name = "/dev/xvda"
       volume_size      = 20
-      tags             = local.tags
+      tags = merge(
+        local.tags,
+        {
+          "Name" = "${local.vpc_name_abr}-cognitech-worker-nodes"
+        }
+      )
     }
   ]
 
-  # Autoscaling_groups = [
-  #   {
-  #     key                       = "afrique"
-  #     name                      = "${local.vpc_name_abr}-afrique"
-  #     min_size                  = 1
-  #     max_size                  = 5
-  #     desired_capacity          = 2
-  #     health_check_type         = "ELB"
-  #     health_check_grace_period = 600
-  #     launch_template_name      = "${local.vpc_name_abr}-afr"
-  #     attach_target_groups = [
-  #       "${local.vpc_name_abr}-afr-tg",
-  #       "${local.vpc_name_abr}-app4-tg"
-  #     ]
-  #     subnet_ids = [
-  #       dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].private_subnet[include.env.locals.subnet_prefix.primary].primary_subnet_id,
-  #       dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].private_subnet[include.env.locals.subnet_prefix.secondary].primary_subnet_id
-  #     ]
-  #     timeouts = {
-  #       delete = "10m"
-  #     }
-  #     tags = local.tags
-  #     additional_tags = [
-  #       {
-  #         key                 = "Name"
-  #         value               = "${local.vpc_name_abr}-docker-asg"
-  #         propagate_at_launch = true
-  #       }
-  #     ]
-  #   }
-  # ]
+  Autoscaling_groups = [
+    #   {
+    #     key                       = "afrique"
+    #     name                      = "${local.vpc_name_abr}-afrique"
+    #     min_size                  = 1
+    #     max_size                  = 5
+    #     desired_capacity          = 2
+    #     health_check_type         = "ELB"
+    #     health_check_grace_period = 600
+    #     launch_template_name      = "${local.vpc_name_abr}-afr"
+    #     attach_target_groups = [
+    #       "${local.vpc_name_abr}-afr-tg",
+    #       "${local.vpc_name_abr}-app4-tg"
+    #     ]
+    #     subnet_ids = [
+    #       dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].private_subnet[include.env.locals.subnet_prefix.primary].primary_subnet_id,
+    #       dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].private_subnet[include.env.locals.subnet_prefix.secondary].primary_subnet_id
+    #     ]
+    #     timeouts = {
+    #       delete = "10m"
+    #     }
+    #     tags = local.tags
+    #     additional_tags = [
+    #       {
+    #         key                 = "Name"
+    #         value               = "${local.vpc_name_abr}-docker-asg"
+    #         propagate_at_launch = true
+    #       }
+    #     ]
+    #   }
+  ]
 
-  # dr_volume_restores = [
-  #   {
-  #     key                  = "ssrs1"
-  #     source_instance_name = "INTPP-SHR-W-SSRS-01"
-  #     target_instance_name = "INTPP-SHR-W-SSRS-02"
-  #     target_az            = "us-east-1a"
-  #     device_volumes = [
-  #       {
-  #         device_name = "xvdf"
-  #         size        = 50
-  #       },
-  #       {
-  #         device_name = "xvdg"
-  #         size        = 50
-  #       },
-  #       {
-  #         device_name = "xvdh"
-  #         size        = 50
-  #       },
-  #       {
-  #         device_name = "xvdi"
-  #         size        = 80
-  #       }
-  #     ]
-  #     restore_volume_tags = merge(
-  #       local.Misc_tags,
-  #       {
-  #         "RestoredFrom" = "INTPP-SHR-W-SSRS-01"
-  #         "Name"         = "INTPP-SHR-W-SSRS-02"
-  #       }
-  #     )
-  #     account_id = local.account_id
-  #   }
-  # ]
+  dr_volume_restores = [
+    #   {
+    #     key                  = "ssrs1"
+    #     source_instance_name = "INTPP-SHR-W-SSRS-01"
+    #     target_instance_name = "INTPP-SHR-W-SSRS-02"
+    #     target_az            = "us-east-1a"
+    #     device_volumes = [
+    #       {
+    #         device_name = "xvdf"
+    #         size        = 50
+    #       },
+    #       {
+    #         device_name = "xvdg"
+    #         size        = 50
+    #       },
+    #       {
+    #         device_name = "xvdh"
+    #         size        = 50
+    #       },
+    #       {
+    #         device_name = "xvdi"
+    #         size        = 80
+    #       }
+    #     ]
+    #     restore_volume_tags = merge(
+    #       local.Misc_tags,
+    #       {
+    #         "RestoredFrom" = "INTPP-SHR-W-SSRS-01"
+    #         "Name"         = "INTPP-SHR-W-SSRS-02"
+    #       }
+    #     )
+    #     account_id = local.account_id
+    #   }
+  ]
 
   eks_nodes = [
-      {
-        key             = "cognitech"
-        cluster_name    = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters[local.vpc_name_abr].eks_cluster_id
-        node_group_name = "${local.vpc_name_abr}-cognitech-ng"
-        node_role_arn   = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.IAM_roles.shared-ec2-nodes.iam_role_arn
-        subnet_ids = [
-          dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].public_subnet[include.env.locals.subnet_prefix.primary].primary_subnet_id,
-          dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].public_subnet[include.env.locals.subnet_prefix.secondary].primary_subnet_id
-        ]
-        desired_size         = 2
-        max_size             = 4
-        min_size             = 1
-        use_launch_template = true
-        launch_template_name = "${local.vpc_name_abr}-cognitech"
-        #instance_types      = ["t3.medium"]
-        #ec2_ssh_key         = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name_abr}-key-pair"].name
-        # source_security_group_ids = [
-        #   dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].security_group.app.id
-        # ]
+    {
+      key             = "cognitech"
+      cluster_name    = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters[local.vpc_name_abr].eks_cluster_id
+      node_group_name = "${local.vpc_name_abr}-cognitech-node-group"
+      node_role_arn   = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.IAM_roles.shared-ec2-nodes.iam_role_arn
+      subnet_ids = [
+        dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].public_subnet[include.env.locals.subnet_prefix.primary].primary_subnet_id,
+        dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].public_subnet[include.env.locals.subnet_prefix.secondary].primary_subnet_id
+      ]
+      desired_size         = 2
+      max_size             = 4
+      min_size             = 1
+      use_launch_template  = true
+      launch_template_name = "${local.vpc_name_abr}-cognitech"
+      tags = {
+        "Name" = "${local.vpc_name_abr}-cognitech-node"
       }
+    }
   ]
 }
 
