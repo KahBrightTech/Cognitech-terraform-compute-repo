@@ -779,7 +779,6 @@ inputs = {
         # source_security_group_ids = [
         #   dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].security_group.app.id
         # ]
-        disk_size           = null
       }
   ]
 }
