@@ -677,7 +677,7 @@ inputs = {
       key              = "cognitech"
       name             = "${local.vpc_name_abr}-cognitech"
       key_name         = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name_abr}-key-pair"].name
-      instance_profile = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_profiles[local.vpc_name_abr].iam_profiles.name
+      # instance_profile = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_profiles[local.vpc_name_abr].iam_profiles.name # Not needed for EKS nodes
       ami_config = {
         os_release_date = "EKSAL2023"
       }
