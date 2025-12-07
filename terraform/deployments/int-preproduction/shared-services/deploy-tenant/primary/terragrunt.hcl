@@ -686,7 +686,7 @@ inputs = {
       vpc_security_group_ids = [
         dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].security_group.app.id
       ]
-      # root_device_name = "/dev/xvda"
+      root_device_name = "/dev/xvda"
       volume_size      = 20
       tags             = local.tags
     }
@@ -758,7 +758,7 @@ inputs = {
   #     account_id = local.account_id
   #   }
   # ]
-  
+
   eks_nodes = [
       {
         key             = "cognitech"
