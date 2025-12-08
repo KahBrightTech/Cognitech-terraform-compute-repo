@@ -29,6 +29,9 @@ locals {
     tertiary   = "sbnt3"
     quaternary = "sbnt4"
   }
+  eks = {
+    service_ipv4_cidr = "172.20.0.0/16"
+  }
 
   tags = {
     Environment  = local.environment
