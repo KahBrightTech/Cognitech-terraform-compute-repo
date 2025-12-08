@@ -682,8 +682,11 @@ inputs = {
       }
       associate_public_ip_address = true
       instance_type               = "t3.medium"
-      root_device_name            = "/dev/xvda"
-      volume_size                 = 20
+      vpc_security_group_ids = [
+        dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].security_group.app.id
+      ]
+      root_device_name = "/dev/xvda"
+      volume_size      = 20
       tags = merge(
         local.tags,
         {
@@ -795,7 +798,6 @@ inputs = {
       desired_size         = 2
       max_size             = 4
       min_size             = 1
-      enable_remote_access = true
       use_launch_template  = true
       launch_template_name = "${local.vpc_name_abr}-cognitech"
       tags = {
