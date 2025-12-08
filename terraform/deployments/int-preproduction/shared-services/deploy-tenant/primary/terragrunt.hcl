@@ -682,9 +682,6 @@ inputs = {
       }
       associate_public_ip_address = true
       instance_type               = "t3.medium"
-      vpc_security_group_ids = [
-        dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].security_group.app.id
-      ]
       root_device_name = "/dev/xvda"
       volume_size      = 20
       user_data = base64encode(yamlencode({
@@ -698,12 +695,6 @@ inputs = {
           }
         }
       }))
-      tags = merge(
-        local.tags,
-        {
-          "Name" = "${local.vpc_name_abr}-cognitech-worker-nodes"
-        }
-      )
     },
     # {
     #   key      = "cognitech"
@@ -800,7 +791,7 @@ inputs = {
     {
       key             = "cognitech"
       cluster_name    = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters[local.vpc_name_abr].eks_cluster_id
-      node_group_name = "${local.vpc_name_abr}-cognitech-node-groups"
+      node_group_name = "${local.vpc_name_abr}-cognitech-node-group"
       node_role_arn   = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.IAM_roles.shared-ec2-nodes.iam_role_arn
       subnet_ids = [
         dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].public_subnet[include.env.locals.subnet_prefix.primary].primary_subnet_id,
