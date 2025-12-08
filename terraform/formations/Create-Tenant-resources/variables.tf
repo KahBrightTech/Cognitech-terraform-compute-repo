@@ -321,6 +321,7 @@ variable "eks_nodes" {
     version                   = optional(string)
     force_update_version      = optional(bool, false)
     capacity_type             = optional(string, "ON_DEMAND")
+    ec2_instance_name         = optional(string, "eks_node_group")
     use_launch_template       = optional(bool, false)
     launch_template_name      = optional(string)
     launch_template = optional(object({
