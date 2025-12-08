@@ -795,9 +795,10 @@ inputs = {
       desired_size         = 2
       max_size             = 4
       min_size             = 1
+      use_launch_template  = true
       launch_template_name = "${local.vpc_name_abr}-cognitech"
       tags = {
-        "Name" = "${local.vpc_name_abr}-cognitech-node"
+        "Name" = "shared-cognitech-node"
       }
     },
     {
