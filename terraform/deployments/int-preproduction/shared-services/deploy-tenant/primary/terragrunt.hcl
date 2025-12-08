@@ -692,6 +692,7 @@ inputs = {
             name                 = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters[local.vpc_name_abr].eks_cluster_id
             apiServerEndpoint    = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters[local.vpc_name_abr].eks_cluster_endpoint
             certificateAuthority = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters[local.vpc_name_abr].eks_cluster_certificate_authority_data
+            cidr                 = "10.100.0.0/16"
           }
         }
       }))
