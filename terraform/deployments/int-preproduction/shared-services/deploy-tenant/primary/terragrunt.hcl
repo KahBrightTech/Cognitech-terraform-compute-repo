@@ -794,11 +794,6 @@ inputs = {
       desired_size = 2
       max_size     = 4
       min_size     = 1
-      enable_remote_access = true
-      ec2_ssh_key  = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name_abr}-key-pair"].name
-      source_security_group_ids = [
-        dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].security_group.app.id
-      ]
       use_launch_template  = true
       launch_template_name = "${local.vpc_name_abr}-cognitech"
       tags = {
