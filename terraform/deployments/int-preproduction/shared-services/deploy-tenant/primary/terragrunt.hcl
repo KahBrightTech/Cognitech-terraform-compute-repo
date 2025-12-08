@@ -796,6 +796,9 @@ inputs = {
       max_size             = 4
       min_size             = 1
       launch_template_name = "${local.vpc_name_abr}-cognitech"
+      tags = {
+        "Name" = "${local.vpc_name_abr}-cognitech-node"
+      }
     },
     {
       key             = "etl"
