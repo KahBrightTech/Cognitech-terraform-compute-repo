@@ -44,19 +44,6 @@ locals {
       ManagedBy   = "terraform:${local.deployment_name}"
     }
   )
-
-  # EKS Node User Data for AL2023
-  eks_nodeadm_user_data = base64encode(yamlencode({
-    apiVersion = "node.eks.aws/v1alpha1"
-    kind       = "NodeConfig"
-    spec = {
-      cluster = {
-        name                = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters[local.vpc_name_abr].eks_cluster_id
-        apiServerEndpoint   = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters[local.vpc_name_abr].eks_cluster_endpoint
-        certificateAuthority = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters[local.vpc_name_abr].eks_cluster_certificate_authority_data
-      }
-    }
-  }))
 }
 #-------------------------------------------------------
 # Dependencies 
@@ -695,9 +682,22 @@ inputs = {
       }
       associate_public_ip_address = true
       instance_type               = "t3.medium"
+      vpc_security_group_ids = [
+        dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].security_group.app.id
+      ]
       root_device_name = "/dev/xvda"
       volume_size      = 20
-      user_data        = local.eks_nodeadm_user_data
+      user_data = base64encode(yamlencode({
+        apiVersion = "node.eks.aws/v1alpha1"
+        kind       = "NodeConfig"
+        spec = {
+          cluster = {
+            name                 = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters[local.vpc_name_abr].eks_cluster_id
+            apiServerEndpoint    = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters[local.vpc_name_abr].eks_cluster_endpoint
+            certificateAuthority = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters[local.vpc_name_abr].eks_cluster_certificate_authority_data
+          }
+        }
+      }))
       tags = merge(
         local.tags,
         {
