@@ -673,30 +673,30 @@ inputs = {
     #   }
   ]
   launch_templates = [
-    {
-      key      = "cognitech"
-      name     = "${local.vpc_name_abr}-cognitech"
-      key_name = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name_abr}-key-pair"].name
-      ami_config = {
-        os_release_date = "EKSAL2023"
-      }
-      associate_public_ip_address = true
-      instance_type               = "t3.medium"
-      root_device_name            = "/dev/xvda"
-      volume_size                 = 20
-      user_data = base64encode(yamlencode({
-        apiVersion = "node.eks.aws/v1alpha1"
-        kind       = "NodeConfig"
-        spec = {
-          cluster = {
-            name                 = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters[local.vpc_name_abr].eks_cluster_id
-            apiServerEndpoint    = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters[local.vpc_name_abr].eks_cluster_endpoint
-            certificateAuthority = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters[local.vpc_name_abr].eks_cluster_certificate_authority_data
-            cidr                 = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters[local.vpc_name_abr].eks_cluster_service_ipv4_cidr
-          }
-        }
-      }))
-    },
+    # {
+    #   key      = "cognitech"
+    #   name     = "${local.vpc_name_abr}-cognitech"
+    #   key_name = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name_abr}-key-pair"].name
+    #   ami_config = {
+    #     os_release_date = "EKSAL2023"
+    #   }
+    #   associate_public_ip_address = true
+    #   instance_type               = "t3.medium"
+    #   root_device_name            = "/dev/xvda"
+    #   volume_size                 = 20
+    #   user_data = base64encode(yamlencode({
+    #     apiVersion = "node.eks.aws/v1alpha1"
+    #     kind       = "NodeConfig"
+    #     spec = {
+    #       cluster = {
+    #         name                 = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters[local.vpc_name_abr].eks_cluster_id
+    #         apiServerEndpoint    = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters[local.vpc_name_abr].eks_cluster_endpoint
+    #         certificateAuthority = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters[local.vpc_name_abr].eks_cluster_certificate_authority_data
+    #         cidr                 = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters[local.vpc_name_abr].eks_cluster_service_ipv4_cidr
+    #       }
+    #     }
+    #   }))
+    # },
     # {
     #   key      = "cognitech"
     #   name     = "${local.vpc_name_abr}-cognitech"
