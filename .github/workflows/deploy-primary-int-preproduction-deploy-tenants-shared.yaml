@@ -78,8 +78,16 @@ jobs:
 
       - name: Plan Terragrunt
         id: plan
-        run: terragrunt run-all plan --terragrunt-non-interactive
+        run: |
+          terragrunt run-all plan --terragrunt-non-interactive --terragrunt-no-color | tee plan_output.txt
 
+      - name: Plan Summary
+        if: success()
+        run: |
+          echo "## Terraform Plan Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          sed 's/\x1b\[[0-9;]*m//g' plan_output.txt | grep -oE "Plan: [0-9]+ to add, [0-9]+ to change, [0-9]+ to destroy\." | sort -u >> $GITHUB_STEP_SUMMARY || echo "No changes detected" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY 
   Approve:
     needs: Plan
     runs-on: ubuntu-latest
