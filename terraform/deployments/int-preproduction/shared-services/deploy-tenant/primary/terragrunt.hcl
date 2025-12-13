@@ -808,6 +808,7 @@ inputs = {
       launch_template_name = "${local.vpc_name_abr}-cognitech"
       ec2_instance_name    = "${local.vpc_name_abr}-worker-node"
     }
+  
     # {
     #   key             = "etl"
     #   cluster_name    = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters[local.vpc_name_abr].eks_cluster_id
@@ -831,6 +832,7 @@ inputs = {
     # }
   ]
 }
+
 #-------------------------------------------------------
 # State Configuration
 #-------------------------------------------------------
