@@ -697,7 +697,7 @@ inputs = {
         }
       }))
       vpc_security_group_ids = [
-        dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters[local.vpc_name_abr].eks_sg_id.eks-nodes
+        dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters.InfoGrid.eks_sg_id.eks-nodes
       ]
     }
     # {
