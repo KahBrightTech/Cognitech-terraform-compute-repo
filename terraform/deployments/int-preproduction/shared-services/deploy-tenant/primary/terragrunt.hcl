@@ -689,10 +689,10 @@ inputs = {
         kind       = "NodeConfig"
         spec = {
           cluster = {
-            name                 = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters[local.vpc_name_abr].eks_cluster_id
-            apiServerEndpoint    = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters[local.vpc_name_abr].eks_cluster_endpoint
-            certificateAuthority = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters[local.vpc_name_abr].eks_cluster_certificate_authority_data
-            cidr                 = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters[local.vpc_name_abr].eks_cluster_service_ipv4_cidr
+            name                 = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters.InfoGrid.eks_cluster_id
+            apiServerEndpoint    = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters.InfoGrid.eks_cluster_endpoint
+            certificateAuthority = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters.InfoGrid.eks_cluster_certificate_authority_data
+            cidr                 = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters.InfoGrid.eks_cluster_service_ipv4_cidr
           }
         }
       }))
