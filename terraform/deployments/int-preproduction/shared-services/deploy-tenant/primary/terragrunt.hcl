@@ -875,10 +875,16 @@ generate "kubernetes-provider" {
   path      = "kubernetes-provider.tf"
   if_exists = "overwrite"
   contents  = <<-EOF
+    data "aws_eks_cluster" "infogrid" {
+    name = "${dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters.InfoGrid.eks_cluster_id}"
+  }
+  data "aws_eks_cluster_auth" "infogrid" {
+    name = "${dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters.InfoGrid.eks_cluster_id}"
+  }
   provider "kubernetes" {
-    host                   = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters.InfoGrid.eks_cluster_endpoint
-    cluster_ca_certificate = base64decode(dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters.InfoGrid.eks_cluster_certificate_authority_data)
-    # token                  = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters.InfoGrid.eks_cluster_token
+    host                   = data.aws_eks_cluster.infogrid.endpoint
+    cluster_ca_certificate = base64decode(data.aws_eks_cluster.infogrid.certificate_authority[0].data)
+    token                  = data.aws_eks_cluster_auth.infogrid.token
   }
   EOF
 }
