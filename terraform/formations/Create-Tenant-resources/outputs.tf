@@ -94,3 +94,11 @@ output "eks_worker_nodes" {
   description = "Output for EKS Worker Nodes"
   value       = module.eks_worker_nodes
 }
+
+#-------------------------------------------------------
+# EKS Service accounts outputs
+#-------------------------------------------------------
+output "eks_service_accounts" {
+  description = "Output for EKS Service Accounts"
+  value       = module.eks_service_accounts
+}

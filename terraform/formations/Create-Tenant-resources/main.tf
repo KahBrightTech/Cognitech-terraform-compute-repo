@@ -202,3 +202,15 @@ module "eks_worker_nodes" {
     } : {}
   )
 }
+
+
+
+#--------------------------------------------------------------------
+# EKS Service Accounts
+#--------------------------------------------------------------------
+module "eks_service_accounts" {
+  source              = "git::https://github.com/njibrigthain100/Cognitech-terraform-iac-modules.git//terraform/modules/EKS-Service-account?ref=v1.4.70"
+  for_each            = (var.eks_service_accounts != null) ? { for item in var.eks_service_accounts : item.key => item } : {}
+  common              = var.common
+  eks_service_account = each.value
+}

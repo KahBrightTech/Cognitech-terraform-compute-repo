@@ -330,3 +330,13 @@ variable "eks_nodes" {
     }))
   }))
 }
+
+variable "eks_service_accounts" {
+  description = "EKS service account configuration object."
+  type = list(object({
+    key       = string
+    name      = optional(string)
+    namespace = optional(string, "default")
+    role_arn  = optional(string)
+  }))
+}
