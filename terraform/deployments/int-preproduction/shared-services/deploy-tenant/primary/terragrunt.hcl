@@ -724,7 +724,7 @@ inputs = {
     #   )
     # }
   ]
-  
+
   Autoscaling_groups = [
     #   {
     #     key                       = "afrique"
@@ -830,7 +830,6 @@ inputs = {
     #   ec2_instance_name = "${local.vpc_name_abr}-worker-node"
     # }
   ]
-
   eks_service_accounts = [
     {
       key      = "secret-manager"
