@@ -700,7 +700,6 @@ inputs = {
         dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters.InfoGrid.eks_sg_id.eks-nodes
       ]
     }
-
     # {
     #   key      = "cognitech"
     #   name     = "${local.vpc_name_abr}-cognitech"
@@ -724,7 +723,6 @@ inputs = {
     #   )
     # }
   ]
-
   Autoscaling_groups = [
     #   {
     #     key                       = "afrique"
@@ -830,13 +828,14 @@ inputs = {
     #   ec2_instance_name = "${local.vpc_name_abr}-worker-node"
     # }
   ]
-  eks_service_accounts = [
-    # {
-    #   key      = "secret-manager"
-    #   name     = "secrets-manager"
-    #   role_arn = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.IAM_roles.shared-infogrid-sa.iam_role_arn
-    # }
-  ]
+  
+  # eks_service_accounts = [
+  #   {
+  #     key      = "secret-manager"
+  #     name     = "secrets-manager"
+  #     role_arn = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.IAM_roles.shared-infogrid-sa.iam_role_arn
+  #   }
+  # ]
 }
 #-------------------------------------------------------
 # State Configuration
