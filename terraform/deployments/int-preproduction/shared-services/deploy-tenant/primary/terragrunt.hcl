@@ -889,5 +889,3 @@ generate "kubernetes-provider" {
   EOF
 }
 
-
-
