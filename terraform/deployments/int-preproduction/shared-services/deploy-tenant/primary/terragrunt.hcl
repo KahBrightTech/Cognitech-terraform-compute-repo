@@ -831,11 +831,11 @@ inputs = {
     # }
   ]
   eks_service_accounts = [
-    {
-      key      = "secret-manager"
-      name     = "secrets-manager"
-      role_arn = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.IAM_roles.shared-infogrid-sa.iam_role_arn
-    }
+    # {
+    #   key      = "secret-manager"
+    #   name     = "secrets-manager"
+    #   role_arn = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.IAM_roles.shared-infogrid-sa.iam_role_arn
+    # }
   ]
 }
 #-------------------------------------------------------
