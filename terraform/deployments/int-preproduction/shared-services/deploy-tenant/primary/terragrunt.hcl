@@ -723,6 +723,7 @@ inputs = {
     #   )
     # }
   ]
+  
   Autoscaling_groups = [
     #   {
     #     key                       = "afrique"
