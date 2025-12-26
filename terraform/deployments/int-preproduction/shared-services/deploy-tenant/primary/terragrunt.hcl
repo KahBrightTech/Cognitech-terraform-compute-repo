@@ -723,7 +723,7 @@ inputs = {
     #   )
     # }
   ]
-  
+
   Autoscaling_groups = [
     #   {
     #     key                       = "afrique"
@@ -868,6 +868,7 @@ generate "aws-providers" {
   }
   EOF
 }
+
 #-------------------------------------------------------
 # Kubernetes Provider 
 #-------------------------------------------------------
