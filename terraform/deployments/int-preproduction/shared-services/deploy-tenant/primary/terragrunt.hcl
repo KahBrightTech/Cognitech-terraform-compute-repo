@@ -673,33 +673,33 @@ inputs = {
     #   }
   ]
   launch_templates = [
-    # {
-    #   key      = "InfoGrid"
-    #   name     = "${local.vpc_name_abr}-InfoGrid"
-    #   key_name = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name_abr}-key-pair"].name
-    #   ami_config = {
-    #     os_release_date = "EKSAL2023"
-    #   }
-    #   associate_public_ip_address = true
-    #   instance_type               = "t3.medium"
-    #   root_device_name            = "/dev/xvda"
-    #   volume_size                 = 20
-    #   user_data = base64encode(yamlencode({
-    #     apiVersion = "node.eks.aws/v1alpha1"
-    #     kind       = "NodeConfig"
-    #     spec = {
-    #       cluster = {
-    #         name                 = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters.InfoGrid.eks_cluster_id
-    #         apiServerEndpoint    = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters.InfoGrid.eks_cluster_endpoint
-    #         certificateAuthority = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters.InfoGrid.eks_cluster_certificate_authority_data
-    #         cidr                 = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters.InfoGrid.eks_cluster_service_ipv4_cidr
-    #       }
-    #     }
-    #   }))
-    #   vpc_security_group_ids = [
-    #     dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters.InfoGrid.eks_sg_id.eks-nodes
-    #   ]
-    # }
+    {
+      key      = "${include.env.locals.eks_cluster_keys.primary_cluster}"
+      name     = "${local.vpc_name_abr}-${include.env.locals.eks_cluster_keys.primary_cluster}"
+      key_name = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name_abr}-key-pair"].name
+      ami_config = {
+        os_release_date = "EKSAL2023"
+      }
+      associate_public_ip_address = true
+      instance_type               = "t3.medium"
+      root_device_name            = "/dev/xvda"
+      volume_size                 = 20
+      user_data = base64encode(yamlencode({
+        apiVersion = "node.eks.aws/v1alpha1"
+        kind       = "NodeConfig"
+        spec = {
+          cluster = {
+            name                 = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters[include.env.locals.eks_cluster_keys.primary_cluster].eks_cluster_id
+            apiServerEndpoint    = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters[include.env.locals.eks_cluster_keys.primary_cluster].eks_cluster_endpoint
+            certificateAuthority = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters[include.env.locals.eks_cluster_keys.primary_cluster].eks_cluster_certificate_authority_data
+            cidr                 = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters[include.env.locals.eks_cluster_keys.primary_cluster].eks_cluster_service_ipv4_cidr
+          }
+        }
+      }))
+      vpc_security_group_ids = [
+        dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters[include.env.locals.eks_cluster_keys.primary_cluster].eks_sg_id.eks-nodes
+      ]
+    }
     # {
     #   key      = "cognitech"
     #   name     = "${local.vpc_name_abr}-cognitech"
@@ -790,22 +790,22 @@ inputs = {
     #   }
   ]
   eks_nodes = [
-    # {
-    #   key             = "InfoGrid"
-    #   cluster_name    = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters.InfoGrid.eks_cluster_id
-    #   node_group_name = "${local.vpc_name_abr}-InfoGrid-node-groups"
-    #   node_role_arn   = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.IAM_roles.shared-ec2-nodes.iam_role_arn
-    #   subnet_ids = [
-    #     dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].public_subnet[include.env.locals.subnet_prefix.primary].primary_subnet_id,
-    #     dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].public_subnet[include.env.locals.subnet_prefix.secondary].primary_subnet_id
-    #   ]
-    #   desired_size         = 2
-    #   max_size             = 4
-    #   min_size             = 1
-    #   use_launch_template  = true
-    #   launch_template_name = "${local.vpc_name_abr}-InfoGrid"
-    #   ec2_instance_name    = "${local.vpc_name_abr}-InfoGrid"
-    # }
+    {
+      key             = "${include.env.locals.eks_cluster_keys.primary_cluster}"
+      cluster_name    = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters[include.env.locals.eks_cluster_keys.primary_cluster].eks_cluster_id
+      node_group_name = "${local.vpc_name_abr}-${include.env.locals.eks_cluster_keys.primary_cluster}-node-groups"
+      node_role_arn   = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.IAM_roles.shared-ec2-nodes.iam_role_arn
+      subnet_ids = [
+        dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].public_subnet[include.env.locals.subnet_prefix.primary].primary_subnet_id,
+        dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].public_subnet[include.env.locals.subnet_prefix.secondary].primary_subnet_id
+      ]
+      desired_size         = 2
+      max_size             = 4
+      min_size             = 1
+      use_launch_template  = true
+      launch_template_name = "${local.vpc_name_abr}-${include.env.locals.eks_cluster_keys.primary_cluster}"
+      ec2_instance_name    = "${local.vpc_name_abr}-${include.env.locals.eks_cluster_keys.primary_cluster}"
+    }
     # {
     #   key             = "etl"
     #   cluster_name    = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters[local.vpc_name_abr].eks_cluster_id
@@ -830,11 +830,11 @@ inputs = {
   ]
 
   eks_service_accounts = [
-    # {
-    #   key      = "secret-manager"
-    #   name     = "secrets-manager"
-    #   role_arn = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.IAM_roles.shared-infogrid-sa.iam_role_arn
-    # }
+    {
+      key      = "secret-manager"
+      name     = "secrets-manager"
+      role_arn = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.IAM_roles["shared-${include.env.locals.eks_cluster_keys.primary_cluster}-sa"].iam_role_arn
+    }
   ]
 }
 #-------------------------------------------------------
@@ -874,16 +874,17 @@ generate "kubernetes-provider" {
   path      = "kubernetes-provider.tf"
   if_exists = "overwrite"
   contents  = <<-EOF
-    data "aws_eks_cluster" "infogrid" {
-    name = "${dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters.InfoGrid.eks_cluster_id}"
+    data "aws_eks_cluster" "${include.env.locals.eks_cluster_keys.primary_cluster}" {
+    name = "${dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters[include.env.locals.eks_cluster_keys.primary_cluster].eks_cluster_id}"
   }
-  data "aws_eks_cluster_auth" "infogrid" {
-    name = "${dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters.InfoGrid.eks_cluster_id}"
+  data "aws_eks_cluster_auth" "${include.env.locals.eks_cluster_keys.primary_cluster}" {
+    name = "${dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters[include.env.locals.eks_cluster_keys.primary_cluster].eks_cluster_id}"
   }
   provider "kubernetes" {
-    host                   = data.aws_eks_cluster.infogrid.endpoint
-    cluster_ca_certificate = base64decode(data.aws_eks_cluster.infogrid.certificate_authority[0].data)
-    token                  = data.aws_eks_cluster_auth.infogrid.token
+    alias                 = "${include.env.locals.eks_cluster_keys.primary_cluster}"
+    host                   = data.aws_eks_cluster.${include.env.locals.eks_cluster_keys.primary_cluster}.endpoint
+    cluster_ca_certificate = base64decode(data.aws_eks_cluster.${include.env.locals.eks_cluster_keys.primary_cluster}.certificate_authority[0].data)
+    token                  = data.aws_eks_cluster_auth.${include.env.locals.eks_cluster_keys.primary_cluster}.token
   }
   EOF
 }

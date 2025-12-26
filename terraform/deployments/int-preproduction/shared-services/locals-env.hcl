@@ -2,7 +2,7 @@ locals {
   cloud = read_terragrunt_config(find_in_parent_folders("locals-cloud.hcl"))
 
   # Simple variables 
-  name_abr     = "intpp"
+  name_abr = "intpp"
   # Environment tags 
   build       = "terraform"
   compliance  = "hippaa"
@@ -33,10 +33,15 @@ locals {
     service_ipv4_cidr = "172.20.0.0/16"
   }
 
+  eks_cluster_keys = {
+    primary_cluster = "InfoGrid"
+  }
+
   tags = {
     Environment  = local.environment
     Owner        = local.owner
     Build-method = local.build
     Compliance   = local.compliance
   }
+
 }
