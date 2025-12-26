@@ -878,7 +878,6 @@ generate "kubernetes-providers" {
   contents  = <<-EOF
   # Primary Cluster Provider
   provider "kubernetes" {
-    alias                  = "${include.env.locals.eks_cluster_keys.primary_cluster}"
     host                   = "${dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters["${include.env.locals.eks_cluster_keys.primary_cluster}"].eks_cluster_endpoint}"
     cluster_ca_certificate = base64decode("${dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters["${include.env.locals.eks_cluster_keys.primary_cluster}"].eks_cluster_certificate_authority_data}")
     
