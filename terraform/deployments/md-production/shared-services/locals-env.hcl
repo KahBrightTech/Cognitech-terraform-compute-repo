@@ -2,7 +2,7 @@ locals {
   cloud = read_terragrunt_config(find_in_parent_folders("locals-cloud.hcl"))
 
   # Simple variables 
-  name_abr     = "mdp"
+  name_abr = "mdp"
   # Environment tags 
   build       = "terraform"
   compliance  = "hippaa"

@@ -1,0 +1,28 @@
+{
+    "Rules": [
+        {
+            "RuleArn": "arn:aws:elasticloadbalancing:us-east-1:730335294148:listener-rule/app/intpp-shared-use1-ecs-web-alb/db75ed5beba98ab5/1de1d370ca937993/c96b493e81aea1e3",
+            "Priority": "default",
+            "Conditions": [],
+            "Actions": [
+                {
+                    "Type": "forward",
+                    "TargetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:730335294148:targetgroup/ecs-frontend-80/2f5630a54632d18d",
+                    "Order": 1,
+                    "ForwardConfig": {
+                        "TargetGroups": [
+                            {
+                                "TargetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:730335294148:targetgroup/ecs-frontend-80/2f5630a54632d18d",
+                                "Weight": 1
+                            }
+                        ],
+                        "TargetGroupStickinessConfig": {
+                            "Enabled": false
+                        }
+                    }
+                }
+            ],
+            "IsDefault": true
+        }
+    ]
+}

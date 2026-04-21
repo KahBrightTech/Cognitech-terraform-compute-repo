@@ -2,7 +2,7 @@ locals {
   cloud = read_terragrunt_config(find_in_parent_folders("locals-cloud.hcl"))
 
   # Simple variables 
-  name_abr = "mdpp"
+  name_abr = "intp"
   # Environment tags 
   build       = "terraform"
   compliance  = "hippaa"
@@ -10,14 +10,14 @@ locals {
   owner       = "kbrigthain@gmail.com"
 
   remote_state_bucket = {
-    remote_dynamodb_table = "terragrunt-lock-table"
+    remote_dynamodb_table = "Terragrunt"
   }
-  resource_prefix = "cognitech-${local.name_abr}"
-  # public_domain   = "cognitechllc.org"
+  resource_prefix = "novutech-${local.name_abr}"
+  public_domain   = "novutechnologies.net"
   network_config_state = {
     bucket_name = {
-      primary   = "md-preprod-us-east-1-network-config-state"
-      secondary = "md-preprod-us-west-2-network-config-state"
+      primary   = "int-prod-us-east-1-network-config-state"
+      secondary = "int-prod-us-west-2-network-config-state"
     }
     key_shared_services      = "${local.name_abr}-shared-services"
     remote_dynamodb_table    = "terragrunt-lock-table"
@@ -29,6 +29,13 @@ locals {
     tertiary   = "sbnt3"
     quaternary = "sbnt4"
   }
+  eks = {
+    service_ipv4_cidr = "172.20.0.0/16"
+  }
+
+  eks_cluster_keys = {
+    primary_cluster = "InfoGrid"
+  }
 
   tags = {
     Environment  = local.environment
@@ -36,4 +43,5 @@ locals {
     Build-method = local.build
     Compliance   = local.compliance
   }
+
 }

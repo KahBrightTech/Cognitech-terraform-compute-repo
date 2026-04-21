@@ -29,8 +29,8 @@ locals {
   aws_account_name = include.cloud.locals.account_info[include.env.locals.name_abr].name
   ## Updates these variables as per the product/service
   shared_vpc_name_abr = "shared"
-  vpc_name        = "development"
-  vpc_name_abr    = "dev"
+  vpc_name            = "development"
+  vpc_name_abr        = "dev"
   # Composite variables 
   tags = merge(
     include.env.locals.tags,

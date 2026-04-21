@@ -673,30 +673,33 @@ inputs = {
     #   }
   ]
   launch_templates = [
-    {
-      key      = "cognitech"
-      name     = "${local.vpc_name_abr}-cognitech"
-      key_name = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name_abr}-key-pair"].name
-      ami_config = {
-        os_release_date = "EKSAL2023"
-      }
-      associate_public_ip_address = true
-      instance_type               = "t3.medium"
-      root_device_name            = "/dev/xvda"
-      volume_size                 = 20
-      user_data = base64encode(yamlencode({
-        apiVersion = "node.eks.aws/v1alpha1"
-        kind       = "NodeConfig"
-        spec = {
-          cluster = {
-            name                 = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters[local.vpc_name_abr].eks_cluster_id
-            apiServerEndpoint    = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters[local.vpc_name_abr].eks_cluster_endpoint
-            certificateAuthority = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters[local.vpc_name_abr].eks_cluster_certificate_authority_data
-            cidr                 = include.env.locals.eks.service_ipv4_cidr
-          }
-        }
-      }))
-    },
+    # {
+    #   key      = "${include.env.locals.eks_cluster_keys.primary_cluster}"
+    #   name     = "${local.vpc_name_abr}-${include.env.locals.eks_cluster_keys.primary_cluster}"
+    #   key_name = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name_abr}-key-pair"].name
+    #   ami_config = {
+    #     os_release_date = "EKSAL2023"
+    #   }
+    #   associate_public_ip_address = true
+    #   instance_type               = "t3.medium"
+    #   root_device_name            = "/dev/xvda"
+    #   volume_size                 = 20
+    #   user_data = base64encode(yamlencode({
+    #     apiVersion = "node.eks.aws/v1alpha1"
+    #     kind       = "NodeConfig"
+    #     spec = {
+    #       cluster = {
+    #         name                 = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters[include.env.locals.eks_cluster_keys.primary_cluster].eks_cluster_id
+    #         apiServerEndpoint    = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters[include.env.locals.eks_cluster_keys.primary_cluster].eks_cluster_endpoint
+    #         certificateAuthority = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters[include.env.locals.eks_cluster_keys.primary_cluster].eks_cluster_certificate_authority_data
+    #         cidr                 = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters[include.env.locals.eks_cluster_keys.primary_cluster].eks_cluster_service_ipv4_cidr
+    #       }
+    #     }
+    #   }))
+    #   vpc_security_group_ids = [
+    #     dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters[include.env.locals.eks_cluster_keys.primary_cluster].eks_sg_id.eks-nodes
+    #   ]
+    # }
     # {
     #   key      = "cognitech"
     #   name     = "${local.vpc_name_abr}-cognitech"
@@ -787,12 +790,11 @@ inputs = {
     #     account_id = local.account_id
     #   }
   ]
-
   eks_nodes = [
     # {
-    #   key             = "cognitech"
-    #   cluster_name    = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters[local.vpc_name_abr].eks_cluster_id
-    #   node_group_name = "${local.vpc_name_abr}-cognitech-node"
+    #   key             = "${include.env.locals.eks_cluster_keys.primary_cluster}"
+    #   cluster_name    = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters[include.env.locals.eks_cluster_keys.primary_cluster].eks_cluster_id
+    #   node_group_name = "${local.vpc_name_abr}-${include.env.locals.eks_cluster_keys.primary_cluster}-node-groups"
     #   node_role_arn   = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.IAM_roles.shared-ec2-nodes.iam_role_arn
     #   subnet_ids = [
     #     dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].public_subnet[include.env.locals.subnet_prefix.primary].primary_subnet_id,
@@ -802,11 +804,9 @@ inputs = {
     #   max_size             = 4
     #   min_size             = 1
     #   use_launch_template  = true
-    #   launch_template_name = "${local.vpc_name_abr}-cognitech"
-    #   tags = {
-    #     "Name" = "shared-cognitech-node"
-    #   }
-    # },
+    #   launch_template_name = "${local.vpc_name_abr}-${include.env.locals.eks_cluster_keys.primary_cluster}"
+    #   ec2_instance_name    = "${local.vpc_name_abr}-${include.env.locals.eks_cluster_keys.primary_cluster}"
+    # }
     # {
     #   key             = "etl"
     #   cluster_name    = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters[local.vpc_name_abr].eks_cluster_id
@@ -826,9 +826,15 @@ inputs = {
     #   source_security_group_ids = [
     #     dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].security_group.app.id
     #   ]
-    #   tags = {
-    #     "Name" = "${local.vpc_name_abr}-etl-node"
-    #   }
+    #   ec2_instance_name = "${local.vpc_name_abr}-worker-node"
+    # }
+  ]
+
+  eks_service_accounts = [
+    # {
+    #   key      = "secret-manager"
+    #   name     = "secrets-manager"
+    #   role_arn = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.IAM_roles["shared-${include.env.locals.eks_cluster_keys.primary_cluster}-sa"].iam_role_arn
     # }
   ]
 }
@@ -863,7 +869,31 @@ generate "aws-providers" {
   EOF
 }
 
-
-
-
+#-------------------------------------------------------
+# Kubernetes Providers (multiple clusters with aliases)
+#-------------------------------------------------------
+generate "kubernetes-providers" {
+  path      = "kubernetes-providers.tf"
+  if_exists = "overwrite"
+  contents  = <<-EOF
+  # Primary Cluster Provider
+  provider "kubernetes" {
+    host                   = "${dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters["${include.env.locals.eks_cluster_keys.primary_cluster}"].eks_cluster_endpoint}"
+    cluster_ca_certificate = base64decode("${dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters["${include.env.locals.eks_cluster_keys.primary_cluster}"].eks_cluster_certificate_authority_data}")
+    
+    exec {
+      api_version = "client.authentication.k8s.io/v1beta1"
+      command     = "aws"
+      args = [
+        "eks",
+        "get-token",
+        "--cluster-name",
+        "${dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters["${include.env.locals.eks_cluster_keys.primary_cluster}"].eks_cluster_name}",
+        "--region",
+        "${local.region}"
+      ]
+    }
+  }
+  EOF
+}
 
