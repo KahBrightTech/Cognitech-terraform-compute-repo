@@ -1,8 +1,67 @@
 # Copilot Instructions for Cognitech Terraform Compute Repo
 
-## Variables
+## Variables — CHANGE THESE PER DEPLOYMENT
+
+Update the values below before each deployment. The rest of this file
+references these variables. When you move to a new account, only this
+section needs to change.
+
 ```
-FEATURE_BRANCH_NAME: int-production-build
+FEATURE_BRANCH_NAME:    int-production-build
+ACCOUNT_NAME:           int-production
+ACCOUNT_ABR:            intp
+ACCOUNT_ID:             271457809232
+IAM_ROLE:               arn:aws:iam::271457809232:role/int-prod-OIDCGitHubRole-role
+PRIMARY_REGION:         us-east-1
+SECONDARY_REGION:       us-west-2
+VPC_NAME:               shared-services
+VPC_NAME_ABR:           shared
+TEMPLATE_SOURCE:        terraform/templates/preprod/terragrunt.hcl
+DEPLOY_PATH_PRIMARY:    terraform/deployments/int-production/shared-services/deploy-tenant/primary
+DEPLOY_PATH_SECONDARY:  terraform/deployments/int-production/shared-services/deploy-tenant/secondary
+WORKFLOW_FILE:          .github/workflows/deploy-primary-int-production-deploy-tenants-shared.yaml
+ENVIRONMENT_GATE:       production
+```
+
+### Quick-reference: values for other accounts
+
+**int-preproduction:**
+```
+FEATURE_BRANCH_NAME:    int-preproduction-build
+ACCOUNT_NAME:           int-preproduction
+ACCOUNT_ABR:            intpp
+ACCOUNT_ID:             730335294148
+IAM_ROLE:               arn:aws:iam::730335294148:role/int-OIDCGitHubRole-role
+TEMPLATE_SOURCE:        terraform/templates/preprod/terragrunt.hcl
+DEPLOY_PATH_PRIMARY:    terraform/deployments/int-preproduction/shared-services/deploy-tenant/primary
+DEPLOY_PATH_SECONDARY:  terraform/deployments/int-preproduction/shared-services/deploy-tenant/secondary
+WORKFLOW_FILE:          .github/workflows/deploy-primary-int-preproduction-deploy-tenants-shared.yaml
+```
+
+**md-preproduction:**
+```
+FEATURE_BRANCH_NAME:    md-preproduction-build
+ACCOUNT_NAME:           md-preproduction
+ACCOUNT_ABR:            mdpp
+ACCOUNT_ID:             533267408704
+IAM_ROLE:               arn:aws:iam::533267408704:role/<YOUR-OIDC-ROLE>
+TEMPLATE_SOURCE:        terraform/templates/preprod/terragrunt.hcl
+DEPLOY_PATH_PRIMARY:    terraform/deployments/md-preproduction/shared-services/deploy-tenant/primary
+DEPLOY_PATH_SECONDARY:  terraform/deployments/md-preproduction/shared-services/deploy-tenant/secondary
+WORKFLOW_FILE:          .github/workflows/deploy-primary-md-preproduction-deploy-tenants-shared.yaml
+```
+
+**md-production:**
+```
+FEATURE_BRANCH_NAME:    md-production-build
+ACCOUNT_NAME:           md-production
+ACCOUNT_ABR:            mdp
+ACCOUNT_ID:             388927731914
+IAM_ROLE:               arn:aws:iam::388927731914:role/<YOUR-OIDC-ROLE>
+TEMPLATE_SOURCE:        terraform/templates/prod/terragrunt.hcl
+DEPLOY_PATH_PRIMARY:    terraform/deployments/md-production/shared-services/deploy-tenant/primary
+DEPLOY_PATH_SECONDARY:  terraform/deployments/md-production/shared-services/deploy-tenant/secondary
+WORKFLOW_FILE:          .github/workflows/deploy-primary-md-production-deploy-tenants-shared.yaml
 ```
 
 ---
@@ -13,9 +72,13 @@ This repository manages AWS compute resources (EC2 instances, ALB/NLB listeners,
 target groups, launch templates, auto scaling groups, EKS node groups) using
 Terragrunt. The Terraform module source is at `terraform/formations/Create-Tenant-resources`.
 
-**Terragrunt template files already exist** in environment-specific folders under
-`terraform/deployments/`. Your job is to **read and modify these EXISTING files** —
-never create new terragrunt files from scratch.
+**Template files exist** in `terraform/templates/` (preprod and prod variants).
+Your job is to:
+1. **Copy** the template from `TEMPLATE_SOURCE` to the `DEPLOY_PATH_PRIMARY` and `DEPLOY_PATH_SECONDARY`
+2. **Set `region_context`** to `"primary"` in the primary file and `"secondary"` in the secondary file
+3. **Format** the file with `terragrunt hclfmt`
+4. **Create a feature branch** named `FEATURE_BRANCH_NAME`, commit, and **open a PR**
+5. **Do NOT modify the template content** beyond setting `region_context` — deploy it exactly as provided
 
 ---
 
@@ -23,39 +86,70 @@ never create new terragrunt files from scratch.
 
 ```
 terraform/
+├── templates/
+│   ├── preprod/terragrunt.hcl                         # Template for preproduction accounts
+│   └── prod/terragrunt.hcl                            # Template for production accounts
 ├── deployments/
-│   ├── locals-cloud.hcl                              # Global: accounts, regions, lambdas
-│   ├── int-preproduction/                            # Account: intpp (730335294148)
-│   │   ├── shared-services/
-│   │   │   ├── locals-env.hcl                        # Env config (name_abr=intpp)
-│   │   │   ├── acquire-state/primary/terragrunt.hcl  # DO NOT TOUCH - reads network state
-│   │   │   └── deploy-tenant/primary/terragrunt.hcl  # ✅ THIS is where you work
-│   │   ├── dev/
-│   │   └── sit/
-│   ├── int-production/                               # Account: intp (271457809232)
-│   │   ├── shared-services/
-│   │   │   ├── acquire-state/primary/terragrunt.hcl  # DO NOT TOUCH
-│   │   │   └── deploy-tenant/primary/terragrunt.hcl  # ✅ THIS is where you work
-│   │   ├── prod/
-│   │   └── uat/
-│   ├── md-preproduction/                             # Account: mdpp (533267408704)
-│   │   ├── shared-services/
-│   │   │   ├── acquire-state/primary/terragrunt.hcl  # DO NOT TOUCH
-│   │   │   └── deploy-tenant/primary/terragrunt.hcl  # ✅ THIS is where you work
-│   │   ├── dev/
-│   │   └── trn/
-│   ├── md-production/                                # Account: mdp (388927731914)
-│   │   ├── shared-services/
-│   │   │   ├── acquire-state/primary/terragrunt.hcl  # DO NOT TOUCH
-│   │   │   └── deploy-tenant/primary/terragrunt.hcl  # ✅ THIS is where you work
-│   │   └── dev/
-│   └── Traning/                                      # Training environment
+│   ├── locals-cloud.hcl                               # Global: accounts, regions, lambdas
+│   ├── int-preproduction/                             # Account: intpp (730335294148)
+│   │   └── shared-services/
+│   │       ├── locals-env.hcl                         # Env config (name_abr=intpp)
+│   │       ├── acquire-state/primary/terragrunt.hcl   # DO NOT TOUCH
+│   │       ├── acquire-state/secondary/terragrunt.hcl # DO NOT TOUCH
+│   │       ├── deploy-tenant/primary/terragrunt.hcl   # Deploy target (primary region)
+│   │       └── deploy-tenant/secondary/terragrunt.hcl # Deploy target (secondary region)
+│   ├── int-production/                                # Account: intp (271457809232)
+│   │   └── shared-services/
+│   │       ├── locals-env.hcl                         # Env config (name_abr=intp)
+│   │       ├── acquire-state/primary/terragrunt.hcl   # DO NOT TOUCH
+│   │       ├── acquire-state/secondary/terragrunt.hcl # DO NOT TOUCH
+│   │       ├── deploy-tenant/primary/terragrunt.hcl   # Deploy target (primary region)
+│   │       └── deploy-tenant/secondary/terragrunt.hcl # Deploy target (secondary region)
+│   ├── md-preproduction/                              # Account: mdpp (533267408704)
+│   │   └── shared-services/
+│   │       ├── locals-env.hcl                         # Env config (name_abr=mdpp)
+│   │       ├── acquire-state/primary/terragrunt.hcl   # DO NOT TOUCH
+│   │       ├── acquire-state/secondary/terragrunt.hcl # DO NOT TOUCH
+│   │       ├── deploy-tenant/primary/terragrunt.hcl   # Deploy target (primary region)
+│   │       └── deploy-tenant/secondary/terragrunt.hcl # Deploy target (secondary region)
+│   ├── md-production/                                 # Account: mdp (388927731914)
+│   │   └── shared-services/
+│   │       ├── locals-env.hcl                         # Env config (name_abr=mdp)
+│   │       ├── acquire-state/primary/terragrunt.hcl   # DO NOT TOUCH
+│   │       ├── acquire-state/secondary/terragrunt.hcl # DO NOT TOUCH
+│   │       ├── deploy-tenant/primary/terragrunt.hcl   # Deploy target (primary region)
+│   │       └── deploy-tenant/secondary/terragrunt.hcl # Deploy target (secondary region)
+│   └── Traning/
 │       ├── dev/
 │       └── uat/
 ├── formations/
-│   └── Create-Tenant-resources/                      # DO NOT TOUCH - Terraform module
-└── Archives/                                         # DO NOT TOUCH - archived configs
+│   └── Create-Tenant-resources/                       # DO NOT TOUCH - Terraform module
+└── Archives/                                          # DO NOT TOUCH - archived configs
 ```
+
+---
+
+## How to Work on an Issue
+
+1. **Read the issue body.** It will tell you which account to target.
+   Cross-reference the account with the Variables section above.
+
+2. **Create a feature branch** from `main` named exactly: `FEATURE_BRANCH_NAME`
+
+3. **Copy the template** from `TEMPLATE_SOURCE` to both:
+   - `DEPLOY_PATH_PRIMARY/terragrunt.hcl`
+   - `DEPLOY_PATH_SECONDARY/terragrunt.hcl`
+
+4. **Set `region_context` correctly:**
+   - In the primary file: `region_context = "primary"` (already set in template)
+   - In the secondary file: change `region_context = "primary"` to `region_context = "secondary"`
+
+5. **Do NOT modify the template content** beyond the `region_context` change.
+
+6. **Run `terragrunt hclfmt`** to validate formatting.
+
+7. **Commit and open a PR** from `FEATURE_BRANCH_NAME` to `main` with the title:
+   `infra: deploy resources to ACCOUNT_NAME/shared-services`
 
 ---
 
@@ -69,52 +163,40 @@ Each environment has TWO terragrunt modules that run in sequence:
    clusters, and hosted zones into a local state. **NEVER modify these files.**
 
 2. **`deploy-tenant/`** — Uses a `dependency` block pointing to `acquire-state`
-   to provision compute resources. All resource blocks in these files are
-   **commented out by default**. Deploying a new resource means **uncommenting**
-   the correct block.
+   to provision compute resources. The template files define what resources to
+   deploy. Cross-repo references resolve automatically at plan/apply time.
 
 ---
 
-## How to Work on an Issue
+## Critical Rules
 
-1. Read the issue body. It will tell you:
-   - Which environment folder to work in (e.g., `int-production/shared-services`)
-   - Whether to target `primary` or `secondary` region
-   - Which resource blocks to uncomment or modify
-   - Any input values to change
+1. **Do NOT modify template content.** Copy the template file as-is. The only
+   permitted change is setting `region_context` for the secondary region file.
 
-2. Create a feature branch from `main` named exactly: `int-production-build`
+2. **Do NOT replace cross-repo references with hardcoded values.** These resolve
+   at plan/apply time from S3 remote state:
+   ```hcl
+   dependency.shared_services.outputs.remote_tfstates.Shared.outputs.*
+   ```
 
-3. Navigate to the correct `deploy-tenant` file, for example:
-   `terraform/deployments/int-preproduction/shared-services/deploy-tenant/primary/terragrunt.hcl`
+3. **Do NOT modify** any of the following:
+   - `terraform/deployments/locals-cloud.hcl`
+   - Any `locals-env.hcl` file
+   - Any `acquire-state/` folder
+   - `terraform/formations/` (the Terraform module)
+   - `terraform/Archives/`
+   - `.github/workflows/` (CI/CD workflow files)
+   - `.github/CODEOWNERS`
+   - Root files: `.gitignore`, `README.md`, `deployment-config.hcl`
 
-4. Make the changes specified in the issue. Common tasks:
-   - **Uncomment an EC2 instance block** from the `ec2_instances` list
-   - **Uncomment an ALB listener** from `alb_listeners`
-   - **Uncomment listener rules** from `alb_listener_rules`
-   - **Uncomment target groups** from `target_groups`
-   - **Uncomment NLB listeners** from `nlb_listeners`
-   - **Uncomment launch templates** from `launch_templates`
-   - **Uncomment ASG blocks** from `Autoscaling_groups`
-   - **Uncomment EKS node groups** from `eks_nodes`
-   - **Modify input values** on existing uncommented blocks
-
-5. Run `terragrunt hclfmt` to validate formatting.
-
-6. Open a PR from the feature branch to `main` with the title pattern:
-   `infra: <description> in <environment>/shared-services`
+4. **Do NOT run `terragrunt plan` or `terragrunt apply` yourself.** The GitHub
+   Actions pipeline handles this automatically.
 
 ---
 
-## Critical Rules for Cross-Repo References
+## Cross-Repo Reference Patterns (Do Not Touch)
 
-The `deploy-tenant` files use `dependency.shared_services.outputs.remote_tfstates.Shared.outputs.*`
-to reference values from the network repo's state. These references are resolved at
-**plan/apply time** by Terraform reading the S3 state bucket.
-
-**NEVER replace these references with hardcoded values.** Preserve them exactly.
-
-Common reference patterns you will see:
+The template files use these references (resolved from S3 at plan time):
 
 ```hcl
 # IAM profiles
@@ -134,14 +216,12 @@ dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_produc
 
 # Load balancers
 dependency.shared_services.outputs.remote_tfstates.Shared.outputs.load_balancers["app"].arn
-dependency.shared_services.outputs.remote_tfstates.Shared.outputs.load_balancers["app"].default_listener.arn
 
 # Certificates
 dependency.shared_services.outputs.remote_tfstates.Shared.outputs.certificates[local.vpc_name].arn
 
 # Hosted zones
 dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].zones[local.vpc_name_abr].zone_name
-dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].zones[local.vpc_name_abr].zone_id
 
 # EKS clusters
 dependency.shared_services.outputs.remote_tfstates.Shared.outputs.eks_clusters[include.env.locals.eks_cluster_keys.primary_cluster].eks_cluster_id
@@ -152,113 +232,41 @@ dependency.shared_services.outputs.remote_tfstates.Shared.outputs.IAM_roles.shar
 
 ---
 
-## Locals You Can Use (Already Defined in Each deploy-tenant File)
-
-These locals are already defined in each `deploy-tenant/primary/terragrunt.hcl`.
-Use them in your inputs — do NOT redefine them:
+## Locals (Already Defined — Do Not Redefine)
 
 ```hcl
-local.vpc_name           # e.g., "shared-services"
-local.vpc_name_abr       # e.g., "shared"
-local.aws_account_name   # e.g., "int-preproduction"
+local.vpc_name           # "shared-services"
+local.vpc_name_abr       # "shared"
+local.aws_account_name   # Resolved from ACCOUNT_NAME via locals-cloud.hcl
 local.region_context     # "primary" or "secondary"
-local.region             # e.g., "us-east-1"
-local.region_prefix      # e.g., "use1"
-local.account_id         # e.g., "730335294148"
-local.tags               # Merged tags from env + deployment
-local.Misc_tags          # Extra tags defined per deployment
-local.public_hosted_zone # e.g., "shared.cognitechllc.org"
-```
-
-And from the include blocks:
-
-```hcl
-include.env.locals.subnet_prefix.primary      # "sbnt1"
-include.env.locals.subnet_prefix.secondary     # "sbnt2"
-include.env.locals.eks_cluster_keys.primary_cluster  # e.g., "InfoGrid"
-include.cloud.locals.repo.root                 # repo root path
-```
-
----
-
-## EC2 Instance Block Template
-
-When uncommenting an EC2 instance, it should follow this exact structure:
-
-```hcl
-{
-  index            = "SERVER_INDEX"           # unique key, e.g., "docker", "nfs", "ans"
-  name             = "SERVER_NAME"            # e.g., "docker-server", "ansible-server"
-  backup_plan_name = "${local.aws_account_name}-${local.region_context}-continous-backup"
-  attach_tg        = ["${local.vpc_name_abr}-XXXX-tg"]  # optional, target groups to attach
-  name_override    = "INTPP-SHR-L-DOCKER-01"  # final instance name
-  ami_config = {
-    os_release_date  = "UBUNTU20"             # AL2023, RHEL9, UBUNTU20, W22, EKSAL2023
-    os_base_packages = "BASE"                 # optional, for Windows only
-  }
-  associate_public_ip_address = true
-  instance_type               = "t3.large"
-  iam_instance_profile        = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_profiles[local.vpc_name].iam_profiles.name
-  key_name                    = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name}-key-pair"].name
-  custom_tags = merge(
-    local.Misc_tags,
-    {
-      "Name"       = "INTPP-SHR-L-DOCKER-01"
-      "DNS_Prefix" = "docker01"
-    }
-  )
-  ebs_device_volume = []     # or list of {name, volume_size, volume_type, delete_on_termination}
-  ebs_root_volume = {
-    volume_size           = 30
-    volume_type           = "gp3"
-    delete_on_termination = true
-  }
-  subnet_id     = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].public_subnet[include.env.locals.subnet_prefix.primary].primary_subnet_id
-  Schedule_name = "server-schedule"
-  security_group_ids = [
-    dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].security_group.app.id
-  ]
-  hosted_zones = {
-    name    = "docker01.${dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].zones[local.vpc_name_abr].zone_name}"
-    zone_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].zones[local.vpc_name_abr].zone_id
-    type    = "A"
-  }
-}
+local.region             # Resolved from region_context
+local.region_prefix      # e.g., "use1" or "usw2"
+local.account_id         # Resolved from ACCOUNT_ID via locals-cloud.hcl
+local.tags               # Merged tags
+local.Misc_tags          # Extra tags
+local.public_hosted_zone # Resolved from locals-env.hcl
 ```
 
 ---
 
 ## Name Override Convention
 
-Server names follow the pattern: `{ACCOUNT_ABR}-{VPC_ABR}-{OS_TYPE}-{SERVICE}-{NUMBER}`
+Server names use dynamic expressions for portability across accounts:
+`${upper(local.aws_account_name)}-${upper(local.vpc_name_abr)}-{OS_TYPE}-{SERVICE}-{NUMBER}`
 
-- Account abbreviations: INTPP, INTP, MDPP, MDP
-- VPC abbreviation: SHR (for shared-services)
-- OS type: L (Linux), W (Windows)
-- Examples: `INTPP-SHR-L-DOCKER-01`, `INTPP-SHR-W-SSRS-01`, `INTPP-SHR-L-NFS-01`
-
----
-
-## DO NOT Modify
-
-- `terraform/deployments/locals-cloud.hcl` — global cloud config
-- Any `locals-env.hcl` file — environment-specific config
-- Any `acquire-state/` folder — remote state acquisition
-- `terraform/formations/` — the Terraform module itself
-- `terraform/Archives/` — archived configs
-- `.github/workflows/` — CI/CD workflow files
-- `.github/CODEOWNERS`
-- Root files: `.gitignore`, `README.md`, `*.md`
+OS type: L (Linux), W (Windows)
 
 ---
 
 ## Workflow
 
 After you open a PR:
-1. The existing GitHub Actions workflow runs `terragrunt plan` automatically.
-2. GitHub sends the user a notification with the workflow result (success/failure).
-3. The user reviews the PR and the plan output.
-4. The user merges the PR to `main`.
-5. The user manually triggers the apply via `workflow_dispatch` in GitHub Actions.
+1. The GitHub Actions workflow (`WORKFLOW_FILE`) runs `terragrunt plan` on the feature branch.
+2. Plan output is posted as a comment on the PR for review.
+3. GitHub notifies the user of the workflow result (success/failure).
+4. The user reviews the plan output on the PR and merges to `main`.
+5. A fresh `terragrunt plan` runs on main and pauses for approval (`ENVIRONMENT_GATE`).
+6. After approval, `terragrunt apply` runs automatically.
+7. GitHub notifies the user of the apply result.
 
 Do NOT run `terragrunt plan` or `terragrunt apply` yourself.
