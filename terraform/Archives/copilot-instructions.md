@@ -290,26 +290,302 @@ OS type: L (Linux), W (Windows)
 ## Workflow
 
 After you open a PR:
-1. The GitHub Actions workflow (`WORKFLOW_FILE`) **runs automatically** when you push commits to the feature branch.
-2. **Plan runs WITHOUT approval** - it executes immediately on push.
-3. Plan output is posted as a comment on the PR for review.
-4. GitHub notifies the user of the workflow result (success/failure).
-5. The user reviews the plan output on the PR and merges to `main`.
-6. A fresh `terragrunt plan` **runs automatically on main** (no approval required for plan).
-7. When ready to apply changes, the user **manually triggers the workflow** from GitHub Actions UI:
-   - Go to Actions → Select the workflow → Click "Run workflow"
-   - Select branch: `main`
-   - Select action: `apply`
-   - Click "Run workflow"
-8. The workflow pauses at the `ENVIRONMENT_GATE` approval step before apply.
-9. After user approval in GitHub UI, `terragrunt apply` runs automatically.
-10. GitHub notifies the user of the apply result.
+1. The GitHub Actions workflow (`WORKFLOW_FILE`) runs `terragrunt plan` automatically on the feature branch.
+2. Plan output is posted as a comment on the PR for review.
+3. GitHub notifies the user of the workflow result (success/failure).
+4. The user reviews the plan output on the PR and merges to `main`.
+5. A fresh `terragrunt plan` runs automatically on main (no approval required for plan).
+6. The workflow pauses at the `ENVIRONMENT_GATE` approval step before apply.
+7. After user approval, `terragrunt apply` runs automatically.
+8. GitHub notifies the user of the apply result.
 
-**Critical Points:**
-- ✅ **Plans run automatically on push** - NO manual triggering needed, NO approval required
-- ✅ **Apply requires manual trigger** - Use "Run workflow" button in GitHub Actions UI
-- ✅ **Approval gate only for Apply** - Plan jobs never require approval
-- ❌ **Do NOT manually trigger workflows for plan** - They run automatically on push
-- ❌ **Do NOT run `terragrunt plan` or `terragrunt apply` in terminal** - GitHub Actions handles this
+**Summary:** Plans run automatically on both feature branch and main. User approval is only required before the apply step.
 
-Do NOT run `terragrunt plan` or `terragrunt apply` yourself in the terminal.
+Do NOT run `terragrunt plan` or `terragrunt apply` yourself.
+
+---
+---
+
+# PART 2: Updating Existing Deployments
+
+## Update Variables — CHANGE THESE PER UPDATE
+
+Use these variables when updating an **existing** deployment file. Set the values
+based on which account/environment you're updating.
+
+```
+UPDATE_FEATURE_BRANCH:  update-int-production-resources
+UPDATE_ACCOUNT_NAME:    int-production
+UPDATE_ACCOUNT_ABR:     intp
+UPDATE_VPC_NAME:        shared-services
+UPDATE_VPC_NAME_ABR:    shared
+UPDATE_FILE_PRIMARY:    terraform/deployments/int-production/shared-services/deploy-tenant/primary/terragrunt.hcl
+UPDATE_FILE_SECONDARY:  terraform/deployments/int-production/shared-services/deploy-tenant/secondary/terragrunt.hcl
+UPDATE_REGION_CONTEXT:  primary
+CHANGE_DESCRIPTION:     Add NLB listener for new service
+```
+
+### Quick-reference: update paths for other accounts
+
+**int-preproduction:**
+```
+UPDATE_FEATURE_BRANCH:  update-int-preproduction-resources
+UPDATE_ACCOUNT_NAME:    int-preproduction
+UPDATE_ACCOUNT_ABR:     intpp
+UPDATE_FILE_PRIMARY:    terraform/deployments/int-preproduction/shared-services/deploy-tenant/primary/terragrunt.hcl
+UPDATE_FILE_SECONDARY:  terraform/deployments/int-preproduction/shared-services/deploy-tenant/secondary/terragrunt.hcl
+```
+
+**md-preproduction:**
+```
+UPDATE_FEATURE_BRANCH:  update-md-preproduction-resources
+UPDATE_ACCOUNT_NAME:    md-preproduction
+UPDATE_ACCOUNT_ABR:     mdpp
+UPDATE_FILE_PRIMARY:    terraform/deployments/md-preproduction/shared-services/deploy-tenant/primary/terragrunt.hcl
+UPDATE_FILE_SECONDARY:  terraform/deployments/md-preproduction/shared-services/deploy-tenant/secondary/terragrunt.hcl
+```
+
+**md-production:**
+```
+UPDATE_FEATURE_BRANCH:  update-md-production-resources
+UPDATE_ACCOUNT_NAME:    md-production
+UPDATE_ACCOUNT_ABR:     mdp
+UPDATE_FILE_PRIMARY:    terraform/deployments/md-production/shared-services/deploy-tenant/primary/terragrunt.hcl
+UPDATE_FILE_SECONDARY:  terraform/deployments/md-production/shared-services/deploy-tenant/secondary/terragrunt.hcl
+```
+
+---
+
+## How to Update Existing Resources
+
+When a user asks to add/modify/remove resources in an existing deployment:
+
+1. **Identify the target file** using `UPDATE_FILE_PRIMARY` or `UPDATE_FILE_SECONDARY`
+   based on which region the user wants to update.
+
+2. **Read the existing file** to understand the current configuration.
+
+3. **Create a feature branch** named `UPDATE_FEATURE_BRANCH`.
+
+4. **Make the requested changes** to the `inputs` block in the terragrunt.hcl file:
+   - Add new resources to the appropriate list (ec2_instances, alb_listeners, nlb_listeners, target_groups, etc.)
+   - Modify existing resource configurations
+   - Remove resources by deleting their entries
+   - **ALWAYS use the variable references** as shown in the template (e.g., `local.vpc_name_abr`, `${upper(local.aws_account_name)}`, etc.)
+   - **NEVER hardcode values** that can be derived from variables
+
+5. **Use proper name override patterns** for all resources:
+   - EC2 instances: `${upper(local.aws_account_name)}-${upper(local.vpc_name_abr)}-{OS}-{SERVICE}-{NUMBER}`
+   - Target groups: `${local.vpc_name_abr}-{service}-tg`
+   - Follow the existing naming patterns in the file
+
+6. **Maintain consistency** with existing cross-repo references:
+   - Use `dependency.shared_services.outputs.remote_tfstates.Shared.outputs.*` for all shared resources
+   - Do NOT hardcode ARNs, IDs, subnet IDs, security group IDs, etc.
+
+7. **Run `terragrunt hclfmt`** to format the file.
+
+8. **Commit and open a PR** with title:
+   `infra: CHANGE_DESCRIPTION for UPDATE_ACCOUNT_NAME/UPDATE_VPC_NAME`
+
+---
+
+## Common Update Scenarios
+
+### Adding an ALB Listener
+
+Add to the `alb_listeners` list in the inputs block:
+
+```hcl
+{
+  key             = "service-name"
+  action          = "forward"  # or "fixed-response"
+  alb_arn         = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.load_balancers["app"].arn
+  certificate_arn = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.certificates[local.vpc_name].arn
+  protocol        = "HTTPS"
+  port            = 443
+  vpc_id          = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
+  target_group = {
+    name = "${local.vpc_name_abr}-service-tg"
+    # ... rest of target group config
+  }
+}
+```
+
+### Adding an ALB Listener Rule
+
+Add to the `alb_listener_rules` list:
+
+```hcl
+{
+  index_key    = "app"
+  listener_arn = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.load_balancers["app"].default_listener.arn
+  rules = [
+    {
+      key      = "new-service"
+      priority = 20  # Must be unique
+      type     = "forward"
+      target_groups = [
+        {
+          tg_name = "${local.vpc_name_abr}-new-service-tg"
+          weight  = 99
+        }
+      ]
+      conditions = [
+        {
+          host_headers = [
+            "service.${local.public_hosted_zone}",
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+### Adding an NLB Listener
+
+Add to the `nlb_listeners` list:
+
+```hcl
+{
+  key             = "service-name"
+  nlb_key         = "nlb-name"
+  nlb_arn         = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.load_balancers["nlb-name"].arn
+  certificate_arn = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.certificates[local.vpc_name].arn
+  protocol        = "TLS"  # or "TCP"
+  port            = 443
+  vpc_id          = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
+  target_group = {
+    name        = "${local.vpc_name_abr}-service-tg"
+    port        = 443
+    protocol    = "TLS"  # or "TCP"
+    target_type = "instance"
+    attachments = [
+      {
+        ec2_key = "service"  # Must match an ec2_instance index key
+        port    = 443
+      }
+    ]
+    health_check = {
+      protocol = "HTTPS"  # or "TCP"
+      port     = 443
+      path     = "/"  # Only for HTTPS/HTTP
+      matcher  = "200,401"  # Only for HTTPS/HTTP
+    }
+  }
+}
+```
+
+### Adding a Target Group
+
+Add to the `target_groups` list:
+
+```hcl
+{
+  name        = "${local.vpc_name_abr}-service-tg"
+  protocol    = "HTTP"  # or HTTPS, TCP, TLS
+  port        = 8080
+  target_type = "instance"
+  health_check = {
+    protocol            = "HTTP"
+    port                = "8080"
+    path                = "/"
+    interval            = 30
+    timeout             = 10
+    healthy_threshold   = 2
+    unhealthy_threshold = 3
+    matcher             = "200-399"
+  }
+  vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
+}
+```
+
+### Adding an EC2 Instance
+
+Add to the `ec2_instances` list:
+
+```hcl
+{
+  index            = "service"  # Unique identifier
+  name             = "service-server"
+  backup_plan_name = "${local.aws_account_name}-${local.region_context}-continous-backup"
+  name_override    = "${upper(local.aws_account_name)}-${upper(local.vpc_name_abr)}-L-SERVICE-01"
+  ami_config = {
+    os_release_date  = "AL2023"  # or "W22" for Windows
+    os_base_packages = "BASE"     # Optional, for Windows
+  }
+  associate_public_ip_address = true
+  instance_type               = "t3.large"
+  iam_instance_profile        = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_profiles[local.vpc_name].iam_profiles.name
+  key_name                    = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name}-key-pair"].name
+  custom_tags = merge(
+    local.Misc_tags,
+    {
+      "Name"       = "${upper(local.aws_account_name)}-${upper(local.vpc_name_abr)}-L-SERVICE-01"
+      "DNS_Prefix" = "service01"
+      "CreateUser" = "True"
+    }
+  )
+  ebs_device_volume = []  # Or add volumes
+  ebs_root_volume = {
+    volume_size           = 30
+    volume_type           = "gp3"
+    delete_on_termination = true
+  }
+  subnet_id     = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].public_subnet[include.env.locals.subnet_prefix.primary].primary_subnet_id
+  Schedule_name = "service-server-schedule"
+  security_group_ids = [
+    dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].security_group.app.id
+  ]
+  hosted_zones = {
+    name    = "service01.${dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].zones[local.vpc_name_abr].zone_name}"
+    zone_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].zones[local.vpc_name_abr].zone_id
+    type    = "A"
+  }
+}
+```
+
+---
+
+## Critical Rules for Updates
+
+1. **Always use variable references** — Never hardcode account names, VPC names, or region-specific values:
+   - ✅ `${upper(local.aws_account_name)}-${upper(local.vpc_name_abr)}-L-APP-01`
+   - ❌ `INTP-SHARED-L-APP-01`
+
+2. **Use cross-repo references** — Never hardcode resource IDs, ARNs, or subnet IDs:
+   - ✅ `dependency.shared_services.outputs.remote_tfstates.Shared.outputs.load_balancers["app"].arn`
+   - ❌ `arn:aws:elasticloadbalancing:us-east-1:271457809232:loadbalancer/app/...`
+
+3. **Maintain naming consistency:**
+   - Target groups: `${local.vpc_name_abr}-{service}-tg`
+   - EC2 name_override: `${upper(local.aws_account_name)}-${upper(local.vpc_name_abr)}-{OS}-{SERVICE}-{NUMBER}`
+   - DNS prefix: lowercase, matches service name
+
+4. **Preserve existing structure** — Do not reformat or reorganize the file beyond the specific change requested.
+
+5. **Update both regions if needed** — If the change applies to both primary and secondary regions,
+   update both `UPDATE_FILE_PRIMARY` and `UPDATE_FILE_SECONDARY`.
+
+6. **Reference existing EC2 instances correctly** — When attaching instances to NLB target groups,
+   use the `ec2_key` that matches the `index` field of the ec2_instance.
+
+7. **Unique priorities for ALB rules** — Each listener rule must have a unique priority number.
+
+8. **Run `terragrunt hclfmt`** after making changes to ensure proper formatting.
+
+---
+
+## Update Workflow
+
+After you open an update PR:
+1. GitHub Actions runs `terragrunt plan` automatically on the feature branch.
+2. The plan shows what resources will be added/changed/destroyed.
+3. User reviews the plan output in the PR comments.
+4. User merges the PR to `main`.
+5. Plan runs again on main automatically.
+6. User approves at the environment gate.
+7. `terragrunt apply` runs and provisions the changes.
+
+**The existing workflow file already handles updates** — you do NOT need to create a new workflow.
