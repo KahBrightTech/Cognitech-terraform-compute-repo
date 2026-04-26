@@ -280,22 +280,63 @@ variable "Autoscaling_groups" {
   default = null
 }
 
-# variable "dr_volume_restores" {
-#   description = "Disaster Recovery Volume Restore configuration"
-#   type = list(object({
-#     key                  = string
-#     name                 = optional(string)
-#     source_instance_name = string
-#     target_instance_name = string
-#     target_az            = string
-#     device_volumes = list(object({
-#       device_name = string
-#       size        = optional(number) # Size in GB, if not specified uses snapshot size
-#     }))
-#     restore_volume_tags = map(string)
-#     account_id          = string
-#   }))
-#   default = null
-# }
+variable "dr_volume_restores" {
+  description = "Disaster Recovery Volume Restore configuration"
+  type = list(object({
+    key                  = string
+    name                 = optional(string)
+    source_instance_name = string
+    target_instance_name = string
+    target_az            = string
+    device_volumes = list(object({
+      device_name = string
+      size        = optional(number) # Size in GB, if not specified uses snapshot size
+    }))
+    restore_volume_tags = map(string)
+    account_id          = string
+  }))
+  default = null
+}
 
 
+variable "eks_nodes" {
+  description = "EKS node group configuration object."
+  type = list(object({
+    key                       = string
+    cluster_name              = string
+    node_group_name           = string
+    node_role_arn             = string
+    subnet_ids                = list(string)
+    desired_size              = number
+    max_size                  = number
+    min_size                  = number
+    instance_types            = optional(list(string))
+    enable_remote_access      = optional(bool, false)
+    ec2_ssh_key               = optional(string)
+    source_security_group_ids = optional(list(string))
+    ami_type                  = optional(string)
+    disk_size                 = optional(number)
+    labels                    = optional(map(string), {})
+    tags                      = optional(map(string), {})
+    version                   = optional(string)
+    force_update_version      = optional(bool, false)
+    capacity_type             = optional(string, "ON_DEMAND")
+    ec2_instance_name         = optional(string, "eks_node_group")
+    use_launch_template       = optional(bool, false)
+    launch_template_name      = optional(string)
+    launch_template = optional(object({
+      id      = optional(string)
+      version = optional(string, "$Latest")
+    }))
+  }))
+}
+
+variable "eks_service_accounts" {
+  description = "EKS service account configuration object."
+  type = list(object({
+    key       = string
+    name      = optional(string)
+    namespace = optional(string, "default")
+    role_arn  = optional(string)
+  }))
+}

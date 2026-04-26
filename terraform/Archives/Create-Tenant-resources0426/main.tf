@@ -174,12 +174,41 @@ module "auto_scaling_groups" {
   depends_on = [module.launch_templates, module.target_groups, module.nlb_listeners]
 }
 
+#--------------------------------------------------------------------
+# EBS Recovery
 # #--------------------------------------------------------------------
-# # EBS Recovery
-# # #--------------------------------------------------------------------
-# module "ebs_recovery" {
-#   source            = "git::https://github.com/njibrigthain100/Cognitech-terraform-iac-modules.git//terraform/modules/EBSRecovery?ref=v1.3.45"
-#   for_each          = (var.dr_volume_restores != null) ? { for item in var.dr_volume_restores : item.key => item } : {}
-#   common            = var.common
-#   dr_volume_restore = each.value
-# }
+module "ebs_recovery" {
+  source            = "git::https://github.com/njibrigthain100/Cognitech-terraform-iac-modules.git//terraform/modules/EBSRecovery?ref=v1.3.45"
+  for_each          = (var.dr_volume_restores != null) ? { for item in var.dr_volume_restores : item.key => item } : {}
+  common            = var.common
+  dr_volume_restore = each.value
+}
+
+
+#--------------------------------------------------------------------
+# EKS Worker nodes
+# #--------------------------------------------------------------------
+module "eks_worker_nodes" {
+  source   = "git::https://github.com/njibrigthain100/Cognitech-terraform-iac-modules.git//terraform/modules/EKS-Node-group?ref=v1.4.76"
+  for_each = (var.eks_nodes != null) ? { for item in var.eks_nodes : item.key => item } : {}
+  common   = var.common
+  eks_node_group = merge(
+    each.value,
+    each.value.use_launch_template ? {
+      launch_template = {
+        id      = module.launch_templates[each.value.launch_template_name].id
+        version = "$Latest"
+      }
+    } : {}
+  )
+}
+
+#--------------------------------------------------------------------
+# EKS Service Accounts
+#--------------------------------------------------------------------
+module "eks_service_accounts" {
+  source              = "git::https://github.com/njibrigthain100/Cognitech-terraform-iac-modules.git//terraform/modules/EKS-Service-account?ref=v1.4.75"
+  for_each            = (var.eks_service_accounts != null) ? { for item in var.eks_service_accounts : item.key => item } : {}
+  common              = var.common
+  eks_service_account = each.value
+}
