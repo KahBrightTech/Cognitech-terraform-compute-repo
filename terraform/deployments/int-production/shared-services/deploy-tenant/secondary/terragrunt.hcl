@@ -15,7 +15,6 @@ include "env" {
 # Locals 
 #-------------------------------------------------------
 locals {
-  deployment         = "tenants-resources"
   region_context     = "secondary"
   deploy_globally    = "true"
   region             = local.region_context == "primary" ? include.cloud.locals.regions.use1.name : include.cloud.locals.regions.usw2.name
