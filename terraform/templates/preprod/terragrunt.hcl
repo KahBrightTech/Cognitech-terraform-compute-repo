@@ -112,7 +112,7 @@ inputs = {
       index            = "ssrs1"
       name             = "ssrs-server"
       backup_plan_name = "${local.aws_account_name}-${local.region_context}-continous-backup"
-      name_override    = "INTPP-SHR-W-SSRS-01"
+      name_override    = "${upper(local.aws_account_name)}-${upper(local.vpc_name_abr)}-W-SSRS-01"
       ami_config = {
         os_release_date  = "W22"
         os_base_packages = "BASE"
@@ -125,7 +125,7 @@ inputs = {
       custom_tags = merge(
         local.Misc_tags,
         {
-          "Name"                = "INTPP-SHR-W-SSRS-01"
+          "Name"                = "${upper(local.aws_account_name)}-${upper(local.vpc_name_abr)}-W-SSRS-01"
           "DNS_Prefix"          = "ssrs01"
           "CreateUser"          = "True"
           "WinRMInstall"        = "True"
@@ -135,24 +135,6 @@ inputs = {
       ebs_device_volume = [
         {
           name                  = "xvdf"
-          volume_size           = 30
-          volume_type           = "gp3"
-          delete_on_termination = true
-        },
-        {
-          name                  = "xvdg"
-          volume_size           = 30
-          volume_type           = "gp3"
-          delete_on_termination = true
-        },
-        {
-          name                  = "xvdh"
-          volume_size           = 30
-          volume_type           = "gp3"
-          delete_on_termination = true
-        },
-        {
-          name                  = "xvdi"
           volume_size           = 30
           volume_type           = "gp3"
           delete_on_termination = true
@@ -178,7 +160,7 @@ inputs = {
       index            = "ssrs2"
       name             = "ssrs-server"
       backup_plan_name = "${local.aws_account_name}-${local.region_context}-continous-backup"
-      name_override    = "INTPP-SHR-W-SSRS-02"
+      name_override    = "${upper(local.aws_account_name)}-${upper(local.vpc_name_abr)}-W-SSRS-02"
       ami_config = {
         os_release_date  = "W22"
         os_base_packages = "BASE"
@@ -191,7 +173,7 @@ inputs = {
       custom_tags = merge(
         local.Misc_tags,
         {
-          "Name"                = "INTPP-SHR-W-SSRS-02"
+          "Name"                = "${upper(local.aws_account_name)}-${upper(local.vpc_name_abr)}-W-SSRS-02"
           "DNS_Prefix"          = "ssrs02"
           "CreateUser"          = "True"
           "WinRMInstall"        = "True"
@@ -219,7 +201,7 @@ inputs = {
       index            = "etl"
       name             = "etl-server"
       backup_plan_name = "${local.aws_account_name}-${local.region_context}-continous-backup"
-      name_override    = "INTPP-SHR-W-ETL-01"
+      name_override    = "${upper(local.aws_account_name)}-${upper(local.vpc_name_abr)}-W-ETL-01"
       ami_config = {
         os_release_date  = "W22"
         os_base_packages = "BASE"
@@ -232,7 +214,7 @@ inputs = {
       custom_tags = merge(
         local.Misc_tags,
         {
-          "Name"                = "INTPP-SHR-W-ETL-01"
+          "Name"                = "${upper(local.aws_account_name)}-${upper(local.vpc_name_abr)}-W-ETL-01"
           "DNS_Prefix"          = "etl01"
           "CreateUser"          = "True"
           "WindowsBannerConfig" = "True"
@@ -278,214 +260,214 @@ inputs = {
     # }
   ]
   alb_listener_rules = [
-    {
-      index_key    = "app"
-      listener_arn = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.load_balancers["app"].default_listener.arn
-      rules = [
-        {
-          key      = "app"
-          priority = 10
-          type     = "forward"
-          target_groups = [
-            {
-              tg_name = "${local.vpc_name_abr}-afr-tg"
-              weight  = 99
-            }
-          ]
-          conditions = [
-            {
-              host_headers = [
-                "afrique.${local.public_hosted_zone}",
-              ]
-            }
-          ]
-        },
-        {
-          key      = "ecom"
-          priority = 11
-          type     = "forward"
-          target_groups = [
-            {
-              tg_name = "${local.vpc_name_abr}-app2-tg"
-              weight  = 99
-            }
-          ]
-          conditions = [
-            {
-              host_headers = [
-                "ecommerce.${local.public_hosted_zone}",
-              ]
-            }
-          ]
-        },
-        {
-          key      = "anime"
-          priority = 12
-          type     = "forward"
-          target_groups = [
-            {
-              tg_name = "${local.vpc_name_abr}-app3-tg"
-              weight  = 99
-            }
-          ]
-          conditions = [
-            {
-              host_headers = [
-                "anime.${local.public_hosted_zone}",
-              ]
-            }
-          ]
-        },
-        {
-          key      = "portainer"
-          priority = 14
-          type     = "forward"
-          target_groups = [
-            {
-              tg_name = "${local.vpc_name_abr}-app4-tg"
-              weight  = 99
-            }
-          ]
-          conditions = [
-            {
-              host_headers = [
-                "portainer.${local.public_hosted_zone}",
-              ]
-            }
-          ]
-        }
-      ]
-    }
+    # {
+    #   index_key    = "app"
+    #   listener_arn = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.load_balancers["app"].default_listener.arn
+    #   rules = [
+    #     {
+    #       key      = "app"
+    #       priority = 10
+    #       type     = "forward"
+    #       target_groups = [
+    #         {
+    #           tg_name = "${local.vpc_name_abr}-afr-tg"
+    #           weight  = 99
+    #         }
+    #       ]
+    #       conditions = [
+    #         {
+    #           host_headers = [
+    #             "afrique.${local.public_hosted_zone}",
+    #           ]
+    #         }
+    #       ]
+    #     },
+    #     {
+    #       key      = "ecom"
+    #       priority = 11
+    #       type     = "forward"
+    #       target_groups = [
+    #         {
+    #           tg_name = "${local.vpc_name_abr}-app2-tg"
+    #           weight  = 99
+    #         }
+    #       ]
+    #       conditions = [
+    #         {
+    #           host_headers = [
+    #             "ecommerce.${local.public_hosted_zone}",
+    #           ]
+    #         }
+    #       ]
+    #     },
+    #     {
+    #       key      = "anime"
+    #       priority = 12
+    #       type     = "forward"
+    #       target_groups = [
+    #         {
+    #           tg_name = "${local.vpc_name_abr}-app3-tg"
+    #           weight  = 99
+    #         }
+    #       ]
+    #       conditions = [
+    #         {
+    #           host_headers = [
+    #             "anime.${local.public_hosted_zone}",
+    #           ]
+    #         }
+    #       ]
+    #     },
+    #     {
+    #       key      = "portainer"
+    #       priority = 14
+    #       type     = "forward"
+    #       target_groups = [
+    #         {
+    #           tg_name = "${local.vpc_name_abr}-app4-tg"
+    #           weight  = 99
+    #         }
+    #       ]
+    #       conditions = [
+    #         {
+    #           host_headers = [
+    #             "portainer.${local.public_hosted_zone}",
+    #           ]
+    #         }
+    #       ]
+    #     }
+    #   ]
+    # }
   ]
   nlb_listeners = [
-    {
-      key             = "ssrs"
-      nlb_key         = "ssrs-nlb"
-      nlb_arn         = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.load_balancers["ssrs"].arn
-      certificate_arn = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.certificates[local.vpc_name].arn
-      protocol        = "TLS"
-      port            = 443
-      vpc_id          = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
-      target_group = {
-        name        = "${local.vpc_name_abr}-ssrs-tg"
-        port        = 443
-        protocol    = "TLS"
-        target_type = "instance"
-        attachments = [
-          {
-            ec2_key = "app"
-            port    = 443
-          }
-        ]
-        health_check = {
-          protocol = "HTTPS"
-          port     = 443
-          path     = "/"
-          matcher  = "200,401"
-        }
-      }
-    },
-    {
-      key             = "ssrs"
-      nlb_key         = "ssrs-nlb"
-      nlb_arn         = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.load_balancers["ssrs"].arn
-      certificate_arn = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.certificates[local.vpc_name].arn
-      protocol        = "TLS"
-      port            = 443
-      vpc_id          = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
-      target_group = {
-        name        = "${local.vpc_name_abr}-ssrs-tg"
-        port        = 8081
-        protocol    = "TCP"
-        target_type = "instance"
-        attachments = []
-        health_check = {
-          protocol = "TCP"
-          port     = 8081
-        }
-      }
-    }
+    # {
+    #   key             = "ssrs"
+    #   nlb_key         = "ssrs-nlb"
+    #   nlb_arn         = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.load_balancers["ssrs"].arn
+    #   certificate_arn = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.certificates[local.vpc_name].arn
+    #   protocol        = "TLS"
+    #   port            = 443
+    #   vpc_id          = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
+    #   target_group = {
+    #     name        = "${local.vpc_name_abr}-ssrs-tg"
+    #     port        = 443
+    #     protocol    = "TLS"
+    #     target_type = "instance"
+    #     attachments = [
+    #       {
+    #         ec2_key = "app"
+    #         port    = 443
+    #       }
+    #     ]
+    #     health_check = {
+    #       protocol = "HTTPS"
+    #       port     = 443
+    #       path     = "/"
+    #       matcher  = "200,401"
+    #     }
+    #   }
+    # },
+    # {
+    #   key             = "ssrs"
+    #   nlb_key         = "ssrs-nlb"
+    #   nlb_arn         = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.load_balancers["ssrs"].arn
+    #   certificate_arn = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.certificates[local.vpc_name].arn
+    #   protocol        = "TLS"
+    #   port            = 443
+    #   vpc_id          = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
+    #   target_group = {
+    #     name        = "${local.vpc_name_abr}-ssrs-tg"
+    #     port        = 8081
+    #     protocol    = "TCP"
+    #     target_type = "instance"
+    #     attachments = []
+    #     health_check = {
+    #       protocol = "TCP"
+    #       port     = 8081
+    #     }
+    #   }
+    # }
   ]
   target_groups = [
-    {
-      name        = "${local.vpc_name_abr}-app-tg"
-      protocol    = "HTTP"
-      port        = 8081
-      target_type = "instance"
-      health_check = {
-        protocol = "HTTP"
-        port     = "8081"
-      }
-      vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
-    },
-    {
-      name        = "${local.vpc_name_abr}-app2-tg"
-      protocol    = "HTTP"
-      port        = 8080
-      target_type = "instance"
-      health_check = {
-        protocol = "HTTP"
-        port     = "8080"
-      }
-      vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
-    },
-    {
-      name        = "${local.vpc_name_abr}-app3-tg"
-      protocol    = "HTTP"
-      port        = 8082
-      target_type = "instance"
-      health_check = {
-        protocol = "HTTP"
-        port     = "8082"
-      }
-      vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
-    },
-    {
-      name        = "${local.vpc_name_abr}-app4-tg"
-      protocol    = "HTTP"
-      port        = 8083
-      target_type = "instance"
-      health_check = {
-        protocol            = "HTTP"
-        port                = "8083"
-        path                = "/"
-        interval            = 30
-        timeout             = 10
-        healthy_threshold   = 2
-        unhealthy_threshold = 3
-        matcher             = "200-399"
-      }
-      vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].vpc_id
-    },
-    {
-      name        = "${local.vpc_name_abr}-ans-tg"
-      protocol    = "HTTPS"
-      port        = 443
-      target_type = "instance"
-      health_check = {
-        protocol = "HTTPS"
-        port     = "443"
-        path     = "/"
-      }
-      vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
-    },
-    {
-      name        = "${local.vpc_name_abr}-afr-tg"
-      protocol    = "HTTP"
-      port        = 3000
-      target_type = "instance"
-      health_check = {
-        protocol            = "HTTP"
-        port                = "3000"
-        path                = "/"
-        interval            = 30
-        timeout             = 10
-        healthy_threshold   = 2
-        unhealthy_threshold = 3
-        matcher             = "200-399"
-      }
-      vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].vpc_id
-    }
+    # {
+    #   name        = "${local.vpc_name_abr}-app-tg"
+    #   protocol    = "HTTP"
+    #   port        = 8081
+    #   target_type = "instance"
+    #   health_check = {
+    #     protocol = "HTTP"
+    #     port     = "8081"
+    #   }
+    #   vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
+    # },
+    # {
+    #   name        = "${local.vpc_name_abr}-app2-tg"
+    #   protocol    = "HTTP"
+    #   port        = 8080
+    #   target_type = "instance"
+    #   health_check = {
+    #     protocol = "HTTP"
+    #     port     = "8080"
+    #   }
+    #   vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
+    # },
+    # {
+    #   name        = "${local.vpc_name_abr}-app3-tg"
+    #   protocol    = "HTTP"
+    #   port        = 8082
+    #   target_type = "instance"
+    #   health_check = {
+    #     protocol = "HTTP"
+    #     port     = "8082"
+    #   }
+    #   vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
+    # },
+    # {
+    #   name        = "${local.vpc_name_abr}-app4-tg"
+    #   protocol    = "HTTP"
+    #   port        = 8083
+    #   target_type = "instance"
+    #   health_check = {
+    #     protocol            = "HTTP"
+    #     port                = "8083"
+    #     path                = "/"
+    #     interval            = 30
+    #     timeout             = 10
+    #     healthy_threshold   = 2
+    #     unhealthy_threshold = 3
+    #     matcher             = "200-399"
+    #   }
+    #   vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].vpc_id
+    # },
+    # {
+    #   name        = "${local.vpc_name_abr}-ans-tg"
+    #   protocol    = "HTTPS"
+    #   port        = 443
+    #   target_type = "instance"
+    #   health_check = {
+    #     protocol = "HTTPS"
+    #     port     = "443"
+    #     path     = "/"
+    #   }
+    #   vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name].vpc_id
+    # },
+    # {
+    #   name        = "${local.vpc_name_abr}-afr-tg"
+    #   protocol    = "HTTP"
+    #   port        = 3000
+    #   target_type = "instance"
+    #   health_check = {
+    #     protocol            = "HTTP"
+    #     port                = "3000"
+    #     path                = "/"
+    #     interval            = 30
+    #     timeout             = 10
+    #     healthy_threshold   = 2
+    #     unhealthy_threshold = 3
+    #     matcher             = "200-399"
+    #   }
+    #   vpc_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].vpc_id
+    # }
   ]
 
 }
