@@ -1,0 +1,196 @@
+name: Deploy-primary-int-production-deploy-tenants-shared
+
+on:
+  push:
+    branches:
+      - main
+      - "*"
+    paths:
+      - ".github/workflows/deploy-primary-int-production-deploy-tenants-shared.yaml"
+      - "terraform/deployments/int-production/shared-services/deploy-tenant/primary/**/*"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "terraform/deployments/int-production/shared-services/deploy-tenant/primary/**/*"
+  workflow_dispatch:
+    inputs:
+      terragrunt_action:
+        description: "Select the terragrunt action to perform"
+        required: true
+        type: choice
+        options:
+          - "plan"
+          - "apply"
+          - "destroy"
+      skip_nochange:
+        description: "Apply even if no change is reported in the plan"
+        required: false
+        type: boolean
+
+env:
+  IAM_ROLE: arn:aws:iam::271457809232:role/int-prod-OIDCGitHubRole-role
+  REGION: us-east-1
+  DEPLOYMENT_PATH: terraform/deployments/int-production/shared-services/deploy-tenant/primary
+
+permissions:
+  packages: write
+  contents: read
+  id-token: write
+  pull-requests: write
+
+jobs:
+  Plan:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-latest]
+    defaults:
+      run:
+        shell: bash
+        working-directory: ${{ env.DEPLOYMENT_PATH }}
+    steps:
+      - name: Clone the repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1.7.0
+        with:
+          role-to-assume: ${{ env.IAM_ROLE }}
+          role-session-name: GitHub_to_AWS_via_FederatedOIDC
+          aws-region: ${{ env.REGION }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-Terraform@v1
+        with:
+          terraform_version: 1.11.1
+          terraform_wrapper: false
+
+      - name: Verify Terraform version
+        run: terraform --version
+
+      - name: Setup Terraform wrapper path
+        run: which terraform
+
+      - name: Setup Terragrunt
+        run: |
+          sudo wget -q -O /bin/terragrunt "https://github.com/gruntwork-io/terragrunt/releases/download/v0.75.0/terragrunt_linux_amd64"
+          sudo chmod +x /bin/terragrunt
+
+      - name: Initialize Terragrunt
+        id: init
+        run: terragrunt init
+
+      - name: Plan Terragrunt
+        id: plan
+        run: |
+          terragrunt run-all plan --terragrunt-non-interactive --terragrunt-no-color | tee plan_output.txt
+
+      - name: Post Plan Output to PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const planOutput = fs.readFileSync('${{ env.DEPLOYMENT_PATH }}/plan_output.txt', 'utf8');
+            const truncated = planOutput.length > 60000 ? planOutput.substring(planOutput.length - 60000) : planOutput;
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `## Terraform Plan Output\n\n\`\`\`\n${truncated}\n\`\`\``
+            });
+
+      - name: Plan Summary
+        if: success()
+        run: |
+          echo "## Terraform Plan Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          sed 's/\x1b\[[0-9;]*m//g' plan_output.txt | grep -oE "Plan: [0-9]+ to add, [0-9]+ to change, [0-9]+ to destroy\." | sort -u >> $GITHUB_STEP_SUMMARY || echo "No changes detected" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+  Approve:
+    needs: Plan
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.terragrunt_action == 'apply' && github.ref == 'refs/heads/main'
+    environment:
+      name: production
+    steps:
+      - name: Awaiting approval before applying changes
+        run: echo "Waiting for manual approval to apply changes."
+
+  Apply:
+    needs: Approve
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.terragrunt_action == 'apply' && github.ref == 'refs/heads/main'
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Clone the repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1.7.0
+        with:
+          role-to-assume: ${{ env.IAM_ROLE }}
+          role-session-name: GitHub_to_AWS_via_FederatedOIDC
+          aws-region: ${{ env.REGION }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-Terraform@v1
+        with:
+          terraform_version: 1.11.1
+          terraform_wrapper: false
+
+      - name: Verify Terraform version
+        run: terraform --version
+
+      - name: Setup Terraform wrapper path
+        run: which terraform
+
+      - name: Setup Terragrunt
+        run: |
+          sudo wget -q -O /bin/terragrunt "https://github.com/gruntwork-io/terragrunt/releases/download/v0.75.0/terragrunt_linux_amd64"
+          sudo chmod +x /bin/terragrunt
+
+      - name: Apply Terragrunt
+        working-directory: ${{ env.DEPLOYMENT_PATH }}
+        run: terragrunt run-all apply --terragrunt-non-interactive
+
+  Destroy:
+    needs: Plan
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.terragrunt_action == 'destroy' && github.ref == 'refs/heads/main'
+    steps:
+      - name: Clone the repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1.7.0
+        with:
+          role-to-assume: ${{ env.IAM_ROLE }}
+          role-session-name: GitHub_to_AWS_via_FederatedOIDC
+          aws-region: ${{ env.REGION }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-Terraform@v1
+        with:
+          terraform_version: 1.11.1
+          terraform_wrapper: false
+
+      - name: Verify Terraform version
+        run: terraform --version
+
+      - name: Setup Terraform wrapper path
+        run: which terraform
+
+      - name: Setup Terragrunt
+        run: |
+          sudo wget -q -O /bin/terragrunt "https://github.com/gruntwork-io/terragrunt/releases/download/v0.75.0/terragrunt_linux_amd64"
+          sudo chmod +x /bin/terragrunt
+
+      - name: Destroy Terragrunt
+        working-directory: ${{ env.DEPLOYMENT_PATH }}
+        run: terragrunt run-all destroy --terragrunt-non-interactive
