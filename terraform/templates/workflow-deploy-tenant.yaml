@@ -6,7 +6,7 @@
 #   2. Replace ALL placeholders below:
 #      __WORKFLOW_NAME__    -> Deploy-primary-ACCOUNT_NAME-deploy-tenants-VPC_NAME_ABR
 #      __WORKFLOW_FILE__    -> WORKFLOW_FILE (from Variables section)
-#      __DEPLOY_PATH__      -> DEPLOY_PATH_PRIMARY (from Variables section)
+#      __DEPLOY_PATH_PRIMARY__  -> DEPLOY_PATH_PRIMARY (from Variables section)
 #      __IAM_ROLE__         -> IAM_ROLE (from Variables section)
 #      __REGION__           -> PRIMARY_REGION (from Variables section)
 #      __ENVIRONMENT_GATE__ -> ENVIRONMENT_GATE (from Variables section)
@@ -22,12 +22,12 @@ on:
       - "*"
     paths:
       - "__WORKFLOW_FILE__"
-      - "__DEPLOY_PATH__/**/*"
+      - "__DEPLOY_PATH_PRIMARY__/**/*"
   pull_request:
     branches:
       - main
     paths:
-      - "__DEPLOY_PATH__/**/*"
+      - "__DEPLOY_PATH_PRIMARY__/**/*"
   workflow_dispatch:
     inputs:
       terragrunt_action:
@@ -46,7 +46,7 @@ on:
 env:
   IAM_ROLE: __IAM_ROLE__
   REGION: __REGION__
-  DEPLOYMENT_PATH: __DEPLOY_PATH__
+  DEPLOYMENT_PATH: __DEPLOY_PATH_PRIMARY__
 
 permissions:
   packages: write

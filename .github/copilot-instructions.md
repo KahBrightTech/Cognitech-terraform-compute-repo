@@ -20,8 +20,14 @@ TEMPLATE_SOURCE:        terraform/templates/preprod/terragrunt.hcl
 DEPLOY_PATH_PRIMARY:    terraform/deployments/int-production/shared-services/deploy-tenant/primary
 DEPLOY_PATH_SECONDARY:  terraform/deployments/int-production/shared-services/deploy-tenant/secondary
 WORKFLOW_FILE:          .github/workflows/deploy-primary-int-production-deploy-tenants-shared.yaml
+WORKFLOW_FILE_SECONDARY: (none)
 ENVIRONMENT_GATE:       production
 ```
+
+> **WORKFLOW_FILE_SECONDARY** is optional. Set it to a filename like
+> `.github/workflows/deploy-secondary-ACCOUNT_NAME-deploy-tenants-VPC_NAME_ABR.yaml`
+> when you want Copilot to also create a workflow for the secondary region.
+> Leave it as `(none)` to skip secondary workflow creation.
 
 ### Quick-reference: values for other accounts
 
@@ -156,7 +162,7 @@ terraform/
    - Replace ALL `__PLACEHOLDER__` values with the actual values from the Variables section:
      - `__WORKFLOW_NAME__` → `Deploy-primary-ACCOUNT_NAME-deploy-tenants-VPC_NAME_ABR`
      - `__WORKFLOW_FILE__` → value of `WORKFLOW_FILE`
-     - `__DEPLOY_PATH__` → value of `DEPLOY_PATH_PRIMARY`
+     - `__DEPLOY_PATH_PRIMARY__` → value of `DEPLOY_PATH_PRIMARY`
      - `__IAM_ROLE__` → value of `IAM_ROLE`
      - `__REGION__` → value of `PRIMARY_REGION`
      - `__ENVIRONMENT_GATE__` → value of `ENVIRONMENT_GATE`
