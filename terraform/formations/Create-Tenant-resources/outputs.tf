@@ -79,26 +79,26 @@ output "auto_scaling_groups" {
   value       = module.auto_scaling_groups
 }
 
-#-------------------------------------------------------
-# DR volume restores outputs
-#-------------------------------------------------------
-output "dr_volume_restores" {
-  description = "Output for DR Volume Restores"
-  value       = module.ebs_recovery
-}
+# #-------------------------------------------------------
+# # DR volume restores outputs
+# #-------------------------------------------------------
+# output "dr_volume_restores" {
+#   description = "Output for DR Volume Restores"
+#   value       = module.ebs_recovery
+# }
 
-#-------------------------------------------------------
-# EKS Worker nodes outputs
-#-------------------------------------------------------
-output "eks_worker_nodes" {
-  description = "Output for EKS Worker Nodes"
-  value       = module.eks_worker_nodes
-}
+# #-------------------------------------------------------
+# # EKS Worker nodes outputs
+# #-------------------------------------------------------
+# output "eks_worker_nodes" {
+#   description = "Output for EKS Worker Nodes"
+#   value       = module.eks_worker_nodes
+# }
 
-#-------------------------------------------------------
-# EKS Service accounts outputs
-#-------------------------------------------------------
-output "eks_service_accounts" {
-  description = "Output for EKS Service Accounts"
-  value       = module.eks_service_accounts
-}
+# #-------------------------------------------------------
+# # EKS Service accounts outputs
+# #-------------------------------------------------------
+# output "eks_service_accounts" {
+#   description = "Output for EKS Service Accounts"
+#   value       = module.eks_service_accounts
+# }
