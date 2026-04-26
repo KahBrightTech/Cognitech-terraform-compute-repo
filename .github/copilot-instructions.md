@@ -72,13 +72,14 @@ This repository manages AWS compute resources (EC2 instances, ALB/NLB listeners,
 target groups, launch templates, auto scaling groups, EKS node groups) using
 Terragrunt. The Terraform module source is at `terraform/formations/Create-Tenant-resources`.
 
-**Template files exist** in `terraform/templates/` (preprod and prod variants).
-Your job is to:
-1. **Copy** the template from `TEMPLATE_SOURCE` to the `DEPLOY_PATH_PRIMARY` and `DEPLOY_PATH_SECONDARY`
+**Template files exist** in `terraform/templates/` (preprod/prod HCL variants and a
+workflow YAML template). Your job is to:
+1. **Copy** the HCL template from `TEMPLATE_SOURCE` to the `DEPLOY_PATH_PRIMARY` and `DEPLOY_PATH_SECONDARY`
 2. **Set `region_context`** to `"primary"` in the primary file and `"secondary"` in the secondary file
 3. **Format** the file with `terragrunt hclfmt`
-4. **Create a feature branch** named `FEATURE_BRANCH_NAME`, commit, and **open a PR**
-5. **Do NOT modify the template content** beyond setting `region_context` — deploy it exactly as provided
+4. **Copy** the workflow template from `terraform/templates/workflow-deploy-tenant.yaml` to `WORKFLOW_FILE` and replace all `__PLACEHOLDER__` values with the matching variables above
+5. **Create a feature branch** named `FEATURE_BRANCH_NAME`, commit, and **open a PR**
+6. **Do NOT modify the template content** beyond setting `region_context` and replacing workflow placeholders
 
 ---
 
@@ -88,7 +89,8 @@ Your job is to:
 terraform/
 ├── templates/
 │   ├── preprod/terragrunt.hcl                         # Template for preproduction accounts
-│   └── prod/terragrunt.hcl                            # Template for production accounts
+│   ├── prod/terragrunt.hcl                            # Template for production accounts
+│   └── workflow-deploy-tenant.yaml                    # Template for GitHub Actions workflow
 ├── deployments/
 │   ├── locals-cloud.hcl                               # Global: accounts, regions, lambdas
 │   ├── int-preproduction/                             # Account: intpp (730335294148)
@@ -136,7 +138,7 @@ terraform/
 
 2. **Create a feature branch** from `main` named exactly: `FEATURE_BRANCH_NAME`
 
-3. **Copy the template** from `TEMPLATE_SOURCE` to both:
+3. **Copy the HCL template** from `TEMPLATE_SOURCE` to both:
    - `DEPLOY_PATH_PRIMARY/terragrunt.hcl`
    - `DEPLOY_PATH_SECONDARY/terragrunt.hcl`
 
@@ -148,7 +150,23 @@ terraform/
 
 6. **Run `terragrunt hclfmt`** to validate formatting.
 
-7. **Commit and open a PR** from `FEATURE_BRANCH_NAME` to `main` with the title:
+7. **Create the GitHub Actions workflow** (if `WORKFLOW_FILE` does not already exist):
+   - Copy `terraform/templates/workflow-deploy-tenant.yaml` to `WORKFLOW_FILE`
+   - Remove the comment header block (lines starting with `#---` at the top)
+   - Replace ALL `__PLACEHOLDER__` values with the actual values from the Variables section:
+     - `__WORKFLOW_NAME__` → `Deploy-primary-ACCOUNT_NAME-deploy-tenants-VPC_NAME_ABR`
+     - `__WORKFLOW_FILE__` → value of `WORKFLOW_FILE`
+     - `__DEPLOY_PATH__` → value of `DEPLOY_PATH_PRIMARY`
+     - `__IAM_ROLE__` → value of `IAM_ROLE`
+     - `__REGION__` → value of `PRIMARY_REGION`
+     - `__ENVIRONMENT_GATE__` → value of `ENVIRONMENT_GATE`
+   - This updates the workflow name, trigger paths, env block, and approval gate.
+   - Do NOT modify the job structure, steps, or tool versions in the workflow.
+   - Example: for int-production the workflow name becomes
+     `Deploy-primary-int-production-deploy-tenants-shared` and the trigger paths
+     point to `terraform/deployments/int-production/shared-services/deploy-tenant/primary/**/*`.
+
+8. **Commit and open a PR** from `FEATURE_BRANCH_NAME` to `main` with the title:
    `infra: deploy resources to ACCOUNT_NAME/shared-services`
 
 ---
@@ -185,9 +203,14 @@ Each environment has TWO terragrunt modules that run in sequence:
    - Any `acquire-state/` folder
    - `terraform/formations/` (the Terraform module)
    - `terraform/Archives/`
-   - `.github/workflows/` (CI/CD workflow files)
+   - `terraform/templates/workflow-deploy-tenant.yaml` (the workflow template)
+   - **Existing** `.github/workflows/` files (do NOT edit workflows that already exist)
    - `.github/CODEOWNERS`
    - Root files: `.gitignore`, `README.md`, `deployment-config.hcl`
+
+   **Exception:** You MAY create a NEW workflow file in `.github/workflows/` by
+   copying from `terraform/templates/workflow-deploy-tenant.yaml` and replacing
+   placeholders. See step 7 in "How to Work on an Issue."
 
 4. **Do NOT run `terragrunt plan` or `terragrunt apply` yourself.** The GitHub
    Actions pipeline handles this automatically.
@@ -270,3 +293,4 @@ After you open a PR:
 7. GitHub notifies the user of the apply result.
 
 Do NOT run `terragrunt plan` or `terragrunt apply` yourself.
+                                                               
