@@ -318,16 +318,30 @@ if ($linuxInstances) {
 
 ### Step 5: If SSM Document Requires Parameters
 
-If your SSM document expects parameters:
+If your SSM document expects parameters, pass them conditionally based on OS:
 
 ```powershell
-$commandId = aws ssm send-command `
-  --instance-ids $instanceIds `
-  --document-name "<SSM_DOCUMENT_NAME>" `
-  --parameters '{"param1":["value1"],"param2":["value2"]}' `
-  --region <PRIMARY_REGION> `
-  --query "Command.CommandId" `
-  --output text
+# For Windows instances with parameters
+if ($windowsInstances) {
+  $winCommandId = aws ssm send-command `
+    --instance-ids $windowsInstances `
+    --document-name "<SSM_DOCUMENT_WINDOWS>" `
+    --parameters '{"param1":["value1"],"param2":["value2"]}' `
+    --region <PRIMARY_REGION> `
+    --query "Command.CommandId" `
+    --output text
+}
+
+# For Linux instances with parameters
+if ($linuxInstances) {
+  $linuxCommandId = aws ssm send-command `
+    --instance-ids $linuxInstances `
+    --document-name "<SSM_DOCUMENT_LINUX>" `
+    --parameters '{"commands":["sudo yum update -y","sudo systemctl restart app"]}' `
+    --region <PRIMARY_REGION> `
+    --query "Command.CommandId" `
+    --output text
+}
 ```
 
 ---
@@ -336,10 +350,11 @@ $commandId = aws ssm send-command `
 
 - **Always verify instance state** before running commands
 - **Check SSM connectivity** (PingStatus = "Online") before sending commands
+- **OS detection** automatically separates Windows and Linux instances for targeted configuration
 - **Review command output** for each instance to ensure success
 - **SSM agent** must be running on instances (pre-installed on modern AMIs)
 - **IAM permissions** required: EC2 instances need `AmazonSSMManagedInstanceCore` policy
-- **Use PowerShell** for Windows environments, Bash for Linux
+- **Document naming convention**: Use OS-specific documents for better control (e.g., `intp-use1-Windows-Banner-Config`)
 
 ---
 
@@ -362,12 +377,13 @@ $commandId = aws ssm send-command `
 
 ---
 
-## Example Workflow
+## Example Workflow with OS Detection
 
 ```powershell
 # 1. Set variables for int-production
 $region = "us-east-1"
-$docName = "MyApp-Deploy"
+$winDocName = "intp-use1-Windows-Banner-Config"
+$linuxDocName = "AWS-RunShellScript"
 $tagKey = "Environment"
 $tagValue = "Shared"
 
@@ -380,35 +396,81 @@ $instanceIds = aws ec2 describe-instances `
 
 Write-Host "Found instances: $instanceIds"
 
-# 3. Check SSM connectivity
+# 3. Check SSM connectivity and get OS type
+$instanceInfo = @()
 foreach ($id in $instanceIds -split '\s+') {
-  $status = aws ssm describe-instance-information `
+  $info = aws ssm describe-instance-information `
     --filters "Key=InstanceIds,Values=$id" `
     --region $region `
-    --query "InstanceInformationList[0].PingStatus" `
-    --output text
-  Write-Host "$id : $status"
+    --query "InstanceInformationList[0].[InstanceId,PingStatus,PlatformType]" `
+    --output json | ConvertFrom-Json
+  
+  if ($info) {
+    $instanceInfo += [PSCustomObject]@{
+      InstanceId = $info[0]
+      PingStatus = $info[1]
+      PlatformType = $info[2]
+    }
+    Write-Host "$($info[0]) : Status=$($info[1]), OS=$($info[2])"
+  }
 }
 
-# 4. Execute SSM document
-$commandId = aws ssm send-command `
-  --instance-ids $instanceIds `
-  --document-name $docName `
-  --region $region `
-  --query "Command.CommandId" `
-  --output text
+# 4. Separate by OS and execute appropriate documents
+$windowsInstances = ($instanceInfo | Where-Object { $_.PlatformType -eq "Windows" -and $_.PingStatus -eq "Online" }).InstanceId
+$linuxInstances = ($instanceInfo | Where-Object { $_.PlatformType -eq "Linux" -and $_.PingStatus -eq "Online" }).InstanceId
 
-Write-Host "Command ID: $commandId"
-
-# 5. Wait and get results
-Start-Sleep -Seconds 30
-foreach ($id in $instanceIds -split '\s+') {
-  Write-Host "`n=== Results for $id ==="
-  aws ssm get-command-invocation `
-    --command-id $commandId `
-    --instance-id $id `
+# Execute Windows document
+if ($windowsInstances) {
+  Write-Host "`n=== Running Windows Banner Config ==="
+  $winCommandId = aws ssm send-command `
+    --instance-ids $windowsInstances `
+    --document-name $winDocName `
     --region $region `
-    --query '[Status,StandardOutputContent]' `
+    --query "Command.CommandId" `
     --output text
+  Write-Host "Windows Command ID: $winCommandId"
+}
+
+# Execute Linux document
+if ($linuxInstances) {
+  Write-Host "`n=== Running Linux Configuration ==="
+  $linuxCommandId = aws ssm send-command `
+    --instance-ids $linuxInstances `
+    --document-name $linuxDocName `
+    --parameters 'commands=["echo Configuring Linux server"]' `
+    --region $region `
+    --query "Command.CommandId" `
+    --output text
+  Write-Host "Linux Command ID: $linuxCommandId"
+}
+
+# 5. Wait and get results for Windows
+
+# 5. Wait and get results for Windows
+if ($windowsInstances -and $winCommandId) {
+  Start-Sleep -Seconds 30
+  foreach ($id in $windowsInstances -split '\s+') {
+    Write-Host "`n=== Windows Results for $id ==="
+    aws ssm get-command-invocation `
+      --command-id $winCommandId `
+      --instance-id $id `
+      --region $region `
+      --query '[Status,StandardOutputContent]' `
+      --output text
+  }
+}
+
+# 6. Wait and get results for Linux
+if ($linuxInstances -and $linuxCommandId) {
+  Start-Sleep -Seconds 30
+  foreach ($id in $linuxInstances -split '\s+') {
+    Write-Host "`n=== Linux Results for $id ==="
+    aws ssm get-command-invocation `
+      --command-id $linuxCommandId `
+      --instance-id $id `
+      --region $region `
+      --query '[Status,StandardOutputContent]' `
+      --output text
+  }
 }
 ```
