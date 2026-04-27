@@ -7,7 +7,7 @@ references these variables. When you move to a new account, only this
 section needs to change.
 
 ```
-FEATURE_BRANCH_NAME:    int-production-build
+FEATURE_BRANCH_NAME:    building-intp-resources
 ACCOUNT_NAME:           int-production
 ACCOUNT_ABR:            intp
 ACCOUNT_ID:             271457809232
