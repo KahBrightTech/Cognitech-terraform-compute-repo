@@ -18,7 +18,7 @@ ENVIRONMENT_TAG_KEY:    Environment
 ENVIRONMENT_TAG_VALUE:  Shared
 SSM_DOCUMENT_NAME:      <YOUR-SSM-DOCUMENT-NAME>
 SSM_DOCUMENT_WINDOWS:   intp-use1-Windows-Banner-Config
-SSM_DOCUMENT_LINUX:     <YOUR-LINUX-SSM-DOCUMENT>
+SSM_DOCUMENT_LINUX:     intp-use1-NFS-Install
 ```
 
 > **NOTE**: Instances are filtered by `<ENVIRONMENT_TAG_KEY>=<ENVIRONMENT_TAG_VALUE>` tag (default: `Environment=Shared`). The INSTANCE_TAG_PATTERN is kept for reference only.
