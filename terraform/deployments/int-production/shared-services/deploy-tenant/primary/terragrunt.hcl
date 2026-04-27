@@ -71,180 +71,180 @@ inputs = {
     account_name_abr = include.env.locals.name_abr
   }
   ec2_instances = [
-    {
-      index            = "nfs"
-      name             = "ansible-server"
-      backup_plan_name = "${local.aws_account_name}-${local.region_context}-continous-backup"
-      name_override    = "INTPP-SHR-L-NFS-01"
-      ami_config = {
-        os_release_date = "AL2023"
-      }
-      associate_public_ip_address = true
-      instance_type               = "t3.large"
-      iam_instance_profile        = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_profiles[local.vpc_name_abr].iam_profiles.name
-      associate_public_ip_address = true
-      key_name                    = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name_abr}-key-pair"].name
-      custom_tags = merge(
-        local.Misc_tags,
-        {
-          "Name"       = "INTPP-SHR-L-NFS-01"
-          "DNS_Prefix" = "nfs01"
-          "CreateUser" = "True"
-        }
-      )
-      ebs_device_volume = []
-      ebs_root_volume = {
-        volume_size           = 30
-        volume_type           = "gp3"
-        delete_on_termination = true
-      }
-      subnet_id     = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].public_subnet[include.env.locals.subnet_prefix.primary].primary_subnet_id
-      Schedule_name = "nfs-server-schedule"
-      security_group_ids = [
-        dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].security_group.app.id
-      ]
-      hosted_zones = {
-        name    = "nfs01.${dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].zones[local.vpc_name_abr].zone_name}"
-        zone_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].zones[local.vpc_name_abr].zone_id
-        type    = "A"
-      }
-    },
-    {
-      index            = "ssrs1"
-      name             = "ssrs-server"
-      backup_plan_name = "${local.aws_account_name}-${local.region_context}-continous-backup"
-      name_override    = "${upper(local.aws_account_name)}-${upper(local.vpc_name_abr)}-W-SSRS-01"
-      ami_config = {
-        os_release_date  = "W22"
-        os_base_packages = "BASE"
-      }
-      associate_public_ip_address = true
-      instance_type               = "t3.large"
-      iam_instance_profile        = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_profiles[local.vpc_name_abr].iam_profiles.name
-      associate_public_ip_address = true
-      key_name                    = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name_abr}-key-pair"].name
-      custom_tags = merge(
-        local.Misc_tags,
-        {
-          "Name"                = "${upper(local.aws_account_name)}-${upper(local.vpc_name_abr)}-W-SSRS-01"
-          "DNS_Prefix"          = "ssrs01"
-          "CreateUser"          = "True"
-          "WinRMInstall"        = "True"
-          "WindowsBannerConfig" = "True"
-        }
-      )
-      ebs_device_volume = [
-        {
-          name                  = "xvdf"
-          volume_size           = 30
-          volume_type           = "gp3"
-          delete_on_termination = true
-        }
-      ]
-      ebs_root_volume = {
-        volume_size           = 50
-        volume_type           = "gp3"
-        delete_on_termination = true
-      }
-      subnet_id     = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].public_subnet[include.env.locals.subnet_prefix.primary].primary_subnet_id
-      Schedule_name = "ansible-server-schedule"
-      security_group_ids = [
-        dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].security_group.app.id
-      ]
-      hosted_zones = {
-        name    = "ssrs01.${dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].zones[local.vpc_name_abr].zone_name}"
-        zone_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].zones[local.vpc_name_abr].zone_id
-        type    = "A"
-      }
-    },
-    {
-      index            = "ssrs2"
-      name             = "ssrs-server"
-      backup_plan_name = "${local.aws_account_name}-${local.region_context}-continous-backup"
-      name_override    = "${upper(local.aws_account_name)}-${upper(local.vpc_name_abr)}-W-SSRS-02"
-      ami_config = {
-        os_release_date  = "W22"
-        os_base_packages = "BASE"
-      }
-      associate_public_ip_address = true
-      instance_type               = "t3.large"
-      iam_instance_profile        = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_profiles[local.vpc_name_abr].iam_profiles.name
-      associate_public_ip_address = true
-      key_name                    = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name_abr}-key-pair"].name
-      custom_tags = merge(
-        local.Misc_tags,
-        {
-          "Name"                = "${upper(local.aws_account_name)}-${upper(local.vpc_name_abr)}-W-SSRS-02"
-          "DNS_Prefix"          = "ssrs02"
-          "CreateUser"          = "True"
-          "WinRMInstall"        = "True"
-          "WindowsBannerConfig" = "True"
-        }
-      )
-      ebs_device_volume = []
-      ebs_root_volume = {
-        volume_size           = 50
-        volume_type           = "gp3"
-        delete_on_termination = true
-      }
-      subnet_id     = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].public_subnet[include.env.locals.subnet_prefix.primary].primary_subnet_id
-      Schedule_name = "ansible-server-schedule"
-      security_group_ids = [
-        dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].security_group.app.id
-      ]
-      hosted_zones = {
-        name    = "ssrs02.${dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].zones[local.vpc_name_abr].zone_name}"
-        zone_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].zones[local.vpc_name_abr].zone_id
-        type    = "A"
-      }
-    },
-    {
-      index            = "etl"
-      name             = "etl-server"
-      backup_plan_name = "${local.aws_account_name}-${local.region_context}-continous-backup"
-      name_override    = "${upper(local.aws_account_name)}-${upper(local.vpc_name_abr)}-W-ETL-01"
-      ami_config = {
-        os_release_date  = "W22"
-        os_base_packages = "BASE"
-      }
-      associate_public_ip_address = true
-      instance_type               = "t3.large"
-      iam_instance_profile        = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_profiles[local.vpc_name_abr].iam_profiles.name
-      associate_public_ip_address = true
-      key_name                    = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name_abr}-key-pair"].name
-      custom_tags = merge(
-        local.Misc_tags,
-        {
-          "Name"                = "${upper(local.aws_account_name)}-${upper(local.vpc_name_abr)}-W-ETL-01"
-          "DNS_Prefix"          = "etl01"
-          "CreateUser"          = "True"
-          "WindowsBannerConfig" = "True"
-        }
-      )
-      ebs_device_volume = [
-        {
-          name                  = "xvdf"
-          volume_size           = 30
-          volume_type           = "gp3"
-          delete_on_termination = true
-        }
-      ]
-      ebs_root_volume = {
-        volume_size           = 50
-        volume_type           = "gp3"
-        delete_on_termination = true
-      }
-      subnet_id     = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].public_subnet[include.env.locals.subnet_prefix.primary].primary_subnet_id
-      Schedule_name = "ansible-server-schedule"
-      security_group_ids = [
-        dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].security_group.app.id
-      ]
-      hosted_zones = {
-        name    = "etl01.${dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].zones[local.vpc_name_abr].zone_name}"
-        zone_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].zones[local.vpc_name_abr].zone_id
-        type    = "A"
-      }
-    }
+    # {
+    #   index            = "nfs"
+    #   name             = "ansible-server"
+    #   backup_plan_name = "${local.aws_account_name}-${local.region_context}-continous-backup"
+    #   name_override    = "INTPP-SHR-L-NFS-01"
+    #   ami_config = {
+    #     os_release_date = "AL2023"
+    #   }
+    #   associate_public_ip_address = true
+    #   instance_type               = "t3.large"
+    #   iam_instance_profile        = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_profiles[local.vpc_name_abr].iam_profiles.name
+    #   associate_public_ip_address = true
+    #   key_name                    = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name_abr}-key-pair"].name
+    #   custom_tags = merge(
+    #     local.Misc_tags,
+    #     {
+    #       "Name"       = "INTPP-SHR-L-NFS-01"
+    #       "DNS_Prefix" = "nfs01"
+    #       "CreateUser" = "True"
+    #     }
+    #   )
+    #   ebs_device_volume = []
+    #   ebs_root_volume = {
+    #     volume_size           = 30
+    #     volume_type           = "gp3"
+    #     delete_on_termination = true
+    #   }
+    #   subnet_id     = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].public_subnet[include.env.locals.subnet_prefix.primary].primary_subnet_id
+    #   Schedule_name = "nfs-server-schedule"
+    #   security_group_ids = [
+    #     dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].security_group.app.id
+    #   ]
+    #   hosted_zones = {
+    #     name    = "nfs01.${dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].zones[local.vpc_name_abr].zone_name}"
+    #     zone_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].zones[local.vpc_name_abr].zone_id
+    #     type    = "A"
+    #   }
+    # },
+    # {
+    #   index            = "ssrs1"
+    #   name             = "ssrs-server"
+    #   backup_plan_name = "${local.aws_account_name}-${local.region_context}-continous-backup"
+    #   name_override    = "${upper(local.aws_account_name)}-${upper(local.vpc_name_abr)}-W-SSRS-01"
+    #   ami_config = {
+    #     os_release_date  = "W22"
+    #     os_base_packages = "BASE"
+    #   }
+    #   associate_public_ip_address = true
+    #   instance_type               = "t3.large"
+    #   iam_instance_profile        = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_profiles[local.vpc_name_abr].iam_profiles.name
+    #   associate_public_ip_address = true
+    #   key_name                    = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name_abr}-key-pair"].name
+    #   custom_tags = merge(
+    #     local.Misc_tags,
+    #     {
+    #       "Name"                = "${upper(local.aws_account_name)}-${upper(local.vpc_name_abr)}-W-SSRS-01"
+    #       "DNS_Prefix"          = "ssrs01"
+    #       "CreateUser"          = "True"
+    #       "WinRMInstall"        = "True"
+    #       "WindowsBannerConfig" = "True"
+    #     }
+    #   )
+    #   ebs_device_volume = [
+    #     {
+    #       name                  = "xvdf"
+    #       volume_size           = 30
+    #       volume_type           = "gp3"
+    #       delete_on_termination = true
+    #     }
+    #   ]
+    #   ebs_root_volume = {
+    #     volume_size           = 50
+    #     volume_type           = "gp3"
+    #     delete_on_termination = true
+    #   }
+    #   subnet_id     = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].public_subnet[include.env.locals.subnet_prefix.primary].primary_subnet_id
+    #   Schedule_name = "ansible-server-schedule"
+    #   security_group_ids = [
+    #     dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].security_group.app.id
+    #   ]
+    #   hosted_zones = {
+    #     name    = "ssrs01.${dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].zones[local.vpc_name_abr].zone_name}"
+    #     zone_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].zones[local.vpc_name_abr].zone_id
+    #     type    = "A"
+    #   }
+    # },
+    # {
+    #   index            = "ssrs2"
+    #   name             = "ssrs-server"
+    #   backup_plan_name = "${local.aws_account_name}-${local.region_context}-continous-backup"
+    #   name_override    = "${upper(local.aws_account_name)}-${upper(local.vpc_name_abr)}-W-SSRS-02"
+    #   ami_config = {
+    #     os_release_date  = "W22"
+    #     os_base_packages = "BASE"
+    #   }
+    #   associate_public_ip_address = true
+    #   instance_type               = "t3.large"
+    #   iam_instance_profile        = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_profiles[local.vpc_name_abr].iam_profiles.name
+    #   associate_public_ip_address = true
+    #   key_name                    = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name_abr}-key-pair"].name
+    #   custom_tags = merge(
+    #     local.Misc_tags,
+    #     {
+    #       "Name"                = "${upper(local.aws_account_name)}-${upper(local.vpc_name_abr)}-W-SSRS-02"
+    #       "DNS_Prefix"          = "ssrs02"
+    #       "CreateUser"          = "True"
+    #       "WinRMInstall"        = "True"
+    #       "WindowsBannerConfig" = "True"
+    #     }
+    #   )
+    #   ebs_device_volume = []
+    #   ebs_root_volume = {
+    #     volume_size           = 50
+    #     volume_type           = "gp3"
+    #     delete_on_termination = true
+    #   }
+    #   subnet_id     = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].public_subnet[include.env.locals.subnet_prefix.primary].primary_subnet_id
+    #   Schedule_name = "ansible-server-schedule"
+    #   security_group_ids = [
+    #     dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].security_group.app.id
+    #   ]
+    #   hosted_zones = {
+    #     name    = "ssrs02.${dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].zones[local.vpc_name_abr].zone_name}"
+    #     zone_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].zones[local.vpc_name_abr].zone_id
+    #     type    = "A"
+    #   }
+    # },
+    # {
+    #   index            = "etl"
+    #   name             = "etl-server"
+    #   backup_plan_name = "${local.aws_account_name}-${local.region_context}-continous-backup"
+    #   name_override    = "${upper(local.aws_account_name)}-${upper(local.vpc_name_abr)}-W-ETL-01"
+    #   ami_config = {
+    #     os_release_date  = "W22"
+    #     os_base_packages = "BASE"
+    #   }
+    #   associate_public_ip_address = true
+    #   instance_type               = "t3.large"
+    #   iam_instance_profile        = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_profiles[local.vpc_name_abr].iam_profiles.name
+    #   associate_public_ip_address = true
+    #   key_name                    = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.ec2_key_pairs["${local.vpc_name_abr}-key-pair"].name
+    #   custom_tags = merge(
+    #     local.Misc_tags,
+    #     {
+    #       "Name"                = "${upper(local.aws_account_name)}-${upper(local.vpc_name_abr)}-W-ETL-01"
+    #       "DNS_Prefix"          = "etl01"
+    #       "CreateUser"          = "True"
+    #       "WindowsBannerConfig" = "True"
+    #     }
+    #   )
+    #   ebs_device_volume = [
+    #     {
+    #       name                  = "xvdf"
+    #       volume_size           = 30
+    #       volume_type           = "gp3"
+    #       delete_on_termination = true
+    #     }
+    #   ]
+    #   ebs_root_volume = {
+    #     volume_size           = 50
+    #     volume_type           = "gp3"
+    #     delete_on_termination = true
+    #   }
+    #   subnet_id     = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].public_subnet[include.env.locals.subnet_prefix.primary].primary_subnet_id
+    #   Schedule_name = "ansible-server-schedule"
+    #   security_group_ids = [
+    #     dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].security_group.app.id
+    #   ]
+    #   hosted_zones = {
+    #     name    = "etl01.${dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].zones[local.vpc_name_abr].zone_name}"
+    #     zone_id = dependency.shared_services.outputs.remote_tfstates.Shared.outputs.Account_products[local.vpc_name_abr].zones[local.vpc_name_abr].zone_id
+    #     type    = "A"
+    #   }
+    # }
   ]
   alb_listeners = [
     # {
