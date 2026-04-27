@@ -29,8 +29,9 @@ locals {
   public_hosted_zone = "${local.vpc_name_abr}.${include.env.locals.public_domain}"
   deployment         = "deploy-tenant"
   ## Updates these variables as per the product/service
-  vpc_name     = "shared-services"
-  vpc_name_abr = "shared"
+  vpc_name             = "shared-services"
+  vpc_name_abr         = "shared"
+  aws_account_name_abr = include.env.locals.name_abr
   Misc_tags = {
     "PrivateHostedZone" = "shared.cognitech.com"
     "PublicHostedZone"  = "cognitech.com"
@@ -63,19 +64,19 @@ terraform {
 #-------------------------------------------------------
 inputs = {
   common = {
-    global           = local.deploy_globally
-    account_name     = include.cloud.locals.account_info[include.env.locals.name_abr].name
-    region_prefix    = local.region_prefix
-    tags             = local.tags
-    region           = local.region
-    account_name_abr = include.env.locals.name_abr
+    global               = local.deploy_globally
+    account_name         = include.cloud.locals.account_info[include.env.locals.name_abr].name
+    region_prefix        = local.region_prefix
+    tags                 = local.tags
+    region               = local.region
+    aws_account_name_abr = local.aws_account_name_abr
   }
   ec2_instances = [
     {
       index            = "nfs"
       name             = "ansible-server"
       backup_plan_name = "${local.aws_account_name}-${local.region_context}-continous-backup"
-      name_override    = "INTPP-SHR-L-NFS-01"
+      name_override    = "${upper(local.aws_account_name_abr)}-${upper(local.vpc_name_abr)}-L-NFS-01"
       ami_config = {
         os_release_date = "AL2023"
       }
@@ -87,7 +88,7 @@ inputs = {
       custom_tags = merge(
         local.Misc_tags,
         {
-          "Name"       = "INTPP-SHR-L-NFS-01"
+          "Name"       = "${upper(local.aws_account_name_abr)}-${upper(local.vpc_name_abr)}-L-NFS-01"
           "DNS_Prefix" = "nfs01"
           "CreateUser" = "True"
         }
@@ -113,7 +114,7 @@ inputs = {
       index            = "ssrs1"
       name             = "ssrs-server"
       backup_plan_name = "${local.aws_account_name}-${local.region_context}-continous-backup"
-      name_override    = "${upper(local.aws_account_name)}-${upper(local.vpc_name_abr)}-W-SSRS-01"
+      name_override    = "${upper(local.aws_account_name_abr)}-${upper(local.vpc_name_abr)}-W-SSRS-01"
       ami_config = {
         os_release_date  = "W22"
         os_base_packages = "BASE"
@@ -126,7 +127,7 @@ inputs = {
       custom_tags = merge(
         local.Misc_tags,
         {
-          "Name"                = "${upper(local.aws_account_name)}-${upper(local.vpc_name_abr)}-W-SSRS-01"
+          "Name"                = "${upper(local.aws_account_name_abr)}-${upper(local.vpc_name_abr)}-W-SSRS-01"
           "DNS_Prefix"          = "ssrs01"
           "CreateUser"          = "True"
           "WinRMInstall"        = "True"
@@ -161,7 +162,7 @@ inputs = {
       index            = "ssrs2"
       name             = "ssrs-server"
       backup_plan_name = "${local.aws_account_name}-${local.region_context}-continous-backup"
-      name_override    = "${upper(local.aws_account_name)}-${upper(local.vpc_name_abr)}-W-SSRS-02"
+      name_override    = "${upper(local.aws_account_name_abr)}-${upper(local.vpc_name_abr)}-W-SSRS-02"
       ami_config = {
         os_release_date  = "W22"
         os_base_packages = "BASE"
@@ -174,7 +175,7 @@ inputs = {
       custom_tags = merge(
         local.Misc_tags,
         {
-          "Name"                = "${upper(local.aws_account_name)}-${upper(local.vpc_name_abr)}-W-SSRS-02"
+          "Name"                = "${upper(local.aws_account_name_abr)}-${upper(local.vpc_name_abr)}-W-SSRS-02"
           "DNS_Prefix"          = "ssrs02"
           "CreateUser"          = "True"
           "WinRMInstall"        = "True"
@@ -202,7 +203,7 @@ inputs = {
       index            = "etl"
       name             = "etl-server"
       backup_plan_name = "${local.aws_account_name}-${local.region_context}-continous-backup"
-      name_override    = "${upper(local.aws_account_name)}-${upper(local.vpc_name_abr)}-W-ETL-01"
+      name_override    = "${upper(local.aws_account_name_abr)}-${upper(local.vpc_name_abr)}-W-ETL-01"
       ami_config = {
         os_release_date  = "W22"
         os_base_packages = "BASE"
@@ -215,7 +216,7 @@ inputs = {
       custom_tags = merge(
         local.Misc_tags,
         {
-          "Name"                = "${upper(local.aws_account_name)}-${upper(local.vpc_name_abr)}-W-ETL-01"
+          "Name"                = "${upper(local.aws_account_name_abr)}-${upper(local.vpc_name_abr)}-W-ETL-01"
           "DNS_Prefix"          = "etl01"
           "CreateUser"          = "True"
           "WindowsBannerConfig" = "True"
