@@ -7,7 +7,7 @@ references these variables. When you move to a new account, only this
 section needs to change.
 
 ```
-FEATURE_BRANCH_NAME:    building-intp-resources
+FEATURE_BRANCH_NAME:    build-update
 ACCOUNT_NAME:           int-production
 ACCOUNT_ABR:            intp
 ACCOUNT_ID:             271457809232
@@ -144,9 +144,12 @@ terraform/
 
 2. **Create a feature branch** from `main` named exactly: `FEATURE_BRANCH_NAME`
 
-3. **Copy the HCL template** from `TEMPLATE_SOURCE` to both:
-   - `DEPLOY_PATH_PRIMARY/terragrunt.hcl`
-   - `DEPLOY_PATH_SECONDARY/terragrunt.hcl`
+3. **Copy or update the HCL template** from `TEMPLATE_SOURCE`:
+   - **If files do NOT exist:** Copy template to both paths:
+     - `DEPLOY_PATH_PRIMARY/terragrunt.hcl`
+     - `DEPLOY_PATH_SECONDARY/terragrunt.hcl`
+   - **If files DO exist:** Replace entire content with fresh template copy to ensure consistency with latest template version
+   - This ensures all deployments use the current template structure
 
 4. **Set `region_context` correctly:**
    - In the primary file: `region_context = "primary"` (already set in template)
@@ -156,10 +159,16 @@ terraform/
 
 6. **Run `terragrunt hclfmt`** to validate formatting.
 
-7. **Create the GitHub Actions workflow** (if `WORKFLOW_FILE` does not already exist):
-   - Copy `terraform/templates/workflow-deploy-tenant.yaml` to `WORKFLOW_FILE`
-   - Remove the comment header block (lines starting with `#---` at the top)
-   - Replace ALL `__PLACEHOLDER__` values with the actual values from the Variables section:
+7. **Create or update the GitHub Actions workflow:**
+   - **If `WORKFLOW_FILE` does NOT exist:**
+     - Copy `terraform/templates/workflow-deploy-tenant.yaml` to `WORKFLOW_FILE`
+     - Remove the comment header block (lines starting with `#---` at the top)
+   - **If `WORKFLOW_FILE` DOES exist:**
+     - Read the existing workflow file
+     - Compare with template structure
+     - Update only if template has new features or structural changes
+     - Otherwise, skip to avoid unnecessary changes
+   - **For new or updated workflows**, replace ALL `__PLACEHOLDER__` values with the actual values from the Variables section:
      - `__WORKFLOW_NAME__` → `Deploy-primary-ACCOUNT_NAME-deploy-tenants-VPC_NAME_ABR`
      - `__WORKFLOW_FILE__` → value of `WORKFLOW_FILE`
      - `__DEPLOY_PATH_PRIMARY__` → value of `DEPLOY_PATH_PRIMARY`
