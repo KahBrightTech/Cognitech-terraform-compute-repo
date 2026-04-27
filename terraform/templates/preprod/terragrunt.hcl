@@ -34,6 +34,7 @@ locals {
   Misc_tags = {
     "PrivateHostedZone" = "shared.cognitech.com"
     "PublicHostedZone"  = "cognitech.com"
+    Environment         = "Shared"
   }
 
   # Composite variables 
